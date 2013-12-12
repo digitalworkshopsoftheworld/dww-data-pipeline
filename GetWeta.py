@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 # Import the IMDbPY package.
 try:
@@ -47,28 +49,31 @@ try:
         movList = graph_db.get_or_create_index(neo4j.Node, "movie")
         movNode = movList.get_or_create('name', movie['title'], {'name': movie['title'] })
         movNode.add_labels("movie")
+        graph_db.create( rel(companyNode, "FILMOGRAPHY", movNode) )
 
         for person in movie['visual effects']:
             i.update(person)
-            print(person['name'])
 
             # Create person node
             peopleList = graph_db.get_or_create_index(neo4j.Node, "person")
             personNode = peopleList.get_or_create('name', person['name'], {'name': person['name'] })
             personNode.add_labels('person')            
-            graph_db.create( rel(personNode, "WORKED_ON", movNode) )
+            
+            roleNode, = graph_db.create( rel(personNode, "WORKED_ON", movNode) )
 
             # Split the tag for the company out of the role notes for the crew member
             splitRole = person.notes.split(": ")
             role = "--"
             comp = "--"
+            print(person['name'] + ". Notes: '" + person.notes + "'")
             if(len(splitRole) > 1):
                 role = str(splitRole[0])
                 comp = str(splitRole[1]).lower()
+                roleNode.update_properties({'role':role})
                 if comp.find(companySearchTag) > -1 :
                     print("==> " + person['name'] + " matches '" + comp + "' under role '" + role + "'")
                     graph_db.create( rel(personNode, "WORKED_FOR", companyNode) )
-        print("Movie complete")
+        print("--- Movie complete")
 
 
 except imdb.IMDbError, e:
