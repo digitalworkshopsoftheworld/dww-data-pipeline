@@ -111,9 +111,11 @@ class ImdbScraper:
                 if not existingCompany:
                     print("Searching for '" + str(vfxRole.company) + "'")
                     if(len(vfxRole.company) > 0):
-                        existingCompany = self.i.search_company(vfxRole.company)[0]     # Grab first company only
-                        if len(existingCompany) > 0:
-                            print("Found " + str(existingCompany['name']))
+                        companyList = self.i.search_company(vfxRole.company)     
+                        if(len(companyList) > 0):       
+                            existingCompany = companyList[0]    # Grab first company only
+                            if len(existingCompany) > 0:
+                                print("Found " + str(existingCompany['name']))
 
                 if existingCompany:
                     print("Attach '" + str(person['name']) + "' to '" + str(existingCompany['name']) + "' for '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
