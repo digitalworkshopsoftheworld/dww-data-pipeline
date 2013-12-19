@@ -1,0 +1,3 @@
+[submodule "py2neo"]
+	path = py2neo
+	url = https://github.com/nigelsmall/py2neo.git
