@@ -61,7 +61,7 @@ try:
             splitRole = person.notes.split(": ")
             role = "--"
             comp = "--"
-            print(person['name'] + ". Notes: '" + person.notes + "'")
+            print(str(person['name']) + ". Notes: '" + str(person.notes) + "'")
             if(len(splitRole) > 1):
                 role = str(splitRole[0])
                 comp = str(splitRole[1]).lower()
