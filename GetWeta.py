@@ -32,6 +32,7 @@ try:
     # Get a company object with the data about the company identified by
     # the given companyID.
 
+    # company = i.get_company(companyID)
     company = i.get_company(companyID)
     print("Searching IMDB for employees of '" + company['name'] + "':")
 
@@ -51,15 +52,10 @@ try:
         movNode.add_labels("movie")
         graph_db.create( rel(companyNode, "FILMOGRAPHY", movNode) )
 
+        
+
         for person in movie['visual effects']:
             i.update(person)
-
-            # Create person node
-            peopleList = graph_db.get_or_create_index(neo4j.Node, "person")
-            personNode = peopleList.get_or_create('name', person['name'], {'name': person['name'] })
-            personNode.add_labels('person')            
-            
-            roleNode, = graph_db.create( rel(personNode, "WORKED_ON", movNode) )
 
             # Split the tag for the company out of the role notes for the crew member
             splitRole = person.notes.split(": ")
@@ -69,9 +65,17 @@ try:
             if(len(splitRole) > 1):
                 role = str(splitRole[0])
                 comp = str(splitRole[1]).lower()
-                roleNode.update_properties({'role':role})
                 if comp.find(companySearchTag) > -1 :
                     print("==> " + person['name'] + " matches '" + comp + "' under role '" + role + "'")
+
+                    # Create person node
+                    peopleList = graph_db.get_or_create_index(neo4j.Node, "person")
+                    personNode = peopleList.get_or_create('name', person['name'], {'name': person['name'] })
+                    personNode.add_labels('person')            
+                    
+                    roleNode, = graph_db.create( rel(personNode, "WORKED_ON", movNode) )
+                    roleNode.update_properties({'role':role})
+
                     graph_db.create( rel(personNode, "WORKED_FOR", companyNode) )
         print("--- Movie complete")
 
