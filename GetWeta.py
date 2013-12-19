@@ -14,7 +14,6 @@ except ImportError:
     print('Missing neo4j or imdbpy')
     sys.exit(1)
 
-
 class ImdbScraper:
 
     def __init__(self):
@@ -28,7 +27,12 @@ class ImdbScraper:
         # Neo4j interface
         self.graph_db = neo4j.GraphDatabaseService(
             "http://localhost:7474/db/data/")
-        # self.graph_db.clear()
+
+        if len(sys.argv) > 1:
+            if(sys.argv[1] == "reset"):
+                self.graph_db.clear()
+                print("Clearing neo4j db")
+                sys.exit(0)
 
         self.rootCompany = self.i.get_company(self.companyID)
         print("Searching IMDB for employees of '" +
