@@ -34,7 +34,7 @@ try:
 
     # company = i.get_company(companyID)
     company = i.get_company(companyID)
-    print("Searching IMDB for employees of '" + company['name'] + "':")
+    print("Searching IMDB for employees of '" + str(company['name']) + "':")
 
     
     # Create company node
@@ -44,15 +44,13 @@ try:
     
     for movie in company['special effects companies']: 
         i.update(movie)
-        print("Searching movie '" + movie['title'] + "' for VFX crew")
+        print("Searching movie '" + str(movie['title']) + "' for VFX crew")
         
         # Create movie node
         movList = graph_db.get_or_create_index(neo4j.Node, "movie")
         movNode = movList.get_or_create('name', movie['title'], {'name': movie['title'] })
         movNode.add_labels("movie")
         graph_db.create( rel(companyNode, "FILMOGRAPHY", movNode) )
-
-        
 
         for person in movie['visual effects']:
             i.update(person)
@@ -66,7 +64,7 @@ try:
                 role = str(splitRole[0])
                 comp = str(splitRole[1]).lower()
                 if comp.find(companySearchTag) > -1 :
-                    print("==> " + person['name'] + " matches '" + comp + "' under role '" + role + "'")
+                    print("==> " + str(person['name']) + " matches '" + comp + "' under role '" + role + "'")
 
                     # Create person node
                     peopleList = graph_db.get_or_create_index(neo4j.Node, "person")
