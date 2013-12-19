@@ -31,8 +31,8 @@ iRemote = imdb.IMDb()
 graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
 graph_db.clear()
 
-getMissingSqlData = True
-buildGraph = False
+getMissingSqlData = False
+buildGraph = True
 
 
 
@@ -80,9 +80,6 @@ if(buildGraph):
     movie = company['special effects companies'][3]
     i.update(movie)
     print("Searching movie '" + movie['title'] + "' for VFX crew")
-
-    for key in movie.iteritems():
-        print(key)
     
     # Create movie node
     movList = graph_db.get_or_create_index(neo4j.Node, "movie")
@@ -90,7 +87,7 @@ if(buildGraph):
     movNode.add_labels("movie")
     graph_db.create( rel(companyNode, "FILMOGRAPHY", movNode) )
 
-    for person in movie['visual effects']:
+    for person in movie['miscellaneous crew']:
         i.update(person)
 
         # Create person node
