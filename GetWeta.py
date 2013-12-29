@@ -75,8 +75,8 @@ class ImdbScraper:
                     personNode = self.FindOrCreatePersonNode(person)
                     personNodeDict[person] = personNode
 
-            print("--- Movie complete")
-        print("--- Total unique employees found: " + len(personNodeDict) )
+            print("--- '" + movie['title'] + "'. Scanned " + str(len(movie['visual effects'])) + " people.")
+        print("--- Total unique employees found: " + str(len(personNodeDict)) )
 
         return personNodeDict
 
@@ -139,7 +139,8 @@ class ImdbScraper:
         companyNode = self.graph_db.get_indexed_node(
             "company", "id", imdbCompany.getID())
         if not companyNode:
-            print("Couldn't find company node. Searched for '" +
+            if not silent:
+                print("Couldn't find company node. Searched for '" +
                   str(imdbCompany['name']) + "'. Creating...")
             self.i.update(imdbCompany)
             companyNode, = self.graph_db.create(node(id=imdbCompany.getID()))
@@ -153,8 +154,8 @@ class ImdbScraper:
         movNode = self.graph_db.get_indexed_node(
             "movie", "id", imdbMovie.getID())
         if not movNode:
-            print(
-                "Couldn't find movie node. Searched for " + str(imdbMovie.getID() + ". Creating..."))
+            if not silent:
+                print("Couldn't find movie node. Searched for " + str(imdbMovie.getID() + ". Creating..."))
             movNode, = self.graph_db.create(node(id=int(imdbMovie.getID())))
             movNode.add_labels("movie")
             movNode.update_properties(
@@ -168,8 +169,8 @@ class ImdbScraper:
             "person", "id", imdbPerson.getID())
 
         if not personNode:
-            print(
-                "Couldn't find person node. Searched for " + str(imdbPerson.getID() + ". Creating..."))
+            if not silent:
+                print("Couldn't find person node. Searched for " + str(imdbPerson.getID() + ". Creating..."))
             personNode, = self.graph_db.create(node(id=imdbPerson.getID()))
             personNode.add_labels("person")
             personNode.update_properties({'name': imdbPerson['name']})
@@ -189,7 +190,8 @@ class ImdbScraper:
 
         role = "--"
         comp = "--"
-        print(str("Finding company from notes: '" + str(filtered) + "'"))
+        if not silent:
+            print(str("Finding company from notes: '" + str(filtered) + "'"))
         if(len(splitRole) > 1):
             role = str(splitRole[0])
             comp = str(splitRole[1]).lower()
@@ -231,6 +233,7 @@ filmographyDepth = -1
 companyID = 5031
 companySearchTag = 'weta'
 
+silent = True
 
 if len(sys.argv) <= 1:
     print("Usage: python2 GetWeta.py (employees/connections/reset)")
