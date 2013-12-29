@@ -14,32 +14,21 @@ except ImportError:
     print('Missing neo4j or imdbpy')
     sys.exit(1)
 
+
 class ImdbScraper:
 
     def __init__(self):
-        # Hardcoded Weta company id
-        self.companyID = 5031
-        self.companySearchTag = 'weta'
-
         # IMDB interface
         self.i = imdb.IMDb()
-        filmographyDepth = 3
 
         # Neo4j interface
         self.graph_db = neo4j.GraphDatabaseService(
             "http://localhost:7474/db/data/")
 
-        if len(sys.argv) > 1:
-            if(sys.argv[1] == "reset"):
-                self.graph_db.clear()
-                print("Clearing neo4j db")
-                sys.exit(0)
+    def SetRootCompany(self, companyID, companySearchTag):
 
-        if len(sys.argv) > 2:
-            filmographyDepth = int(sys.argv[2])
-
-        print("Starting...")
-        print("Scanning for films " + str(filmographyDepth) + " deep")
+        self.companyID = companyID
+        self.companySearchTag = companySearchTag
 
         self.rootCompany = self.i.get_company(self.companyID)
         print("Searching IMDB for employees of '" +
@@ -48,11 +37,7 @@ class ImdbScraper:
         # List of companies for quick checking for existing companies
         self.companyList = [self.rootCompany]
 
-
-        rootPersonList = self.GetPeopleInFilmography(self.rootCompany, filmographyDepth)
-        self.ConnectPeopleToCompanies(rootPersonList, filmographyDepth)
-
-    def GetPeopleInFilmography(self, company, filmographyDepth):
+    def GetPeopleInFilmography(self, filmographyDepth):
         personNodeDict = {}
 
         self.companyIndex = self.graph_db.get_or_create_index(
@@ -62,12 +47,17 @@ class ImdbScraper:
         self.personIndex = self.graph_db.get_or_create_index(
             neo4j.Node, "person")
 
-        companyNode = self.FindOrCreateCompanyNode(company)
+        companyNode = self.FindOrCreateCompanyNode(self.rootCompany)
 
         # Dummy movie list of first n movies
         movieList = []
+
+        if(filmographyDepth < 0):
+            filmographyDepth = len(
+                self.rootCompany['special effects companies'])
+
         for i in range(filmographyDepth):
-            movieList.append(company['special effects companies'][i])
+            movieList.append(self.rootCompany['special effects companies'][i])
 
         # for movie in company['special effects companies']:
         for movie in movieList:
@@ -80,8 +70,6 @@ class ImdbScraper:
                 self.graph_db.create(rel(companyNode, "FILMOGRAPHY", movNode))
 
             for person in movie['visual effects']:
-                # Split the tag for the company out of the role notes for the
-                # crew member
                 vfxRole = self.FindCompanyFromPersonNotes(
                     person, self.companySearchTag)
                 if(len(vfxRole.company) > 0):
@@ -90,13 +78,18 @@ class ImdbScraper:
 
             print("--- Movie complete")
 
+        print("--- Total unique employees found: " + len(personNodeDict) )
+
         return personNodeDict
 
     def ConnectPeopleToCompanies(self, personNodeDict, filmographyDepth):
         print("---------------------------------")
-        print("Root person list")
+        print("Searching employee filmographies")
         for person, personNode in personNodeDict.iteritems():
             self.i.update(person)
+
+            if(filmographyDepth < 0):
+                filmographyDepth = len(person['visual effects'])
 
             for i in range(filmographyDepth):
                 if(i >= len(person['visual effects'])):
@@ -111,18 +104,22 @@ class ImdbScraper:
                 if not existingCompany:
                     print("Searching for '" + str(vfxRole.company) + "'")
                     if(len(vfxRole.company) > 0):
-                        companyList = self.i.search_company(vfxRole.company)     
-                        if(len(companyList) > 0):       
-                            existingCompany = companyList[0]    # Grab first company only
+                        companyList = self.i.search_company(vfxRole.company)
+                        if(len(companyList) > 0):
+                            # Grab first company only
+                            existingCompany = companyList[0]
                             if len(existingCompany) > 0:
                                 print("Found " + str(existingCompany['name']))
 
                 if existingCompany:
-                    print("Attach '" + str(person['name']) + "' to '" + str(existingCompany['name']) + "' for '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
+                    print("Attach '" + str(person['name']) + "' to '" + str(
+                        existingCompany['name']) + "' for '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
                     companyNode = self.FindOrCreateCompanyNode(existingCompany)
-                    self.ConnectPersonToCompany(personNode, companyNode, vfxRole.role, movie)
+                    self.ConnectPersonToCompany(
+                        personNode, companyNode, vfxRole.role, movie)
                 else:
                     print("Could not find company.")
+        print('Finished')
 
     def ConnectPersonToCompany(self, personNode, companyNode, role, imdbMovie):
         personCompanyRelationship = list(
@@ -144,7 +141,8 @@ class ImdbScraper:
         companyNode = self.graph_db.get_indexed_node(
             "company", "id", imdbCompany.getID())
         if not companyNode:
-            print("Couldn't find company. Searched for '" + str(imdbCompany['name']) + "'. Creating...")
+            print("Couldn't find company node. Searched for '" +
+                  str(imdbCompany['name']) + "'. Creating...")
             self.i.update(imdbCompany)
             companyNode, = self.graph_db.create(node(id=imdbCompany.getID()))
             companyNode.add_labels("company")
@@ -158,7 +156,7 @@ class ImdbScraper:
             "movie", "id", imdbMovie.getID())
         if not movNode:
             print(
-                "Couldn't find movie. Searched for " + str(imdbMovie.getID() + ". Creating..."))
+                "Couldn't find movie node. Searched for " + str(imdbMovie.getID() + ". Creating..."))
             self.i.update(imdbMovie)
             movNode, = self.graph_db.create(node(id=int(imdbMovie.getID())))
             movNode.add_labels("movie")
@@ -174,7 +172,7 @@ class ImdbScraper:
 
         if not personNode:
             print(
-                "Couldn't find person. Searched for " + str(imdbPerson.getID() + ". Creating..."))
+                "Couldn't find person node. Searched for " + str(imdbPerson.getID() + ". Creating..."))
             self.i.update(imdbPerson)
             personNode, = self.graph_db.create(node(id=imdbPerson.getID()))
             personNode.add_labels("person")
@@ -208,14 +206,15 @@ class ImdbScraper:
 
         return outRole
 
-
     def FindCompanyInNodes(self, companyname):
         for comp in self.companyList:
             if(comp['name'].lower() == companyname.lower()):
                 return comp
         return None
 
-
+#
+# Class for storing a role and associated company
+#
 class VFXRole:
 
     def __init__(self):
@@ -223,4 +222,37 @@ class VFXRole:
         self.company = ""
         self.matchedTag = ""
 
+
+# Script start
+# -----------------------------------------------------
 scraper = ImdbScraper()
+
+
+# Start arguments
+filmographyDepth = -1
+
+# Hardcoded Weta company id
+companyID = 5031
+companySearchTag = 'weta'
+
+
+if len(sys.argv) <= 1:
+    print("Usage: python2 GetWeta.py (employees/connections/reset)")
+    sys.exit(0)
+
+if len(sys.argv) > 1:
+    print("Starting...")
+    scraper.SetRootCompany(companyID, companySearchTag)
+
+    if(sys.argv[1] == "reset"):
+        print("Clearing neo4j db")
+        scraper.graph_db.clear()
+        sys.exit(0)
+    elif(sys.argv[1] == "employees"):
+        print("Searching for employees in filmography...")
+        scraper.GetPeopleInFilmography(filmographyDepth)
+    elif(sys.argv[1] == "connections"):
+        print("Searching for employees in filmography...")
+        personList = scraper.GetPeopleInFilmography(filmographyDepth)
+        scraper.ConnectPeopleToCompanies(personList, filmographyDepth)
+        sys.exit(0)
