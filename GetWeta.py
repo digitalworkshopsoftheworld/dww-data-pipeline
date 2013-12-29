@@ -26,7 +26,6 @@ class ImdbScraper:
             "http://localhost:7474/db/data/")
 
     def SetRootCompany(self, companyID, companySearchTag):
-
         self.companyID = companyID
         self.companySearchTag = companySearchTag
 
@@ -77,7 +76,6 @@ class ImdbScraper:
                     personNodeDict[person] = personNode
 
             print("--- Movie complete")
-
         print("--- Total unique employees found: " + len(personNodeDict) )
 
         return personNodeDict
@@ -157,7 +155,6 @@ class ImdbScraper:
         if not movNode:
             print(
                 "Couldn't find movie node. Searched for " + str(imdbMovie.getID() + ". Creating..."))
-            self.i.update(imdbMovie)
             movNode, = self.graph_db.create(node(id=int(imdbMovie.getID())))
             movNode.add_labels("movie")
             movNode.update_properties(
@@ -173,7 +170,6 @@ class ImdbScraper:
         if not personNode:
             print(
                 "Couldn't find person node. Searched for " + str(imdbPerson.getID() + ". Creating..."))
-            self.i.update(imdbPerson)
             personNode, = self.graph_db.create(node(id=imdbPerson.getID()))
             personNode.add_labels("person")
             personNode.update_properties({'name': imdbPerson['name']})
