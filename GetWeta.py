@@ -68,14 +68,16 @@ class ImdbScraper:
             if(len(movCompanyRelationship) < 1):
                 self.graph_db.create(rel(companyNode, "FILMOGRAPHY", movNode))
 
-            for person in movie['visual effects']:
-                vfxRole = self.FindCompanyFromPersonNotes(
-                    person, self.companySearchTag)
-                if(len(vfxRole.company) > 0):
-                    personNode = self.FindOrCreatePersonNode(person)
-                    personNodeDict[person] = personNode
-
-            print("--- '" + movie['title'] + "'. Scanned " + str(len(movie['visual effects'])) + " people.")
+            if movie.has_key('visual effects'):
+                for person in movie['visual effects']:
+                    vfxRole = self.FindCompanyFromPersonNotes(
+                        person, self.companySearchTag)
+                    if(len(vfxRole.company) > 0):
+                        personNode = self.FindOrCreatePersonNode(person)
+                        personNodeDict[person] = personNode
+                print("--- '" + movie['title'] + "'. Scanned " + str(len(movie['visual effects'])) + " people. Total found: " + str(len(personNodeDict)))
+            else:
+                print("--- No vfx employees in " + str(movie['title']))
         print("--- Total unique employees found: " + str(len(personNodeDict)) )
 
         return personNodeDict
@@ -158,8 +160,13 @@ class ImdbScraper:
                 print("Couldn't find movie node. Searched for " + str(imdbMovie.getID() + ". Creating..."))
             movNode, = self.graph_db.create(node(id=int(imdbMovie.getID())))
             movNode.add_labels("movie")
+
+            year = ""
+            if imdbMovie.has_key('year'):
+                year = imdbMovie['year']
+
             movNode.update_properties(
-                {'title': imdbMovie['title'], 'release': imdbMovie['year']})
+                {'title': imdbMovie['title'], 'release': year})
             self.movieIndex.add("id", movNode['id'], movNode)
 
         return movNode
