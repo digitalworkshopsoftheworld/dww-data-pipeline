@@ -6,7 +6,7 @@
 	path = imdbpy
 	url = https://github.com/Mystfit/imdbpy.git
 
-[submodule "fuzzyfuzzy"]
+[submodule "fuzzywuzzy"]
 	path = fuzzywuzzy
 	url = https://github.com/seatgeek/fuzzywuzzy.git
 
