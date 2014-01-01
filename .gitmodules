@@ -1,3 +1,12 @@
 [submodule "py2neo"]
 	path = py2neo
 	url = https://github.com/nigelsmall/py2neo.git
+
+[submodule "imdbpy"]
+	path = imdbpy
+	url = https://github.com/Mystfit/imdbpy.git
+
+[submodule "fuzzyfuzzy"]
+	path = fuzzywuzzy
+	url = https://github.com/seatgeek/fuzzywuzzy.git
+
