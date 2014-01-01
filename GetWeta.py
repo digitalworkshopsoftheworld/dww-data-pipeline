@@ -2,6 +2,10 @@
 
 import sys
 import re
+import resource
+import pdb
+import gc
+import objgraph
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -10,16 +14,18 @@ sys.setdefaultencoding("utf-8")
 try:
     import imdb
     from py2neo import neo4j, node, rel
-except ImportError:
-    print('Missing neo4j or imdbpy')
-    sys.exit(1)
+    from fuzzywuzzy import fuzz
 
+except ImportError:
+    print('Missing neo4j or imdbpy or fuzzywuzzy')
+    sys.exit(1)
 
 class ImdbScraper:
 
     def __init__(self):
         # IMDB interface
         self.i = imdb.IMDb()
+        self.cachedCompanySearches = {}
 
         # Neo4j interface
         self.graph_db = neo4j.GraphDatabaseService(
@@ -28,7 +34,6 @@ class ImdbScraper:
     def SetRootCompany(self, companyID, companySearchTag):
         self.companyID = companyID
         self.companySearchTag = companySearchTag
-
         self.rootCompany = self.i.get_company(self.companyID)
         print("Searching IMDB for employees of '" +
               str(self.rootCompany['name']) + "':")
@@ -58,9 +63,14 @@ class ImdbScraper:
         for i in range(filmographyDepth):
             movieList.append(self.rootCompany['special effects companies'][i])
 
-        # for movie in company['special effects companies']:
         for movie in movieList:
-            self.i.update(movie)
+            while True:
+                try:
+                    self.i.update(movie)
+                except imdb.IMDbDataAccessError:
+                    print("*** HTTP error. Redialing")
+                    continue
+                break
             movNode = self.FindOrCreateMovieNode(movie)
 
             movCompanyRelationship = list(
@@ -72,21 +82,32 @@ class ImdbScraper:
                 for person in movie['visual effects']:
                     vfxRole = self.FindCompanyFromPersonNotes(
                         person, self.companySearchTag)
-                    if(len(vfxRole.company) > 0):
+                    if(len(vfxRole.matchedTag) > 0):
                         personNode = self.FindOrCreatePersonNode(person)
                         personNodeDict[person] = personNode
                 print("--- '" + movie['title'] + "'. Scanned " + str(len(movie['visual effects'])) + " people. Total found: " + str(len(personNodeDict)))
             else:
                 print("--- No vfx employees in " + str(movie['title']))
+            movie.clear()
         print("--- Total unique employees found: " + str(len(personNodeDict)) )
-
+        print '!!! Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         return personNodeDict
 
     def ConnectPeopleToCompanies(self, personNodeDict, filmographyDepth):
         print("---------------------------------")
+        self.ResetRelationships()
+
         print("Searching employee filmographies")
         for person, personNode in personNodeDict.iteritems():
-            self.i.update(person)
+            startmem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+
+            while True:
+                try:
+                    self.i.update(person)
+                except imdb.IMDbDataAccessError:
+                    print("*** HTTP error. Redialing")
+                    continue
+                break
 
             if(filmographyDepth < 0):
                 filmographyDepth = len(person['visual effects'])
@@ -96,18 +117,33 @@ class ImdbScraper:
                     break
 
                 movie = person['visual effects'][i]
-                self.i.update(movie)
+                while True:
+                    try:
+                        self.i.update(movie)
+                    except imdb.IMDbDataAccessError:
+                        print("*** HTTP error. Redialing")
+                        continue
+                    break
 
                 vfxRole = self.FindCompanyFromPersonNotes(movie)
-                existingCompany = self.FindCompanyInNodes(vfxRole.company)
+                existingCompany = None
+                if vfxRole.company in self.cachedCompanySearches:
+                    existingCompany = self.cachedCompanySearches[vfxRole.company]
 
                 if not existingCompany:
-                    print("Searching for '" + str(vfxRole.company) + "'")
                     if(len(vfxRole.company) > 0):
-                        companyList = self.i.search_company(vfxRole.company)
+                        print("Searching for '" + str(vfxRole.company) + "'")
+                        while True:
+                            try:
+                                companyList = self.i.search_company(vfxRole.company)
+                            except imdb.IMDbDataAccessError:
+                                print("*** HTTP error. Redialling")
+                                continue
+                            break
                         if(len(companyList) > 0):
                             # Grab first company only
                             existingCompany = companyList[0]
+                            self.cachedCompanySearches[vfxRole.company] = existingCompany
                             if len(existingCompany) > 0:
                                 print("Found " + str(existingCompany['name']))
 
@@ -116,14 +152,31 @@ class ImdbScraper:
                         existingCompany['name']) + "' for '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
                     companyNode = self.FindOrCreateCompanyNode(existingCompany)
                     self.ConnectPersonToCompany(
-                        personNode, companyNode, vfxRole.role, movie)
+                        personNode, companyNode, vfxRole, movie)
                 else:
-                    print("Could not find company.")
+                    print("No company for '" + str(person['name']) + "' under role '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
+                
+                # cleanup movie objects
+                #movie.clear()
+                #del movie
+            
+            # cleanup person
+            personNodeDict[person] = None
+            person.clear()
+            del person
+            print ('!!! Delta Memory usage: %s (kb)' % (int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) - startmem) )
+            print '!!! Total Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            gc.collect()
+            #objgraph.show_most_common_types()
+            #pdb.set_trace()
         print('Finished')
 
-    def ConnectPersonToCompany(self, personNode, companyNode, role, imdbMovie):
+    def ConnectPersonToCompany(self, personNode, companyNode, vfxrole, imdbMovie):
         personCompanyRelationship = list(
             self.graph_db.match(start_node=personNode, end_node=companyNode))
+
+        # Use fuzzy matching to see if we need to flag this relationship as one to check the company
+        fuzzyCompanyMatch = fuzz.ratio(companyNode.get_properties()['name'].lower().strip(), vfxrole.company.lower().strip())
 
         relExists = False
         # Check for preexisting relationships to company
@@ -135,8 +188,10 @@ class ImdbScraper:
             roleNode, =  self.graph_db.create(
                 rel(personNode, "WORKED_FOR", companyNode))
             roleNode.update_properties(
-                {'role': role, 'movieID': imdbMovie.getID(), 'release': imdbMovie['year']})
-
+                {'role': vfxrole.role, 'company': vfxrole.company, 'movieID': imdbMovie.getID(), 'release': imdbMovie['year'], 'matchRatio': fuzzyCompanyMatch})
+        if not silent:
+            print("Match ratio: " + str(fuzzyCompanyMatch) + ". CompRole: " + str(vfxrole.company.lower().strip()) + ". Node: " + str(companyNode.get_properties()['name'].lower().strip()) )
+    
     def FindOrCreateCompanyNode(self, imdbCompany):
         companyNode = self.graph_db.get_indexed_node(
             "company", "id", imdbCompany.getID())
@@ -144,7 +199,13 @@ class ImdbScraper:
             if not silent:
                 print("Couldn't find company node. Searched for '" +
                   str(imdbCompany['name']) + "'. Creating...")
-            self.i.update(imdbCompany)
+            while True:
+                try:
+                    self.i.update(imdbCompany)
+                except imdb.IMDbDataAccessError:
+                    print("*** HTTP error. Redialling")
+                    continue
+                break
             companyNode, = self.graph_db.create(node(id=imdbCompany.getID()))
             companyNode.add_labels("company")
             companyNode.update_properties({'name': imdbCompany['name']})
@@ -187,7 +248,9 @@ class ImdbScraper:
 
     def FindCompanyFromPersonNotes(self, person, companyTag=""):
         outRole = VFXRole()
-        filtered = re.sub('[!@#$\(\)]', '', person.notes).rstrip()
+        filtered = re.sub('[!@#$\(\)\[\]]', '', person.notes).rstrip()
+        #filtered = re.sub('r[^\w]', '', person.notes).rstrip()
+        
         splitRole = []
 
         try:
@@ -195,27 +258,37 @@ class ImdbScraper:
         except:
             print("Something went wrong splitting roles")
 
-        role = "--"
-        comp = "--"
+        role = ""
+        comp = ""
         if not silent:
             print(str("Finding company from notes: '" + str(filtered) + "'"))
         if(len(splitRole) > 1):
             role = str(splitRole[0])
             comp = str(splitRole[1]).lower()
+            splitComp = comp.split(' - ')
             if(len(companyTag) > 0):
                 if comp.find(self.companySearchTag) > -1:
                     outRole.matchedTag = companyTag
-
             outRole.role = role
-            outRole.company = comp
+            outRole.company = splitComp[0]
+        else:
+            outRole.role = role
 
         return outRole
 
-    def FindCompanyInNodes(self, companyname):
+    def FindCompanyInNodes(self, imdbCompany):
         for comp in self.companyList:
-            if(comp['name'].lower() == companyname.lower()):
+            if(comp['name'].lower() == imdbCompany['name'].lower()):
                 return comp
         return None
+
+    def ResetDb(self):
+        print("Clearing neo4j db")
+        scraper.graph_db.clear()
+
+    def ResetRelationships(self):
+        print("Clearing relationships")
+        neo4j.CypherQuery(self.graph_db, 'start r=relationship(*) delete r').execute()
 
 #
 # Class for storing a role and associated company
@@ -243,17 +316,16 @@ companySearchTag = 'weta'
 silent = True
 
 if len(sys.argv) <= 1:
-    print("Usage: python2 GetWeta.py (employees/connections/reset)")
-    sys.exit(0)
+    print("Usage: python2 GetWeta.py (employees/connections/reset/reset_relationships)")
 
 if len(sys.argv) > 1:
     print("Starting...")
     scraper.SetRootCompany(companyID, companySearchTag)
 
     if(sys.argv[1] == "reset"):
-        print("Clearing neo4j db")
-        scraper.graph_db.clear()
-        sys.exit(0)
+        scraper.ResetDb()
+    elif(sys.argv[1] == "reset_relationships"):
+        scraper.ResetRelationships()
     elif(sys.argv[1] == "employees"):
         print("Searching for employees in filmography...")
         scraper.GetPeopleInFilmography(filmographyDepth)
@@ -261,4 +333,4 @@ if len(sys.argv) > 1:
         print("Searching for employees in filmography...")
         personList = scraper.GetPeopleInFilmography(filmographyDepth)
         scraper.ConnectPeopleToCompanies(personList, filmographyDepth)
-        sys.exit(0)
+    
