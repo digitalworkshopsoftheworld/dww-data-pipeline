@@ -67,7 +67,7 @@ class ImdbScraper:
             while True:
                 try:
                     self.i.update(movie)
-                except imdb.IMDbDataAccessError:
+                except imdb.IMDbError:
                     print("*** HTTP error. Redialing")
                     continue
                 break
@@ -93,7 +93,7 @@ class ImdbScraper:
         print '!!! Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         return personNodeDict
 
-    def ConnectPeopleToCompanies(self, personNodeDict, filmographyDepth):
+    def ConnectPeopleToCompanies(self, personNodeDict):
         print("---------------------------------")
         self.ResetRelationships()
 
@@ -104,26 +104,27 @@ class ImdbScraper:
             while True:
                 try:
                     self.i.update(person)
-                except imdb.IMDbDataAccessError:
+                except imdb.IMDbError:
                     print("*** HTTP error. Redialing")
                     continue
                 break
 
-            if(filmographyDepth < 0):
-                filmographyDepth = len(person['visual effects'])
+            if not person.has_key('visual effects'):
+                print(" === " + str(person['name']) + " has no VFX filmography.")
+                print(person)
+                print(" === Skipping...")
+                continue
 
-            for i in range(filmographyDepth):
-                if not person.has_key('visual effects'):
-                    print(" === " + str(person['name']) + " has no VFX filmography.")
-                    print(person)
-                    print(" === Skipping...")
-                    continue
+            for i in range(len(person['visual effects'])):
+
+                if i >= len(person['visual effects']):
+                    break
 
                 movie = person['visual effects'][i]
                 while True:
                     try:
                         self.i.update(movie)
-                    except imdb.IMDbDataAccessError:
+                    except imdb.IMDbError:
                         print("*** HTTP error. Redialing")
                         continue
                     break
@@ -139,7 +140,7 @@ class ImdbScraper:
                         while True:
                             try:
                                 companyList = self.i.search_company(vfxRole.company)
-                            except imdb.IMDbDataAccessError:
+                            except imdb.IMDbError:
                                 print("*** HTTP error. Redialling")
                                 continue
                             break
@@ -205,7 +206,7 @@ class ImdbScraper:
             while True:
                 try:
                     self.i.update(imdbCompany)
-                except imdb.IMDbDataAccessError:
+                except imdb.IMDbError:
                     print("*** HTTP error. Redialling")
                     continue
                 break
@@ -335,5 +336,5 @@ if len(sys.argv) > 1:
     elif(sys.argv[1] == "connections"):
         print("Searching for employees in filmography...")
         personList = scraper.GetPeopleInFilmography(filmographyDepth)
-        scraper.ConnectPeopleToCompanies(personList, filmographyDepth)
+        scraper.ConnectPeopleToCompanies(personList)
     
