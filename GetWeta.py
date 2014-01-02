@@ -113,8 +113,11 @@ class ImdbScraper:
                 filmographyDepth = len(person['visual effects'])
 
             for i in range(filmographyDepth):
-                if(i >= len(person['visual effects'])):
-                    break
+                if not person.has_key('visual effects'):
+                    print(" === " + str(person['name']) + " has no VFX filmography.")
+                    print(person)
+                    print(" === Skipping...")
+                    continue
 
                 movie = person['visual effects'][i]
                 while True:
