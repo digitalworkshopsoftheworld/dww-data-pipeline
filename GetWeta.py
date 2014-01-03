@@ -5,7 +5,6 @@ import re
 import resource
 import pdb
 import gc
-import objgraph
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -67,7 +66,7 @@ class ImdbScraper:
             while True:
                 try:
                     self.i.update(movie)
-                except imdb.IMDbError:
+                except imdb.IMDbDataAccessError:
                     print("*** HTTP error. Redialing")
                     continue
                 break
@@ -97,6 +96,9 @@ class ImdbScraper:
         print("---------------------------------")
         self.ResetRelationships()
 
+        self.personCount = 0
+        self.personTotal = len(personNodeDict)
+
         print("Searching employee filmographies")
         for person, personNode in personNodeDict.iteritems():
             startmem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -104,7 +106,7 @@ class ImdbScraper:
             while True:
                 try:
                     self.i.update(person)
-                except imdb.IMDbError:
+                except imdb.IMDbDataAccessError:
                     print("*** HTTP error. Redialing")
                     continue
                 break
@@ -124,7 +126,7 @@ class ImdbScraper:
                 while True:
                     try:
                         self.i.update(movie)
-                    except imdb.IMDbError:
+                    except imdb.IMDbDataAccessError:
                         print("*** HTTP error. Redialing")
                         continue
                     break
@@ -140,7 +142,7 @@ class ImdbScraper:
                         while True:
                             try:
                                 companyList = self.i.search_company(vfxRole.company)
-                            except imdb.IMDbError:
+                            except imdb.IMDbDataAccessError:
                                 print("*** HTTP error. Redialling")
                                 continue
                             break
@@ -159,21 +161,18 @@ class ImdbScraper:
                         personNode, companyNode, vfxRole, movie)
                 else:
                     print("No company for '" + str(person['name']) + "' under role '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
-                
-                # cleanup movie objects
-                #movie.clear()
-                #del movie
             
-            # cleanup person
+            # Cleanup person data
+            self.personCount += 1
+            print(" === " + ((self.personCount / self.personTotal)*100) + "% - " + str(self.personCount) + "/" + str(self.personTotal) + "people processed")
             personNodeDict[person] = None
             person.clear()
             del person
             print ('!!! Delta Memory usage: %s (kb)' % (int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) - startmem) )
             print '!!! Total Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             gc.collect()
-            #objgraph.show_most_common_types()
-            #pdb.set_trace()
-        print('Finished')
+
+        print('===== Finished =====')
 
     def ConnectPersonToCompany(self, personNode, companyNode, vfxrole, imdbMovie):
         personCompanyRelationship = list(
@@ -206,7 +205,7 @@ class ImdbScraper:
             while True:
                 try:
                     self.i.update(imdbCompany)
-                except imdb.IMDbError:
+                except imdb.IMDbDataAccessError:
                     print("*** HTTP error. Redialling")
                     continue
                 break
