@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>AjaxTest</title>
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+
+<style>
+	.key{
+		color: #FF0000;
+	}
+	.string{
+		color: #00FF00;
+	}
+</style>
+<script>
+
+$( document ).ready(function() {
+    // Using the core $.ajax() method
+	$.ajax({
+	    // the URL for the request
+	    url: "http://neo4j.aesphere.net/db/data/cypher",
+	 
+	    // the data to send (will be converted to a query string)
+	    data: JSON.stringify({
+	        "query": "MATCH (p:person)-[r:WORKED_FOR]-(c:company) WHERE r.matchRatio > 80 RETURN p,r,c",
+	        "params": {}
+	    }),
+	 
+	    // whether this is a POST or GET request
+	    type: "POST",
+	 
+	    accepts: "application/json",
+      	dataType:"json",
+      	contentType:"application/json",
+      	headers: { 
+      		"X-Stream": "true"    
+    	},
+	 
+	    // code to run if the request succeeds;
+	    // the response is passed to the function
+	    success: function( json ) {
+	        $('body').append(syntaxHighlight(json));
+	        console.log(json);
+	    },
+	 
+	    // code to run if the request fails; the raw request and
+	    // status codes are passed to the function
+	    error: function( xhr, status ) {
+	        console.log( "HTTP problem!" );
+	    },
+	 
+	    // code to run regardless of success or failure
+	    complete: function( xhr, status ) {
+	    	console.log( "HTTP complete!" );
+	    }
+	});
+
+	function syntaxHighlight(json) {
+	    if (typeof json != 'string') {
+	         json = JSON.stringify(json, undefined, 2);
+	    }
+	    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+	        var cls = 'number';
+	        if (/^"/.test(match)) {
+	            if (/:$/.test(match)) {
+	                cls = 'key';
+	            } else {
+	                cls = 'string';
+	            }
+	        } else if (/true|false/.test(match)) {
+	            cls = 'boolean';
+	        } else if (/null/.test(match)) {
+	            cls = 'null';
+	        }
+	        return '<span class="' + cls + '">' + match + '</span>';
+	    });
+	}
+});
+</script>
+</head>
