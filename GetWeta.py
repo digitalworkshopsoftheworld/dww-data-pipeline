@@ -25,6 +25,7 @@ class ImdbScraper:
         # IMDB interface
         self.i = imdb.IMDb()
         self.cachedCompanySearches = {}
+        self.cachedMovieSearches = {}
 
         # Neo4j interface
         self.graph_db = neo4j.GraphDatabaseService(
@@ -63,14 +64,20 @@ class ImdbScraper:
             movieList.append(self.rootCompany['special effects companies'][i])
 
         for movie in movieList:
-            while True:
-                try:
-                    self.i.update(movie)
-                except imdb.IMDbDataAccessError:
-                    print("*** HTTP error. Redialing")
-                    continue
-                break
             movNode = self.FindOrCreateMovieNode(movie)
+
+            if movie.getID() in self.cachedMovieSearches:
+                movie = self.cachedMovieSearches[movie.getID()]
+            else:
+                while True:
+                    try:
+                        self.i.update(movie)
+                        self.cachedMovieSearches[movie.getID()] = movie
+                    except imdb.IMDbDataAccessError:
+                        print("*** HTTP error. Redialing")
+                        continue
+                    break
+            
 
             movCompanyRelationship = list(
                 self.graph_db.match(start_node=companyNode, end_node=movNode))
@@ -123,13 +130,18 @@ class ImdbScraper:
                     break
 
                 movie = person['visual effects'][i]
-                while True:
-                    try:
-                        self.i.update(movie)
-                    except imdb.IMDbDataAccessError:
-                        print("*** HTTP error. Redialing")
-                        continue
-                    break
+
+                if movie.getID() in self.cachedMovieSearches:
+                    movie = self.cachedMovieSearches[movie.getID()]
+                else:
+                    while True:
+                        try:
+                            self.i.update(movie)
+                            self.cachedMovieSearches[movie.getID()] = movie
+                        except imdb.IMDbDataAccessError:
+                            print("*** HTTP error. Redialing")
+                            continue
+                        break
 
                 vfxRole = self.FindCompanyFromPersonNotes(movie)
                 existingCompany = None
@@ -155,22 +167,26 @@ class ImdbScraper:
 
                 if existingCompany:
                     print("Attach '" + str(person['name']) + "' to '" + str(
-                        existingCompany['name']) + "' for '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
+                        existingCompany['name']) + "' for '" + str(vfxRole.role) + "'")
                     companyNode = self.FindOrCreateCompanyNode(existingCompany)
                     self.ConnectPersonToCompany(
                         personNode, companyNode, vfxRole, movie)
                 else:
-                    print("No company for '" + str(person['name']) + "' under role '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
+                    print("No company for '" + str(person['name']) + "' under role '" + str(vfxRole.role) + "'")
             
             # Cleanup person data
             self.personCount += 1
-            print(" === " + ((self.personCount / self.personTotal)*100) + "% - " + str(self.personCount) + "/" + str(self.personTotal) + "people processed")
+            print(" === " + str(self.personCount) + "/" + str(self.personTotal) + "people processed")
             personNodeDict[person] = None
             person.clear()
-            del person
+            #del person
             print ('!!! Delta Memory usage: %s (kb)' % (int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) - startmem) )
             print '!!! Total Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-            gc.collect()
+            
+            # Clear movie cache if we've used too much ram
+            if resource.getrusage(resource.RUSAGE_SELF).ru_maxrss > maxMemUsage:
+                cachedMovieSearches = {}
+            #gc.collect()
 
         print('===== Finished =====')
 
@@ -311,6 +327,8 @@ scraper = ImdbScraper()
 
 # Start arguments
 filmographyDepth = -1
+
+maxMemUsage = 5000000000
 
 # Hardcoded Weta company id
 companyID = 5031
