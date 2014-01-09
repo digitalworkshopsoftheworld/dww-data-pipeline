@@ -221,13 +221,13 @@ class ImdbScraper:
                 cachedNode.update_properties(nodeProperties)
                 nodeIndex.add("id", cachedNode['id'], cachedNode)
 
-                print("Finished caching " + nodeType + " '" + nodeProperties['name'] + "'")
+                print("Finished caching " + str(nodeType) + " '" + str(nodeProperties['name']) + "'")
             else:
                 print "No vfx credits found in film"
         else:
             try:
                 with open(pickleFileName, 'rb'):
-                    print("Loading " + nodeType + " '" + str(imdbObj.getID()) + "' from cache")
+                    print("Loading " + str(nodeType) + " '" + str(imdbObj.getID()) + "' from cache")
                     pickleFile = open(pickleFileName, 'rb')
                     cachedList = pickle.load(pickleFile)
                     pickleFile.close()
