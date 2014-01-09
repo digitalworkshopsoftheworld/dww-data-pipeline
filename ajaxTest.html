@@ -17,11 +17,12 @@ $( document ).ready(function() {
     // Using the core $.ajax() method
 	$.ajax({
 	    // the URL for the request
-	    url: "http://neo4j.aesphere.net/db/data/cypher",
-	 
+	    //url: "http://neo4j.aesphere.net/db/data/cypher",
+	 	url: "http://localhost:7474/db/data/cypher",
+
 	    // the data to send (will be converted to a query string)
 	    data: JSON.stringify({
-	        "query": "MATCH (p:person)-[r:WORKED_FOR]-(c:company) WHERE r.matchRatio > 80 RETURN p,r,c",
+	        "query": "MATCH (p:person)-[r:WORKED_FOR]-(c:company) WHERE r.matchRatio > 80 RETURN p,r,c ORDER BY p.id, r.release",
 	        "params": {}
 	    }),
 	 
@@ -38,8 +39,14 @@ $( document ).ready(function() {
 	    // code to run if the request succeeds;
 	    // the response is passed to the function
 	    success: function( json ) {
-	        $('body').append(syntaxHighlight(json));
-	        console.log(json);
+	        //$('body').append(syntaxHighlight(json));
+	        //console.log(json);
+	        $.each(json.data, function()
+	        	{
+	        		console.log(this[0].data, this[1].data, this[2].data);
+	        	}
+	        );
+
 	    },
 	 
 	    // code to run if the request fails; the raw request and

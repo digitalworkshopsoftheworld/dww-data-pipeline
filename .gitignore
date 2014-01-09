@@ -1,7 +1,6 @@
-imdbLocalDb/
-imdbLocalDb
+imdbLocalDB/
 CSVconvert/
-Csvconvert
+imdbcache/
 
 # Compiled source #
 ###################
