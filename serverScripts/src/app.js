@@ -15,7 +15,7 @@ var getAllQuery = [
     'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
     'WHERE r.matchRatio > 80',
     'RETURN p,r,c',
-    'ORDER BY p.id'
+    'ORDER BY p.id, r.release'
 ].join('\n');
 
 app.set('views', __dirname + '/../views');
