@@ -53,10 +53,10 @@ app.get('/all/dwwAllPeople.csv', function(req, res) {
         var csvLine = [
           line.p._data.data.id, 
           line.p._data.data.name,
+          line.r._data.data.role, 
           line.r._data.data.movieID, 
           line.r._data.data.company,  
           line.r._data.data.matchRatio, 
-          line.r._data.data.role, 
           line.r._data.data.release,
           line.c._data.data.id, 
           line.c._data.data.name
