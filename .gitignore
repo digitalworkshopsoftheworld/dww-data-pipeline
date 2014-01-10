@@ -1,6 +1,5 @@
-imdbLocalDB/
-CSVconvert/
 imdbcache/
+node_modules/
 
 # Compiled source #
 ###################

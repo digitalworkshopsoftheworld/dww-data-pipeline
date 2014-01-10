@@ -9,6 +9,7 @@ import gc
 import cPickle as pickle
 import time
 import shutil
+import json
 
 
 reload(sys)
@@ -29,11 +30,22 @@ class ImdbScraper:
     def __init__(self):
         # IMDB interface
         self.i = imdb.IMDb()
-        self.cachedCompanySearches = {}
 
         # Neo4j interface
         self.graph_db = neo4j.GraphDatabaseService(
             "http://localhost:7474/db/data/")
+
+        # Company whitelists
+        self.cachedCompanySearches = {}
+        self.companyWhitelist = {}
+
+        # Indexes
+        self.companyIndex = self.graph_db.get_or_create_index(
+            neo4j.Node, "company")
+        self.movieIndex = self.graph_db.get_or_create_index(
+            neo4j.Node, "movie")
+        self.personIndex = self.graph_db.get_or_create_index(
+            neo4j.Node, "person")
 
     def SetRootCompany(self, companyID, companySearchTag):
         self.companyID = companyID
@@ -48,27 +60,22 @@ class ImdbScraper:
     def GetPeopleInFilmography(self, filmographyDepth):
         personList = {}
 
-        self.companyIndex = self.graph_db.get_or_create_index(
-            neo4j.Node, "company")
-        self.movieIndex = self.graph_db.get_or_create_index(
-            neo4j.Node, "movie")
-        self.personIndex = self.graph_db.get_or_create_index(
-            neo4j.Node, "person")
-
-        companyNode = self.FindOrCreateCompanyNode(self.rootCompany)
+        rootCompanyDB = self.GetCachedListAndNode(self.rootCompany, "company")
+        companyNode = rootCompanyDB[0]
+        companyObj = rootCompanyDB[1]
 
         # Dummy movie list of first n movies
         movieList = []
 
         if(filmographyDepth < 0):
             filmographyDepth = len(
-                self.rootCompany['special effects companies'])
+                companyObj['special effects companies'])
 
         for i in range(filmographyDepth):
-            movieList.append(self.rootCompany['special effects companies'][i])
+            movieList.append(companyObj['special effects companies'][i])
 
         for movie in movieList:
-            movDB = self.GetCachedListAndNode(movie, "visual effects", "movie")
+            movDB = self.GetCachedListAndNode(movie, "movie", "visual effects")
             movNode = movDB[0]
             vfxCrew = movDB[1]
 
@@ -100,7 +107,7 @@ class ImdbScraper:
         for personID, person in personList.iteritems():
             startmem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000000
 
-            personDB = self.GetCachedListAndNode(person, "visual effects", "person")
+            personDB = self.GetCachedListAndNode(person, "person", "visual effects")
             personNode = personDB[0]
             personFilmography = personDB[1]
 
@@ -111,7 +118,7 @@ class ImdbScraper:
                 continue
 
             for movie in personFilmography:
-                movDB = self.GetCachedListAndNode(movie, "visual effects", "movie")
+                movDB = self.GetCachedListAndNode(movie, "movie", "visual effects")
                 movNode = movDB[0]
                 vfxCrew = movDB[1]
 
@@ -119,35 +126,34 @@ class ImdbScraper:
                 if(personInMovie):
                     vfxRole = self.FindCompanyFromPersonNotes(personInMovie)
                     existingCompany = None
-                    if vfxRole.company in self.cachedCompanySearches:
-                        existingCompany = self.cachedCompanySearches[vfxRole.company]
-                        print("Found cached company " + str(vfxRole.company))
 
-                    if not existingCompany:
-                        if(len(vfxRole.company) > 0):
-                            print("Searching for '" + str(vfxRole.company) + "'")
-                            while True:
-                                try:
-                                    companyList = self.i.search_company(vfxRole.company)
-                                except imdb.IMDbDataAccessError:
-                                    print("*** HTTP error. Redialling")
-                                    continue
-                                break
-                            if(len(companyList) > 0):
-                                # Grab first company only
-                                existingCompany = companyList[0]
-                                self.cachedCompanySearches[vfxRole.company] = existingCompany
-                                if len(existingCompany) > 0:
-                                    print("Found " + str(existingCompany['name']))
+                    if vfxRole.company in self.companyWhitelist:
+                        existingCompany = self.companyWhitelist[vfxRole.company]
+                    else:
+                        if len(vfxRole.company) > 0:
+                            print("Searching for " + vfxRole.company)
+                            compList = self.i.search_company(vfxRole.company)
+                            if len(compList) > 0:
+                                existingCompany = compList[0]
+                                self.companyWhitelist[vfxRole.company] = existingCompany
+                            else:
+                                print("No results found for '" + str(vfxRole.company) + "'")
+                                continue
+                        else:
+                            print "Skipping role '" + str(vfxRole.role) + "'. No associated company"
+                            continue
+
+                    compDB = self.GetCachedListAndNode(existingCompany, "company")
+                    compNode = compDB[0]
+                    existingCompany = compDB[1]
 
                     if existingCompany:
                         print("Attach '" + str(personInMovie['name']) + "' to '" + str(
                             existingCompany['name']) + "' for '" + str(vfxRole.role) + "'")
-                        companyNode = self.FindOrCreateCompanyNode(existingCompany)
                         self.ConnectPersonToCompany(
-                            personNode, companyNode, vfxRole, movNode)
+                            personNode, compNode, vfxRole, movNode)
                     else:
-                        print("No company for '" + str(person['name']) + "' under role '" + str(vfxRole.role) + "'")
+                        print("No company called '" + str(vfxRole.company) + "' for " + str(person['name']) + "' under role '" + str(vfxRole.role) + "'")
                 else:
                     print("Couldn't find person in movie")
             
@@ -179,7 +185,7 @@ class ImdbScraper:
         if not silent:
             print("Match ratio: " + str(fuzzyCompanyMatch) + ". CompRole: " + str(vfxrole.company.lower().strip()) + ". Node: " + str(companyNode.get_properties()['name'].lower().strip()) )
 
-    def GetCachedListAndNode(self, imdbObj, listKey, nodeType):
+    def GetCachedListAndNode(self, imdbObj, nodeType, listKey=""):
         cachedList = None
         cachedListPickle = None
         pickleFileName = str(imdbCacheDir + "/" + nodeType + "/" + str(imdbObj.getID()) + ".pkl")
@@ -188,14 +194,13 @@ class ImdbScraper:
 
         if not cachedNode:
             self.UpdateImdbObj(imdbObj)
-            if imdbObj.has_key(listKey):
+            if len(listKey) > 0:
+                if imdbObj.has_key(listKey):
+                    cachedList = imdbObj[listKey]
+            else:
+                cachedList = imdbObj
 
-                # Save key list into pickle file
-                cachedList = imdbObj[listKey]
-                pickleFile = open( pickleFileName, 'wb')
-                cachedListPickle = pickle.dump(cachedList, pickleFile)
-                pickleFile.close()
-
+            if cachedList:
                 # Build DB node
                 cachedNode, = self.graph_db.create(node(id=str(imdbObj.getID())))
                 cachedNode.add_labels(nodeType)
@@ -221,9 +226,12 @@ class ImdbScraper:
                 cachedNode.update_properties(nodeProperties)
                 nodeIndex.add("id", cachedNode['id'], cachedNode)
 
-                print("Finished caching " + str(nodeType) + " '" + str(nodeProperties['name']) + "'")
-            else:
-                print "No vfx credits found in film"
+                # Save key list into pickle file
+                pickleFile = open( pickleFileName, 'wb')
+                cachedListPickle = pickle.dump(cachedList, pickleFile)
+                pickleFile.close()
+
+                print("Cached " + str(nodeType) + " '" + str(nodeProperties['name']) + "'")
         else:
             try:
                 with open(pickleFileName, 'rb'):
@@ -329,11 +337,15 @@ class ImdbScraper:
 # Class for storing a role and associated company
 #
 class VFXRole:
-
     def __init__(self):
         self.role = ""
         self.company = ""
         self.matchedTag = ""
+
+class VFXCompany:
+    def __init__(self, companyID = -1):
+        self.name = ""
+        self.id = companyID
 
 
 # Script start
