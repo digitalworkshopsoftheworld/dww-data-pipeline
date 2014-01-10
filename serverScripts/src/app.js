@@ -35,35 +35,71 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/all', function(req, res) {
+app.get('/all/csv', function(req, res) {
   var query = [
         'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
         'WHERE r.matchRatio > 80',
         'RETURN p,r,c'
     ].join('\n');
 
-    outJson = []
+    db.query(query, params = {}, function(err,  results){
+      if (err) throw err;
+      
+      var csvCols = ["personId", "personName", "imdbMovieId", "companySearch", "companyMatchRatio",
+                 "personRole", "movieReleaseYear", "matchedCompanyId", "matchedCompanyName"].join(",")
+      var outCsv = ""           
+      for(var i = 0; i < results.length; i++){
+        var line = results[i];
+        var csvLine = [
+          line.p._data.data.id, 
+          line.p._data.data.name,
+          line.r._data.data.movieID, 
+          line.r._data.data.company,  
+          line.r._data.data.matchRatio, 
+          line.r._data.data.role, 
+          line.r._data.data.release,
+          line.c._data.data.id, 
+          line.c._data.data.name
+        ].join(",") + "\n";
+        
+        outCsv += csvLine;
+      }
+
+      res.set('Content-Type', 'application/octet-stream');
+      res.send(csvCols + "\n" + outCsv);
+    });  
+});
+
+
+app.get('/all/json', function(req, res) {
+  var query = [
+        'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
+        'WHERE r.matchRatio > 80',
+        'RETURN p,r,c'
+    ].join('\n');
+
 
     db.query(query, params = {}, function(err,  results){
       if (err) throw err;
+      var outJson = []
 
       for(var i = 0; i < results.length; i++){
-        line = results[i];
-        jsonLine = {
+        var line = results[i];
+        var jsonLine = {
           p:{
-            id:line.p._data.data.id, 
-            name:line.p._data.data.name
+            personId:line.p._data.data.id, 
+            personName:line.p._data.data.name
           }, 
           r:{
-            id:line.r._data.data.id, 
-            company:line.r._data.data.company, 
-            matchRatio:line.r._data.data.matchRatio, 
-            role:line.r._data.data.role, 
-            release:line.r._data.data.release
+            imdbMovieId:line.r._data.data.movieID, 
+            companySearch:line.r._data.data.company, 
+            companyMatchRatio:line.r._data.data.matchRatio, 
+            personRole:line.r._data.data.role, 
+            movieReleaseYear:line.r._data.data.release
           }, 
           c:{
-            id:line.c._data.data.id, 
-            name:line.c._data.data.name
+            matchedCompanyId:line.c._data.data.id, 
+            matchedCompanyName:line.c._data.data.name
           }
         };
         outJson.push(jsonLine);
@@ -72,6 +108,8 @@ app.get('/all', function(req, res) {
       res.json({data:outJson});
     });  
 });
+
+
 
 
 // 404
