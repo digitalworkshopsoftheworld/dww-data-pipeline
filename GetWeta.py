@@ -31,20 +31,16 @@ class ImdbScraper:
         # IMDB interface
         self.i = imdb.IMDb()
 
-        # Neo4j interface
-        self.graph_db = neo4j.GraphDatabaseService(
-            "http://localhost:7474/db/data/")
-
         # Company whitelists
         self.cachedCompanySearches = {}
         self.companyWhitelist = {}
 
         # Indexes
-        self.companyIndex = self.graph_db.get_or_create_index(
+        self.companyIndex = neo4jHandle.get_or_create_index(
             neo4j.Node, "company")
-        self.movieIndex = self.graph_db.get_or_create_index(
+        self.movieIndex = neo4jHandle.get_or_create_index(
             neo4j.Node, "movie")
-        self.personIndex = self.graph_db.get_or_create_index(
+        self.personIndex = neo4jHandle.get_or_create_index(
             neo4j.Node, "person")
 
     def SetRootCompany(self, companyID, companySearchTag):
@@ -81,9 +77,9 @@ class ImdbScraper:
 
             if(vfxCrew):
                 movCompanyRelationship = list(
-                    self.graph_db.match(start_node=companyNode, end_node=movNode))
+                    neo4jHandle.match(start_node=companyNode, end_node=movNode))
                 if(len(movCompanyRelationship) < 1):
-                    self.graph_db.create(rel(companyNode, "FILMOGRAPHY", movNode))
+                    neo4jHandle.create(rel(companyNode, "FILMOGRAPHY", movNode))
 
                 for person in vfxCrew:
                     vfxRole = self.FindCompanyFromPersonNotes(
@@ -166,7 +162,7 @@ class ImdbScraper:
 
     def ConnectPersonToCompany(self, personNode, companyNode, vfxrole, movieNode):
         personCompanyRelationship = list(
-            self.graph_db.match(start_node=personNode, end_node=companyNode))
+            neo4jHandle.match(start_node=personNode, end_node=companyNode))
 
         # Use fuzzy matching to see if we need to flag this relationship as one to check the company
         fuzzyCompanyMatch = fuzz.ratio(companyNode.get_properties()['name'].lower().strip(), vfxrole.company.lower().strip())
@@ -178,7 +174,7 @@ class ImdbScraper:
                 relExists = True
 
         if not relExists:
-            roleNode, =  self.graph_db.create(
+            roleNode, =  neo4jHandle.create(
                 rel(personNode, "WORKED_FOR", companyNode))
             roleNode.update_properties(
                 {'role': vfxrole.role, 'company': vfxrole.company, 'movieID': movieNode.get_properties()['id'], 'release': movieNode.get_properties()['release'], 'matchRatio': fuzzyCompanyMatch})
@@ -189,7 +185,7 @@ class ImdbScraper:
         cachedList = None
         cachedListPickle = None
         pickleFileName = str(imdbCacheDir + "/" + nodeType + "/" + str(imdbObj.getID()) + ".pkl")
-        cachedNode = self.graph_db.get_indexed_node(
+        cachedNode = neo4jHandle.get_indexed_node(
             nodeType, "id", imdbObj.getID())
 
         if not cachedNode:
@@ -202,7 +198,7 @@ class ImdbScraper:
 
             if cachedList:
                 # Build DB node
-                cachedNode, = self.graph_db.create(node(id=str(imdbObj.getID())))
+                cachedNode, = neo4jHandle.create(node(id=str(imdbObj.getID())))
                 cachedNode.add_labels(nodeType)
 
                 # Set node properties
@@ -210,10 +206,10 @@ class ImdbScraper:
                 nodeIndex = None
 
                 if nodeType == "movie":
-                    year = ""
+                    year = 0
                     if imdbObj.has_key('year'):
                         year = imdbObj['year']
-                    nodeProperties['release'] = year
+                    nodeProperties['release'] = int(year)
                     nodeProperties['name'] = imdbObj['title']
                     nodeIndex = self.movieIndex
                 elif nodeType == "person":
@@ -254,7 +250,7 @@ class ImdbScraper:
             break
 
     def FindOrCreateCompanyNode(self, imdbCompany):
-        companyNode = self.graph_db.get_indexed_node(
+        companyNode = neo4jHandle.get_indexed_node(
             "company", "id", imdbCompany.getID())
         if not companyNode:
             if not silent:
@@ -267,7 +263,7 @@ class ImdbScraper:
                     print("*** HTTP error. Redialling")
                     continue
                 break
-            companyNode, = self.graph_db.create(node(id=imdbCompany.getID()))
+            companyNode, = neo4jHandle.create(node(id=imdbCompany.getID()))
             companyNode.add_labels("company")
             companyNode.update_properties({'name': imdbCompany['name']})
             self.companyIndex.add("id", companyNode['id'], companyNode)
@@ -316,12 +312,12 @@ class ImdbScraper:
 
     def ResetDb(self):
         print("Clearing nodes")
-        query = neo4j.CypherQuery(self.graph_db, "start n = node(*) delete n")
+        query = neo4j.CypherQuery(neo4jHandle, "start n = node(*) delete n")
         query.execute()
 
     def ResetRelationships(self):
         print("Clearing relationships")
-        query = neo4j.CypherQuery(self.graph_db, "start r = relationship(*) delete r")
+        query = neo4j.CypherQuery(neo4jHandle, "start r = relationship(*) delete r")
         query.execute()
 
     def ResetCache(self):
@@ -342,16 +338,20 @@ class VFXRole:
         self.company = ""
         self.matchedTag = ""
 
-class VFXCompany:
-    def __init__(self, companyID = -1):
-        self.name = ""
-        self.id = companyID
+class GraphDBParser:
+    def 
+
 
 
 # Script start
 # -----------------------------------------------------
-scraper = ImdbScraper()
 
+#Create DB handle
+neo4jHandle = neo4j.GraphDatabaseService(
+            "http://localhost:7474/db/data/")
+
+# IMdb scraper class
+scraper = ImdbScraper()
 
 # Recurse limits
 filmographyDepth = -1

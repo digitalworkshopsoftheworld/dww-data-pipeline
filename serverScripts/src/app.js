@@ -1,7 +1,6 @@
 /*
  * Dependencies
  */
-
 var express  = require('express')
   , http     = require('http')
   , neo4j    = require('neo4j');
@@ -10,8 +9,14 @@ var express  = require('express')
 /*
  * App Setup
  */
-
 var app = express();
+
+var getAllQuery = [
+    'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
+    'WHERE r.matchRatio > 80',
+    'RETURN p,r,c',
+    'ORDER BY p.id'
+].join('\n');
 
 app.set('views', __dirname + '/../views');
 app.set('view engine', 'jade');
@@ -21,10 +26,10 @@ app.use(app.router);
 
 var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
+
 /*
  * App requests
  */
-
 // Main page
 app.get('/', function(req, res) {
     res.render('index', {
@@ -35,14 +40,9 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/all/csv', function(req, res) {
-  var query = [
-        'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
-        'WHERE r.matchRatio > 80',
-        'RETURN p,r,c'
-    ].join('\n');
-
-    db.query(query, params = {}, function(err,  results){
+// Route for returning csv data
+app.get('/all/dwwAllPeople.csv', function(req, res) {
+    db.query(getAllQuery, params = {}, function(err,  results){
       if (err) throw err;
       
       var csvCols = ["personId", "personName", "imdbMovieId", "companySearch", "companyMatchRatio",
@@ -71,15 +71,9 @@ app.get('/all/csv', function(req, res) {
 });
 
 
+// Route for returning json data
 app.get('/all/json', function(req, res) {
-  var query = [
-        'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
-        'WHERE r.matchRatio > 80',
-        'RETURN p,r,c'
-    ].join('\n');
-
-
-    db.query(query, params = {}, function(err,  results){
+    db.query(getAllQuery, params = {}, function(err,  results){
       if (err) throw err;
       var outJson = []
       var lastpersonId = ""
@@ -121,8 +115,6 @@ app.get('/all/json', function(req, res) {
       res.json({data:outJson});
     });  
 });
-
-
 
 
 // 404
