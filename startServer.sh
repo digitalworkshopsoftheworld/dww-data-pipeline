@@ -1,3 +1,3 @@
 #!/bin/bash
 
-node serverScripts/src/app.js
+node serverScripts/src/app.js &
