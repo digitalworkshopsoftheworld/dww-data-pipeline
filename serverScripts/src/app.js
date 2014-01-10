@@ -112,7 +112,7 @@ app.get('/all/json', function(req, res) {
       //Push last person after loop finishes
       outJson.push(lastPersonObject);
 
-      res.json({data:outJson});
+      res.json({people:outJson});
     });  
 });
 
