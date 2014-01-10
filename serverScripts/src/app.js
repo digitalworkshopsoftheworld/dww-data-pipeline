@@ -47,7 +47,7 @@ app.get('/all/csv', function(req, res) {
       
       var csvCols = ["personId", "personName", "imdbMovieId", "companySearch", "companyMatchRatio",
                  "personRole", "movieReleaseYear", "matchedCompanyId", "matchedCompanyName"].join(",")
-      var outCsv = ""           
+      var outCsv = "" 
       for(var i = 0; i < results.length; i++){
         var line = results[i];
         var csvLine = [
@@ -82,28 +82,41 @@ app.get('/all/json', function(req, res) {
     db.query(query, params = {}, function(err,  results){
       if (err) throw err;
       var outJson = []
+      var lastpersonId = ""
+      var lastPersonObject = {};
 
       for(var i = 0; i < results.length; i++){
         var line = results[i];
-        var jsonLine = {
-          p:{
-            personId:line.p._data.data.id, 
-            personName:line.p._data.data.name
-          }, 
-          r:{
-            imdbMovieId:line.r._data.data.movieID, 
-            companySearch:line.r._data.data.company, 
-            companyMatchRatio:line.r._data.data.matchRatio, 
-            personRole:line.r._data.data.role, 
-            movieReleaseYear:line.r._data.data.release
-          }, 
-          c:{
-            matchedCompanyId:line.c._data.data.id, 
-            matchedCompanyName:line.c._data.data.name
-          }
-        };
-        outJson.push(jsonLine);
+        var currentPersonObject;
+
+        if(lastPersonObject.id == line.p._data.data.id){
+          currentPersonObject = lastPersonObject;
+        } else {
+          if(currentPersonObject)
+            outJson.push(currentPersonObject);
+          
+          currentPersonObject = {
+            id:line.p._data.data.id, 
+            name:line.p._data.data.name, 
+            rels:[]
+          };
+        }
+
+        currentPersonObject.rels.push({
+          imdbMovieId:line.r._data.data.movieID, 
+          companySearch:line.r._data.data.company, 
+          companyMatchRatio:line.r._data.data.matchRatio, 
+          personRole:line.r._data.data.role, 
+          movieReleaseYear:line.r._data.data.release,
+          matchedCompanyId:line.c._data.data.id, 
+          matchedCompanyName:line.c._data.data.name
+        });
+
+        lastPersonObject = currentPersonObject;
       }
+
+      //Push last person after loop finishes
+      outJson.push(lastPersonObject);
 
       res.json({data:outJson});
     });  
