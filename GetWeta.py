@@ -338,11 +338,6 @@ class VFXRole:
         self.company = ""
         self.matchedTag = ""
 
-class GraphDBParser:
-    def 
-
-
-
 # Script start
 # -----------------------------------------------------
 
