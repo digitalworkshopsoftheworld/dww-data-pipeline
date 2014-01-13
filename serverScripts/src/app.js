@@ -30,6 +30,15 @@ var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474
 /*
  * App requests
  */
+
+//Cross domain scripting allowance
+ app.all('/', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+ });
+
+
 // Main page
 app.get('/', function(req, res) {
     res.render('index', {
