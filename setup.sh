@@ -8,6 +8,7 @@ cd serverScripts/src; npm install
 cd ../../fuzzywuzzy; python2 setup.py install
 cd ../imdbpy; python2 setup.py install
 cd ../py2neo; python2 setup.py install
+cd ../beautifulsoup; python2 setup.py install
 cd ..
 
 mkdir imdbCache

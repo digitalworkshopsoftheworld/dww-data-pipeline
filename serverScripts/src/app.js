@@ -13,7 +13,6 @@ var app = express();
 
 var getAllQuery = [
     'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
-    'WHERE r.matchRatio > 80',
     'RETURN p,r,c',
     'ORDER BY p.id, r.release'
 ].join('\n');
@@ -54,8 +53,8 @@ app.get('/all/dwwAllPeople.csv', function(req, res) {
     db.query(getAllQuery, params = {}, function(err,  results){
       if (err) throw err;
       
-      var csvCols = ["personId", "personName", "imdbMovieId", "companySearch", "companyMatchRatio",
-                 "personRole", "movieReleaseYear", "matchedCompanyId", "matchedCompanyName"].join(",")
+      var csvCols = ["personId", "personName", "personRole", "imdbMovieId", "searchedCompany", "searchedMatchRatio",
+                  "movieReleaseYear", "matchedCompanyId", "matchedCompanyName"].join(",")
       var outCsv = "" 
       for(var i = 0; i < results.length; i++){
         var line = results[i];

@@ -10,3 +10,6 @@
 	path = fuzzywuzzy
 	url = https://github.com/seatgeek/fuzzywuzzy.git
 
+[submodule "beautifulsoup"]
+	path = beautifulsoup
+	url = https://github.com/Mystfit/beautifulsoup.git
