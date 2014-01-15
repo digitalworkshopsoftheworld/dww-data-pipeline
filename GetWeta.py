@@ -84,7 +84,7 @@ class ImdbScraper:
                         rel(companyNode, "FILMOGRAPHY", movNode))
 
                 for person in vfxCrew:
-                    vfxRole = self.FindCompanyFromPersonNotes(
+                    vfxRole = self.ParseCompanyFromPersonNotes(
                         person, self.companySearchTag)
                     if(len(vfxRole.matchedTag) > 0):
                         personList[person.getID()] = person
@@ -127,7 +127,7 @@ class ImdbScraper:
 
                 personInMovie = self.FindPersonInList(vfxCrew, personNode)
                 if(personInMovie):
-                    vfxRole = self.FindCompanyFromPersonNotes(personInMovie)
+                    vfxRole = self.ParseCompanyFromPersonNotes(personInMovie)
                     existingCompany = None
 
                     if vfxRole.company in self.companyWhitelist:
@@ -165,7 +165,7 @@ class ImdbScraper:
                 else:
                     print("Couldn't find person in movie")
 
-            personList[personID] = None            
+            personList[personID] = None
             self.personCount += 1
             print(" === " + str(self.personCount) + "/" +
                   str(self.personTotal) + " people processed")
@@ -292,19 +292,18 @@ class ImdbScraper:
 
         return companyNode
 
-    def FindCompanyFromPersonNotes(self, person, companyTag=""):
+    def ParseCompanyFromPersonNotes(self, person, companyTag=""):
         outRole = VFXRole()
         # Remove symbols
-        filtered = re.sub('[!@#\.$\"\'\(\)\[\]]', '', person.notes)
-        # Remove alternate name credits
-        filtered = re.sub('\sas\s.*$', '', filtered)
-        # Remove uncredited roles
-        filtered = re.sub('\suncredited', '', filtered)
-        filtered = re.sub('\sltd', '', filtered)
-        filtered = re.sub('\s,ltd', '', filtered)
-        filtered = re.sub('\sltd\.', '', filtered)
-        filtered = re.sub('\sinc', '', filtered)
-        filtered = re.sub('\s,inc', '', filtered).strip()
+        filtered = re.sub(r'[!@#*$\(\)\\\[\]]', '', person.notes).lower()
+        filtered = re.sub("\"", "\'", filtered)
+        # Remove episode lists
+        filtered = re.sub(r'(\w+)\s(\bepisodes),?(\s\w+)?(-\w+)?', '', filtered)
+        # Remove alternate name credits and uncredited roles
+        filtered = re.sub(r'\suncredited|\sas\s.*$', '', filtered)
+        # Remove company types
+        filtered = re.sub(r'(?:\sltd|\sinc)\.|(?:\sltd|\sinc)', '', filtered)
+        filtered = filtered.strip()
 
         splitRole = []
         splitRole = filtered.split(":")
@@ -312,10 +311,11 @@ class ImdbScraper:
         role = ""
         comp = ""
         if not silent:
-            print(str("Finding company from notes: '" + str(filtered) + "'"))
+            print(
+                str("Filtered: '" + str(filtered) + "'. Original: '" + str(person.notes) + "'"))
         if(len(splitRole) > 1):
             role = str(splitRole[0]).strip()
-            comp = str(splitRole[1]).lower().strip()
+            comp = str(splitRole[1]).strip()
             splitComp = comp.split(' - ')
             if(len(companyTag) > 0):
                 if comp.find(self.companySearchTag) > -1:
@@ -323,12 +323,15 @@ class ImdbScraper:
             outRole.role = role
             splitCompDivision = splitComp[0].split(",")
             if(len(splitCompDivision) > 1):
-                outRole.company = splitCompDivision[1].rstrip()
+                outRole.company = splitCompDivision[1]
                 outRole.role += (", " + splitCompDivision[0].strip())
             else:
-                outRole.company = splitCompDivision[0].strip()
+                outRole.company = splitCompDivision[0]
         else:
             outRole.role = role
+
+        outRole.company = outRole.company.strip()
+        outRole.role = outRole.role.strip()
 
         return outRole
 
@@ -353,6 +356,12 @@ class ImdbScraper:
         print("Clearing relationships")
         query = neo4j.CypherQuery(
             neo4jHandle, "start r = relationship(*) delete r")
+        query.execute()
+
+    def ResetCompanies(self):
+        print("Clearing company nodes")
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (c:company) DELETE c")
         query.execute()
 
     def ResetCache(self):
@@ -401,7 +410,7 @@ silent = False
 
 # Start flags
 if len(sys.argv) <= 1:
-    print("Usage: python2 GetWeta.py (employees/connections/reset/reset_relationships)")
+    print("Usage: python2 GetWeta.py (employees/connections/reset/reset_db/reset_companies)")
 
 if len(sys.argv) > 1:
     print("Starting...")
@@ -411,9 +420,12 @@ if len(sys.argv) > 1:
         scraper.ResetCache()
         scraper.ResetRelationships()
         scraper.ResetDb()
-    elif(sys.argv[1] == "resetDB"):
+    elif(sys.argv[1] == "reset_db"):
         scraper.ResetRelationships()
         scraper.ResetDb()
+    elif(sys.argv[1] == "reset_companies"):
+        scraper.ResetRelationships()
+        scraper.ResetCompanies()
     elif(sys.argv[1] == "employees"):
         print("Searching for employees in filmography...")
         scraper.GetPeopleInFilmography(filmographyDepth)
