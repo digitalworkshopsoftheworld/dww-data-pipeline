@@ -10,7 +10,8 @@ import cPickle as pickle
 import time
 import shutil
 import json
-
+from optparse import OptionParser
+from Utils import Logger
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -48,10 +49,8 @@ class ImdbScraper:
         self.companyID = companyID
         self.companySearchTag = companySearchTag
         self.rootCompany = self.i.get_company(self.companyID)
-        print("Searching IMDB for employees of '" +
-              str(self.rootCompany['name']) + "':")
 
-        # List of companies for quick checking for existing companies
+        # List of companies for quick checking against existing companies
         self.companyList = [self.rootCompany]
 
     def GetPeopleInFilmography(self, filmographyDepth):
@@ -112,58 +111,63 @@ class ImdbScraper:
             personNode = personDB[0]
             personFilmography = personDB[1]
 
-            if len(personFilmography) < 1:
-                print(
-                    " === " + str(person['name']) + " has no VFX filmography.")
-                print(person)
-                print(" === Skipping...")
-                continue
+            if personFilmography:
+                if len(personFilmography) < 1:
+                    print(
+                        " === " + str(person['name']) + " has no VFX filmography.")
+                    print(person)
+                    print(" === Skipping...")
+                    continue
 
-            for movie in personFilmography:
-                movDB = self.GetCachedListAndNode(
-                    movie, "movie", "visual effects")
-                movNode = movDB[0]
-                vfxCrew = movDB[1]
+                for movie in personFilmography:
+                    movDB = self.GetCachedListAndNode(
+                        movie, "movie", "visual effects")
+                    movNode = movDB[0]
+                    vfxCrew = movDB[1]
 
-                personInMovie = self.FindPersonInList(vfxCrew, personNode)
-                if(personInMovie):
-                    vfxRole = self.ParseCompanyFromPersonNotes(personInMovie)
-                    existingCompany = None
+                    personInMovie = self.FindPersonInList(vfxCrew, personNode)
+                    if(personInMovie):
+                        vfxRole = self.ParseCompanyFromPersonNotes(
+                            personInMovie)
+                        existingCompany = None
 
-                    if vfxRole.company in self.companyWhitelist:
-                        existingCompany = self.companyWhitelist[
-                            vfxRole.company]
-                    else:
-                        if len(vfxRole.company) > 0:
-                            print("Searching for " + vfxRole.company)
-                            compList = self.i.search_company(vfxRole.company)
-                            if len(compList) > 0:
-                                existingCompany = compList[0]
-                                self.companyWhitelist[
-                                    vfxRole.company] = existingCompany
-                            else:
-                                print(
-                                    "No results found for '" + str(vfxRole.company) + "'")
-                                continue
+                        if vfxRole.company in self.companyWhitelist:
+                            existingCompany = self.companyWhitelist[
+                                vfxRole.company]
                         else:
-                            print "Skipping role '" + str(vfxRole.role) + "'. No associated company"
-                            continue
+                            if len(vfxRole.company) > 0:
+                                print("Searching for " + vfxRole.company)
+                                compList = self.i.search_company(
+                                    vfxRole.company)
+                                if len(compList) > 0:
+                                    existingCompany = compList[0]
+                                    self.companyWhitelist[
+                                        vfxRole.company] = existingCompany
+                                else:
+                                    print(
+                                        "No results found for '" + str(vfxRole.company) + "'")
+                                    continue
+                            else:
+                                print "Skipping role '" + str(vfxRole.role) + "'. No associated company"
+                                continue
 
-                    compDB = self.GetCachedListAndNode(
-                        existingCompany, "company")
-                    compNode = compDB[0]
-                    existingCompany = compDB[1]
+                        compDB = self.GetCachedListAndNode(
+                            existingCompany, "company")
+                        compNode = compDB[0]
+                        existingCompany = compDB[1]
 
-                    if existingCompany:
-                        print("Attach '" + str(personInMovie['name']) + "' to '" + str(
-                            existingCompany['name']) + "' for '" + str(vfxRole.role) + "'")
-                        self.ConnectPersonToCompany(
-                            personNode, compNode, vfxRole, movNode)
+                        if existingCompany:
+                            print("Attach '" + str(personInMovie['name']) + "' to '" + str(
+                                existingCompany['name']) + "' for '" + str(vfxRole.role) + "'")
+                            self.ConnectPersonToCompany(
+                                personNode, compNode, vfxRole, movNode)
+                        else:
+                            print("No company called '" + str(vfxRole.company) + "' for " + str(
+                                person['name']) + "' under role '" + str(vfxRole.role) + "'")
                     else:
-                        print("No company called '" + str(vfxRole.company) + "' for " + str(
-                            person['name']) + "' under role '" + str(vfxRole.role) + "'")
-                else:
-                    print("Couldn't find person in movie")
+                        print("Couldn't find person in movie")
+            else:
+                print "No person filmography object"
 
             personList[personID] = None
             self.personCount += 1
@@ -196,11 +200,10 @@ class ImdbScraper:
                 rel(personNode, "WORKED_FOR", companyNode))
             roleNode.update_properties(
                 {'role': vfxrole.role, 'company': vfxrole.company, 'movieID': movieNode.get_properties()['id'], 'release': movieNode.get_properties()['release'], 'matchRatio': fuzzyCompanyMatch})
-        if not silent:
-            print("Match ratio: " + str(fuzzyCompanyMatch) + ". CompRole: " + str(vfxrole.company.lower().strip())
-                  + ". Node: " + str(companyNode.get_properties()['name'].lower().strip()))
+        Log.Log("Match ratio: " + str(fuzzyCompanyMatch) + ". CompRole: " + str(vfxrole.company.lower().strip())
+                  + ". Node: " + str(companyNode.get_properties()['name'].lower().strip() ))
 
-    def GetCachedListAndNode(self, imdbObj, nodeType, listKey=""):
+    def GetCachedListAndNode(self, imdbObj, nodeType, listKey="", forceUpdate=False):
         cachedList = None
         cachedListPickle = None
         pickleFileName = str(
@@ -208,7 +211,7 @@ class ImdbScraper:
         cachedNode = neo4jHandle.get_indexed_node(
             nodeType, "id", imdbObj.getID())
 
-        if not cachedNode:
+        if not cachedNode or forceUpdate:
             self.UpdateImdbObj(imdbObj)
             if len(listKey) > 0:
                 if imdbObj.has_key(listKey):
@@ -218,7 +221,9 @@ class ImdbScraper:
 
             if cachedList:
                 # Build DB node
-                cachedNode, = neo4jHandle.create(node(id=str(imdbObj.getID())))
+                if not cachedNode:
+                    cachedNode, = neo4jHandle.create(
+                        node(id=str(imdbObj.getID())))
                 cachedNode.add_labels(nodeType)
 
                 # Set node properties
@@ -246,19 +251,24 @@ class ImdbScraper:
                 pickleFile = open(pickleFileName, 'wb')
                 cachedListPickle = pickle.dump(cachedList, pickleFile)
                 pickleFile.close()
-
-                print("Cached " + str(nodeType) +
-                      " '" + str(nodeProperties['name']) + "'")
+                Log.Log("Cached " + str(nodeType) +
+                          " '" + str(nodeProperties['name']) + "'")
         else:
             try:
                 with open(pickleFileName, 'rb'):
-                    print("Loading " + str(nodeType) + " '" + str(
-                        imdbObj.getID()) + "' from cache")
+                    Log.Log("Loading " + str(nodeType) + " '" + str(
+                            imdbObj.getID()) + "' from cache")
                     pickleFile = open(pickleFileName, 'rb')
                     cachedList = pickle.load(pickleFile)
                     pickleFile.close()
             except IOError:
-                print "No pickle found"
+                print "-- No pickle found, recreating cache"
+                cachedNode.delete()
+                del cachedNode
+                rebuiltDB = self.GetCachedListAndNode(
+                    imdbObj, nodeType, listKey, True)
+                cachedNode = rebuiltDB[0]
+                cachedList = rebuiltDB[1]
 
         return cachedNode, cachedList
 
@@ -275,8 +285,7 @@ class ImdbScraper:
         companyNode = neo4jHandle.get_indexed_node(
             "company", "id", imdbCompany.getID())
         if not companyNode:
-            if not silent:
-                print("Couldn't find company node. Searched for '" +
+            Log.log("Couldn't find company node. Searched for '" +
                       str(imdbCompany['name']) + "'. Creating...")
             while True:
                 try:
@@ -298,7 +307,8 @@ class ImdbScraper:
         filtered = re.sub(r'[!@#*$\(\)\\\[\]]', '', person.notes).lower()
         filtered = re.sub("\"", "\'", filtered)
         # Remove episode lists
-        filtered = re.sub(r'(\w+)\s(\bepisodes),?(\s\w+)?(-\w+)?', '', filtered)
+        filtered = re.sub(
+            r'(\w+)\s(\bepisodes),?(\s\w+)?(-\w+)?', '', filtered)
         # Remove alternate name credits and uncredited roles
         filtered = re.sub(r'\suncredited|\sas\s.*$', '', filtered)
         # Remove company types
@@ -310,8 +320,7 @@ class ImdbScraper:
 
         role = ""
         comp = ""
-        if not silent:
-            print(
+        Log.Log(
                 str("Filtered: '" + str(filtered) + "'. Original: '" + str(person.notes) + "'"))
         if(len(splitRole) > 1):
             role = str(splitRole[0]).strip()
@@ -373,10 +382,11 @@ class ImdbScraper:
             for f in dirlist:
                 os.remove(f)
 
+
+
 #
 # Class for storing a role and associated company
 #
-
 
 class VFXRole:
 
@@ -388,9 +398,21 @@ class VFXRole:
 # Script start
 # -----------------------------------------------------
 
+#Args
+parser = OptionParser()
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
+parser.add_option("--reset-companies", action="store_true", dest="resetCompanies", help="Reset all company nodes")
+parser.add_option("--reset-all", action="store_true", dest="resetAll", help="Reset DB and cache")
+parser.add_option("-c", "--company", action="store_true", dest="startCompany", help="IMDB id of root company")
+parser.add_option("-s", "--search", action="store_true", dest="startSearch", help="Search term for root company")
+(options, args) = parser.parse_args()
+
 # Create DB handle
 neo4jHandle = neo4j.GraphDatabaseService(
     "http://localhost:7474/db/data/")
+
+# Logging
+Log = Logger(options.verbose)
 
 # IMdb scraper class
 scraper = ImdbScraper()
@@ -401,35 +423,37 @@ filmographyDepth = -1
 # Cache locations
 imdbCacheDir = os.path.abspath("imdbCache")
 
-# Hardcoded Weta company id
+# Root company ID and search terms
 companyID = 5031
 companySearchTag = 'weta'
 
-# Logging
-silent = False
+if options.startCompany or options.startSearch:
+    if options.startCompany and options.startSearch:
+        companyID = options.startCompany
+        companySearchTag = options.startSearch
+    else:
+        print "Both the root company ID and company search term need to be set!"
+        sys.exit(1)
 
-# Start flags
-if len(sys.argv) <= 1:
-    print("Usage: python2 GetWeta.py (employees/connections/reset/reset_db/reset_companies)")
+# Main parser object
+scraper.SetRootCompany(companyID, companySearchTag)
+print "===== DWW Data Parser for IMDB ====="
+print "------------------------------------"
+print("Root company is '" + str(companyID) + "', search term is '" + str(companySearchTag) + "'")
 
-if len(sys.argv) > 1:
-    print("Starting...")
-    scraper.SetRootCompany(companyID, companySearchTag)
+# Resets
+if options.resetAll:
+    scraper.ResetCache()
+    scraper.ResetRelationships()
+    scraper.ResetDb()
+    sys.exit(0)
+elif options.resetCompanies:
+    scraper.ResetRelationships()
+    scraper.ResetCompanies()
+    sys.exit(0)
 
-    if(sys.argv[1] == "reset"):
-        scraper.ResetCache()
-        scraper.ResetRelationships()
-        scraper.ResetDb()
-    elif(sys.argv[1] == "reset_db"):
-        scraper.ResetRelationships()
-        scraper.ResetDb()
-    elif(sys.argv[1] == "reset_companies"):
-        scraper.ResetRelationships()
-        scraper.ResetCompanies()
-    elif(sys.argv[1] == "employees"):
-        print("Searching for employees in filmography...")
-        scraper.GetPeopleInFilmography(filmographyDepth)
-    elif(sys.argv[1] == "connections"):
-        print("Searching for employees in filmography...")
-        personList = scraper.GetPeopleInFilmography(filmographyDepth)
-        scraper.ConnectPeopleToCompanies(personList)
+# Get list of people to search from root company
+personList = scraper.GetPeopleInFilmography(filmographyDepth)
+
+# Make connections
+scraper.ConnectPeopleToCompanies(personList)
