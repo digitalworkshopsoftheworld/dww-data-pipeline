@@ -133,7 +133,9 @@ var dwwFront = {
         $("<option>").attr("value", this.id).html("-Bad Data-").appendTo(dropdown);
 
         $.each(mapFile, function() {
-            $("<option>").attr("value", this.id).html(this.company).appendTo(dropdown);
+            if (this.company.search("role:") < 0 && (this.company.search("baddata:") < 0)) {
+                $("<option>").attr("value", this.id).html(this.company).appendTo(dropdown);
+            }
         });
 
         //Sort alphabetically
