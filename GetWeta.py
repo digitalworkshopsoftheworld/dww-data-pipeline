@@ -160,7 +160,7 @@ class ImdbScraper:
                             print("Attach '" + str(personInMovie['name']) + "' to '" + str(
                                 existingCompany['name']) + "' for '" + str(vfxRole.role) + "'")
                             self.ConnectPersonToCompany(
-                                personNode, compNode, vfxRole, movNode)
+                                personNode, compNode, vfxRole, movNode, personInMovie.notes)
                         else:
                             print("No company called '" + str(vfxRole.company) + "' for " + str(
                                 person['name']) + "' under role '" + str(vfxRole.role) + "'")
@@ -180,7 +180,7 @@ class ImdbScraper:
 
         print('===== Finished =====')
 
-    def ConnectPersonToCompany(self, personNode, companyNode, vfxrole, movieNode):
+    def ConnectPersonToCompany(self, personNode, companyNode, vfxrole, movieNode, rawNotes=""):
         personCompanyRelationship = list(
             neo4jHandle.match(start_node=personNode, end_node=companyNode))
 
@@ -199,9 +199,9 @@ class ImdbScraper:
             roleNode, =  neo4jHandle.create(
                 rel(personNode, "WORKED_FOR", companyNode))
             roleNode.update_properties(
-                {'role': vfxrole.role, 'company': vfxrole.company, 'movieID': movieNode.get_properties()['id'], 'release': movieNode.get_properties()['release'], 'matchRatio': fuzzyCompanyMatch})
+                {'role': vfxrole.role, 'company': vfxrole.company, 'movieID': movieNode.get_properties()['id'], 'release': movieNode.get_properties()['release'], 'matchRatio': fuzzyCompanyMatch, 'rawNotes': rawNotes})
         Log.Log("Match ratio: " + str(fuzzyCompanyMatch) + ". CompRole: " + str(vfxrole.company.lower().strip())
-                  + ". Node: " + str(companyNode.get_properties()['name'].lower().strip() ))
+                + ". Node: " + str(companyNode.get_properties()['name'].lower().strip()))
 
     def GetCachedListAndNode(self, imdbObj, nodeType, listKey="", forceUpdate=False):
         cachedList = None
@@ -213,10 +213,17 @@ class ImdbScraper:
 
         if not cachedNode or forceUpdate:
             self.UpdateImdbObj(imdbObj)
-            if len(listKey) > 0:
-                if imdbObj.has_key(listKey):
-                    cachedList = imdbObj[listKey]
+            cachedList = []
+            if listKey:
+                # Append all keys to the cached list that match
+                Log.Log(" * Caching " + nodeType + " '" + str(
+                    imdbObj) + "' with list key '" + listKey + "'")
+                for key in imdbObj.keys():
+                    if listKey in key:
+                        for val in imdbObj[key]:
+                            cachedList.append(val)
             else:
+                Log.Log(" * Caching " + nodeType + " '" + str(imdbObj) + "'")
                 cachedList = imdbObj
 
             if cachedList:
@@ -251,18 +258,18 @@ class ImdbScraper:
                 pickleFile = open(pickleFileName, 'wb')
                 cachedListPickle = pickle.dump(cachedList, pickleFile)
                 pickleFile.close()
-                Log.Log("Cached " + str(nodeType) +
-                          " '" + str(nodeProperties['name']) + "'")
+                Log.Log(" * ...done.")
         else:
             try:
                 with open(pickleFileName, 'rb'):
-                    Log.Log("Loading " + str(nodeType) + " '" + str(
-                            imdbObj.getID()) + "' from cache")
+                    Log.Log(" * Cache file exists for '" + str(imdbObj) + "'")
                     pickleFile = open(pickleFileName, 'rb')
+                    Log.Log(" * Loading " + str(nodeType) + " '" + str(
+                            imdbObj) + "' from cache")
                     cachedList = pickle.load(pickleFile)
                     pickleFile.close()
             except IOError:
-                print "-- No pickle found, recreating cache"
+                Log.Log(" * No pickle found, recreating cache")
                 cachedNode.delete()
                 del cachedNode
                 rebuiltDB = self.GetCachedListAndNode(
@@ -280,26 +287,6 @@ class ImdbScraper:
                 print("*** HTTP error. Redialing")
                 continue
             break
-
-    def FindOrCreateCompanyNode(self, imdbCompany):
-        companyNode = neo4jHandle.get_indexed_node(
-            "company", "id", imdbCompany.getID())
-        if not companyNode:
-            Log.log("Couldn't find company node. Searched for '" +
-                      str(imdbCompany['name']) + "'. Creating...")
-            while True:
-                try:
-                    self.i.update(imdbCompany)
-                except imdb.IMDbDataAccessError:
-                    print("*** HTTP error. Redialling")
-                    continue
-                break
-            companyNode, = neo4jHandle.create(node(id=imdbCompany.getID()))
-            companyNode.add_labels("company")
-            companyNode.update_properties({'name': imdbCompany['name']})
-            self.companyIndex.add("id", companyNode['id'], companyNode)
-
-        return companyNode
 
     def ParseCompanyFromPersonNotes(self, person, companyTag=""):
         outRole = VFXRole()
@@ -321,7 +308,7 @@ class ImdbScraper:
         role = ""
         comp = ""
         Log.Log(
-                str("Filtered: '" + str(filtered) + "'. Original: '" + str(person.notes) + "'"))
+            str("Filtered: '" + str(filtered) + "'. Original: '" + str(person.notes) + "'"))
         if(len(splitRole) > 1):
             role = str(splitRole[0]).strip()
             comp = str(splitRole[1]).strip()
@@ -344,6 +331,29 @@ class ImdbScraper:
 
         return outRole
 
+    #
+    # Find functions
+    #
+    def FindOrCreateCompanyNode(self, imdbCompany):
+        companyNode = neo4jHandle.get_indexed_node(
+            "company", "id", imdbCompany.getID())
+        if not companyNode:
+            Log.log("Couldn't find company node. Searched for '" +
+                    str(imdbCompany['name']) + "'. Creating...")
+            while True:
+                try:
+                    self.i.update(imdbCompany)
+                except imdb.IMDbDataAccessError:
+                    print("*** HTTP error. Redialling")
+                    continue
+                break
+            companyNode, = neo4jHandle.create(node(id=imdbCompany.getID()))
+            companyNode.add_labels("company")
+            companyNode.update_properties({'name': imdbCompany['name']})
+            self.companyIndex.add("id", companyNode['id'], companyNode)
+
+        return companyNode
+
     def FindPersonInList(self, crewList, personNode):
         for p in crewList:
             if p.getID() == personNode.get_properties()['id']:
@@ -356,10 +366,12 @@ class ImdbScraper:
                 return comp
         return None
 
+    # Reset functions
     def ResetDb(self):
         print("Clearing nodes")
         query = neo4j.CypherQuery(neo4jHandle, "start n = node(*) delete n")
         query.execute()
+        self.ResetCache(["movie", "company", "person"])
 
     def ResetRelationships(self):
         print("Clearing relationships")
@@ -372,22 +384,55 @@ class ImdbScraper:
         query = neo4j.CypherQuery(
             neo4jHandle, "MATCH (c:company) DELETE c")
         query.execute()
+        self.ResetCache(["company"])
 
-    def ResetCache(self):
-        cacheDirs = ["movie", "person", "company"]
-        for cacheDir in cacheDirs:
+    def ResetMovies(self):
+        print("Clearing movie nodes")
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (m:movie) DELETE m")
+        query.execute()
+        self.ResetCache(["movie"])
+
+    def ResetPeople(self):
+        print("Clearing people nodes")
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (p:person) DELETE p")
+        query.execute()
+        self.ResetCache(["person"])
+
+    def ResetCache(self, dirList):
+        for cacheDir in dirList:
             print "Clearing %s cache" % cacheDir
             os.chdir(imdbCacheDir + "/" + cacheDir)
             dirlist = [f for f in os.listdir(".") if f.endswith(".pkl")]
             for f in dirlist:
                 os.remove(f)
 
+    #
+    # Mappings
+    #
+    def BuildCompanyMap(self, mapFile):
+        mapList = {}
+        query = neo4j.CypherQuery(
+            neo4jHandle, "\n".join(["MATCH (p:person)-[r:WORKED_FOR]-(c:company)",
+                          "WHERE r.matchRatio > 90",
+                          "RETURN DISTINCT r.company AS search,",
+                          "COUNT(r.company) AS searchcount,",
+                          "c.name AS company,", "c.id AS id,", "r.matchRatio AS match",
+                          "ORDER BY match"]))
+        result = query.execute()
+        for record in result:
+            mapList[record.values[0]] = {"id":record.values[3], "company":record.values[2]}
 
+        jsonOut = open(mapFile, 'wb')
+        json.dump(mapList, jsonOut)
+        jsonOut.close()
+
+        print str(len(result)) + " results written to map file " + mapFile
 
 #
 # Class for storing a role and associated company
 #
-
 class VFXRole:
 
     def __init__(self):
@@ -398,13 +443,24 @@ class VFXRole:
 # Script start
 # -----------------------------------------------------
 
-#Args
+# Args
 parser = OptionParser()
-parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
-parser.add_option("--reset-companies", action="store_true", dest="resetCompanies", help="Reset all company nodes")
-parser.add_option("--reset-all", action="store_true", dest="resetAll", help="Reset DB and cache")
-parser.add_option("-c", "--company", action="store_true", dest="startCompany", help="IMDB id of root company")
-parser.add_option("-s", "--search", action="store_true", dest="startSearch", help="Search term for root company")
+parser.add_option("-v", "--verbose",
+                  action="store_true", dest="verbose", default=False)
+parser.add_option("--reset-movies", action="store_true",
+                  dest="resetMovies", help="Reset all movie nodes", default=False)
+parser.add_option("--reset-people", action="store_true",
+                  dest="resetPeople", help="Reset all people nodes", default=False)
+parser.add_option("--reset-companies", action="store_true",
+                  dest="resetCompanies", help="Reset all company nodes", default=False)
+parser.add_option("--reset-all", action="store_true",
+                  dest="resetAll", help="Reset DB and cache", default=False)
+parser.add_option("-c", "--company", action="store_true",
+                  dest="startCompany", help="IMDB id of root company", default=False)
+parser.add_option("-s", "--search", action="store_true",
+                  dest="startSearch", help="Search term for root company", default=False)
+parser.add_option("--buildCompanyMap", action="store", type="string",
+                  dest="companyMapFile", help="Build initial company map file")
 (options, args) = parser.parse_args()
 
 # Create DB handle
@@ -439,18 +495,27 @@ if options.startCompany or options.startSearch:
 scraper.SetRootCompany(companyID, companySearchTag)
 print "===== DWW Data Parser for IMDB ====="
 print "------------------------------------"
-print("Root company is '" + str(companyID) + "', search term is '" + str(companySearchTag) + "'")
 
 # Resets
-if options.resetAll:
-    scraper.ResetCache()
+if options.resetAll or options.resetCompanies or options.resetMovies or options.resetPeople:
     scraper.ResetRelationships()
-    scraper.ResetDb()
+    if options.resetAll:
+        scraper.ResetDb()
+    if options.resetCompanies:
+        scraper.ResetCompanies()
+    if options.resetMovies:
+        scraper.ResetMovies()
+    if options.resetPeople:
+        scraper.ResetPeople()
     sys.exit(0)
-elif options.resetCompanies:
-    scraper.ResetRelationships()
-    scraper.ResetCompanies()
+
+# Mappings
+if options.companyMapFile:
+    scraper.BuildCompanyMap(options.companyMapFile)
     sys.exit(0)
+
+print("Root company is '" + str(companyID) +
+      "', search term is '" + str(companySearchTag) + "'")
 
 # Get list of people to search from root company
 personList = scraper.GetPeopleInFilmography(filmographyDepth)
