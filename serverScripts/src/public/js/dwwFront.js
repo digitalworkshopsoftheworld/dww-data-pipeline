@@ -80,13 +80,26 @@ var dwwFront = {
             // }
 
             //Link search to existing company
-            if (newCompanyName && newCompanyId) {
-                mapFile[companySearch] = {
-                    company: newCompanyName,
-                    id: newCompanyId
+            if (newCompanyName || newCompanyId) {
+                if (newCompanyName) {
+                    var id = -1;
+                    if (newCompanyId) {
+                        id = newCompanyId;
+                    }
+
+                    mapFile[companySearch] = {
+                        company: newCompanyName,
+                        id: id
+                    }
+                    $(this).parent().parent().removeClass("unverified").addClass("verified");
+                    //$(this).parent().parent().find(".verifyControls");
+                } else {
+                    $.pnotify({
+                        title: 'Mapping error',
+                        text: 'Need to provide a name!',
+                        animate_speed: 'fast'
+                    });
                 }
-                $(this).parent().parent().removeClass("unverified").addClass("verified");
-                $(this).parent().parent().find(".verifyControls");
             }
 
             dwwFront.BuildCompanyTable(companyQueryData);
