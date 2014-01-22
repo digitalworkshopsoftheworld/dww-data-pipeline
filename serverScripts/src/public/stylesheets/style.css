@@ -7,6 +7,16 @@ a {
   color: #00B7FF;
 }
 
+div.top{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+thead{
+	background-color: #DDD;
+	font-weight: bold;
+}
+
 .verified {
 	background-color: #63D1F4;
 }

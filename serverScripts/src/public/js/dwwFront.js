@@ -25,8 +25,8 @@ var dwwFront = {
         $('#datatable thead')
             .append("<td>Search</td>")
             .append("<td>Company</td>")
-            .append("<td>Times Searched:</td>")
-            .append("<td>Verified</td>");
+            .append("<td>Search count</td>")
+            .append("<td></td>");
 
         //Build table
         $.each(json, function() {

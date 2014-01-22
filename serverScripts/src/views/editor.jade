@@ -5,6 +5,20 @@ block includes
 
 block content
   div.top
+    h1 DWW Company Mappings
+    h3 Legend:
+    p
+      ul
+        li
+          span.verified &nbsp&nbsp&nbsp&nbsp
+          span  Mapping exists between search and company.
+        li
+          span.verified.role &nbsp&nbsp&nbsp&nbsp
+          span  Search term is a role rather than a company.
+        li
+          span.verified.baddata &nbsp&nbsp&nbsp&nbsp
+          span  Bad search term. Everything that isn't a role or an actual company search.
+          
   div.container
     div#controls
       button#uploadMap Save changes
