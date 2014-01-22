@@ -63,7 +63,7 @@ exports.getCompanyMap = function(req, res) {
 
 exports.editCompanyMap = function(req, res) {
     //console.log(req.body);
-    fs.writeFile(__dirname + '/public/js/mapFile.json', JSON.stringify(req.body), function(err) {
+    fs.writeFile(__dirname + '../public/js/mapFile.json', JSON.stringify(req.body), function(err) {
         if (err) return console.log(err);
         console.log('Wrote mappings to > mapFile.json');
     });
