@@ -2,26 +2,24 @@
  * DB setup
  */
 var neo4j = require('neo4j');
-
-var getAllQuery = [
-    'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
-    'RETURN p,r,c',
-    'ORDER BY p.id, r.release'
-].join('\n');
-
 var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
 
 /*
- * Data parsers
+ * Data dumpers
  */
 exports.getAllPeopleAsCSV = function(callbackComplete) {
     var outCsv = ""
     var csvCols = ["personId", "personName", "personRole", "imdbMovieId", "searchedCompany", "searchedMatchRatio",
         "movieReleaseYear", "matchedCompanyId", "matchedCompanyName"
     ].join(",");
+    var query = [
+        'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
+        'RETURN p,r,c',
+        'ORDER BY p.id, r.release'
+    ].join('\n');
 
-    db.query(getAllQuery, params = {}, function(err, results) {
+    db.query(query, params = {}, function(err, results) {
         if (err) throw err;
 
         for (var i = 0; i < results.length; i++) {
@@ -45,9 +43,14 @@ exports.getAllPeopleAsCSV = function(callbackComplete) {
 };
 
 exports.getAllPeopleAsJson = function(callbackComplete) {
+    var query = [
+        'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
+        'RETURN p,r,c',
+        'ORDER BY p.id, r.release'
+    ].join('\n');
     var outJson = [];
 
-    db.query(getAllQuery, params = {}, function(err, results) {
+    db.query(query, params = {}, function(err, results) {
         if (err) throw err;
         var lastpersonId = ""
         var lastPersonObject = {};
@@ -89,13 +92,17 @@ exports.getAllPeopleAsJson = function(callbackComplete) {
 };
 
 
+
+/*
+ * Data listers
+ */
 exports.getCompanySearchList = function(callbackComplete) {
-    var outJson = [];
     var query = [
         "MATCH (p:person)-[r:WORKED_FOR]-(c:company)",
         "RETURN DISTINCT r.company AS search, COUNT(r.company) AS count",
         "ORDER BY count DESC, r.company"
     ].join("\n");
+    var outJson = [];
 
     db.query(query, params = {}, function(err, results) {
         if (err) throw err;
@@ -114,11 +121,11 @@ exports.getCompanySearchList = function(callbackComplete) {
 
 
 exports.getCompanyList = function(callbackComplete) {
-    var outJson = [];
     var query = [
         "MATCH (c:company)",
         "RETURN c.name as name, c.id as id"
     ].join("\n");
+    var outJson = [];
 
     db.query(query, params = {}, function(err, results) {
         if (err) throw err;
@@ -137,19 +144,18 @@ exports.getCompanyList = function(callbackComplete) {
 
 
 exports.getRoleList = function(callbackComplete) {
-    var outJson = [];
     var query = [
         "MATCH (p:person)-[r:WORKED_FOR]-(c:company)",
         "RETURN DISTINCT r.role AS role, COUNT(r.role) AS count",
         "ORDER BY count DESC, r.role"
     ].join("\n");
+    var outJson = [];
 
     db.query(query, params = {}, function(err, results) {
         if (err) throw err;
 
         var outJson = [];
         for (var i = 0; i < results.length; i++) {
-            console.log(results[i]);
             outJson.push({
                 'role': results[i]['role'],
                 'count': results[i]['count']
@@ -160,15 +166,17 @@ exports.getRoleList = function(callbackComplete) {
 }
 
 
-
-exports.getAllBadRelationships = function(callbackComplete) {
-    var outJson = [];
+exports.getCompanySearchMappings = function(callbackComplete) {
     var query = [
         "MATCH (p:person)-[r:WORKED_FOR]-(c:company)",
-        "WHERE r.matchRatio < 100",
-        "RETURN r,c",
-        "ORDER BY r.matchRatio"
+        "RETURN DISTINCT r.company AS search,",
+        "COUNT(r.company) AS searchcount,",
+        "c.name AS company,",
+        "c.id AS id,",
+        "r.matchRatio AS match",
+        "ORDER BY search"
     ].join("\n");
+    var outJson = [];
 
     db.query(query, params = {}, function(err, results) {
         if (err) throw err;
@@ -176,12 +184,14 @@ exports.getAllBadRelationships = function(callbackComplete) {
         var outJson = [];
         for (var i = 0; i < results.length; i++) {
             outJson.push({
-                "searchResult": results[i].c._data.data,
-                "searchedFor": results[i].r._data.data.company,
-                "role": results[i].r._data.data.role
+                "search": results[i]['search'],
+                "searchcount": results[i]['searchcount'],
+                "company": results[i]['company'],
+                "id": results[i]['id'],
+                "match": results[i]['match'],
             });
         }
 
         callbackComplete(outJson);
     });
-};
+}

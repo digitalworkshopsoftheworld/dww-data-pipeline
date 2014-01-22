@@ -1,7 +1,11 @@
 /*
  * Modules
  */
-var dww = require('../dwwApi.js');
+var dww = require('../dwwApi.js'),
+    url = require('url'),
+    queryString = require("querystring"),
+    fs = require('fs');
+
 
 /*
  * Raw data routes
@@ -39,8 +43,33 @@ exports.roleList = function(req, res) {
     })
 };
 
-exports.allBadRelationships = function(req, res) {
-    dww.getAllBadRelationships(function(data) {
+exports.companyMappings = function(req, res) {
+    dww.getCompanySearchMappings(function(data) {
         res.json(data);
     })
+}
+
+exports.index = function(req, res) {
+    res.render('index', {
+        title: 'Express'
+    });
+};
+
+exports.getCompanyMap = function(req, res) {
+    res.render('editor', {
+        title: 'DWW - Company Search Mappings'
+    });
+};
+
+exports.editCompanyMap = function(req, res) {
+    //console.log(req.body);
+    fs.writeFile('public/js/mapFile.json', JSON.stringify(req.body), function(err) {
+        if (err) return console.log(err);
+        console.log('Wrote mappings to > mapFile.json');
+    });
+
+    res.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    res.end('updated mappings');
 };

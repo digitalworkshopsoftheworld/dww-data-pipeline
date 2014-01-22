@@ -6,3 +6,26 @@ body {
 a {
   color: #00B7FF;
 }
+
+.verified {
+	background-color: #63D1F4;
+}
+
+.role.verified{
+	background-color: #F0A804;
+}
+
+.baddata.verified{
+	background-color: #F87531;
+}
+
+.verifySection, #newCompanyName, #newCompanyId{
+	width: 275px;
+}
+
+tr {
+	border: solid;
+	border-width: 1px 0;
+	border-color: #DDD;
+	vertical-align: top;
+}

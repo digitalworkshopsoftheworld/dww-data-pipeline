@@ -3,7 +3,6 @@
  */
 
 var express = require('express'),
-    routes = require('./routes'),
     dww = require('./routes/dwwRoutes.js'),
     http = require('http'),
     path = require('path'),
@@ -42,7 +41,6 @@ var enableCORS = function(req, res, next) {
 app.use(enableCORS);
 
 
-
 /*
  * Routes
  */
@@ -54,13 +52,15 @@ app.all('/', function(req, res, next) {
     next();
 });
 
-app.get('/', routes.index);
+app.get('/', dww.index);
 app.get('/all/json', dww.dumpJSON);
 app.get('/all/csv', dww.dumpCSV);
 app.get('/list/companies', dww.companyList);
 app.get('/list/searches', dww.companySearchList);
+app.get('/list/companymap', dww.companyMappings);
 app.get('/list/roles', dww.roleList);
-app.get('/non-matching', dww.allBadRelationships);
+app.get('/companymap', dww.getCompanyMap);
+app.post('/companymap', dww.editCompanyMap);
 
 /*
  * Start server

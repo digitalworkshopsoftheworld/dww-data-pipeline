@@ -3,11 +3,13 @@ html
   head
     title= title
     link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
-    script(src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
-    script(src='/bootstrap/js/bootstrap.min.js')
+    link(rel='stylesheet', href='/stylesheets/jquery.pnotify.default.css')
     script(src='http://code.jquery.com/jquery-2.0.3.min.js')
     script(src='http://code.jquery.com/ui/1.10.3/jquery-ui.min.js')
+    script(src='/bootstrap/js/bootstrap.min.js')
+    script(src='/js/jquery.pnotify.min.js')
+
+    block includes
   body
     block content
