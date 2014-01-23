@@ -1,4 +1,5 @@
 var mapFileData;
+var reverseMapData;
 var mapQueryData;
 var bUsemapFileData = true;
 
@@ -29,8 +30,9 @@ var dwwFront = {
             dataType: "json",
             contentType: "application/json",
             success: function(json) {
-                mapFileData = dwwFront.RemoveDuplicateMaps(json);
-                console.log(mapFileData);
+                mapFileData = json;
+                reverseMapData = dwwFront.BuildReverseMap(mapFileData);
+                console.log(reverseMapData);
                 dwwFront.GetMappingListTable();
             },
             error: function(xhr, status) {
@@ -39,12 +41,22 @@ var dwwFront = {
         });
     },
 
-    RemoveDuplicateMaps: function(mapFile) {
-        var cleanMap = {};
-        $.each(mapFile, function(key, val) {
-            cleanMap[key] = val;
+    BuildReverseMap: function(mapFile) {
+        //Get entries that match the map first to build up ui controls
+        reverseMapFile = {}
+        $.each(mapFile, function(d) {
+            //Build reverse list
+            if (this.name in reverseMapFile) {
+                reverseMapFile[this.name].searches.push(d);
+            } else {
+                reverseMapFile[this.name] = {
+                    "id": this.id,
+                    "searches": [d]
+                }
+            }
         });
-        return cleanMap;
+
+        return reverseMapFile;
     },
 
     BuildMappingTable: function(json) {
@@ -56,12 +68,15 @@ var dwwFront = {
             var rowStr = "<tr><td class='searchHeader'>" + this.search + "</td>";
             rowStr += "<td class='nameHeader'>" + this.name + "</td>";
             rowStr += "<td class='searchCountHeader'>" + this.searchcount + "</td>";
-            rowStr += "<td class='verifyControls'></td></tr>";
+            rowStr += "<td class='verifyControls'><div class='verifySection'></div><button class='verifyButton'></button></td></tr>";
             var table = $('#datatable tbody');
             var row = $(rowStr).appendTo(table);
-            var cell = $(row).find("td.verifyControls");
-            $("<div>").addClass("verifySection").appendTo(cell);
-            $("<button>").addClass("verifyButton").appendTo(cell).html("Verify").click(dwwFront.MapControls);
+            var editButton = $(row).find(".verifyControls button").button({
+                text: false,
+                icons: {
+                    primary: "ui-icon-pencil"
+                }
+            }).click(dwwFront.MapControls);
 
             if (bUsemapFileData) {
                 if (this.search in mapFileData) {
@@ -85,6 +100,7 @@ var dwwFront = {
     },
 
     MapControls: function() {
+        var editButton = $(this);
         if ($(this).hasClass("open")) {
 
             var newMapName = $("#newMapName").val();
@@ -104,8 +120,8 @@ var dwwFront = {
                         "id": id
                     }
                     $(this).parent().parent().removeClass("unverified").addClass("verified");
-                    //$(this).parent().parent().find(".verifyControls");
-                    mapFileData = dwwFront.RemoveDuplicateMaps(mapFileData);
+                    dwwFront.BuildMappingTable(mapQueryData);
+                    reverseMapData = dwwFront.BuildReverseMap(mapFileData);
                 } else {
                     $.pnotify({
                         title: 'Mapping error',
@@ -115,23 +131,25 @@ var dwwFront = {
                 }
             }
 
-            dwwFront.BuildMappingTable(mapQueryData);
-
-            console.log(mapFileData);
+            $(editButton).show();
 
             //Cleanup
-            $(this).html("Verify");
+            //$(this).html("Verify");
             $(this).parent().find(".verifySection").html("");
             $(this).removeClass("open");
         } else {
-            //Clear existing open dialongs
+            //Clear existing open dialogs
+            $(this).hide();
             $(".verifySection").html("");
-            $(".verifyButton").html("Verify");
-            $(this).html("Save");
             $(this).addClass("open");
             dwwFront.BuildMapDropdown($(this).parent().find(".verifySection"));
-            var newMapName = $("<input id='newMapName' type='text' placeholder='" + capitalize(mapType) + " name'>").appendTo($(this).parent().find(".verifySection"));
-            var newMapId = $("<input id='newMapId' type='text' placeholder='" + capitalize(mapType) + " ID'>").appendTo($(this).parent().find(".verifySection"));
+            $("<input id='newMapName' type='text' placeholder='" + capitalize(mapType) + " name'>").appendTo($(this).parent().find(".verifySection"));
+            if (mapType != "role") {
+                $("<input id='newMapId' type='text' placeholder='" + capitalize(mapType) + " ID'>").appendTo($(this).parent().find(".verifySection"));
+            }
+            $("<button id='saveFieldButton'>Save</button>").button().click(function() {
+                $(editButton).click();
+            }).appendTo($(this).parent().find(".verifySection"));
         }
     },
 
@@ -160,9 +178,9 @@ var dwwFront = {
             $("<option>").attr("value", this.id).html("-Role-").appendTo(dropdown);
         }
 
-        $.each(reverseMapData, function() {
-            if (this.name.search("role:") < 0 && (this.name.search("baddata:") < 0)) {
-                $("<option>").attr("value", this.id).html(this.name).appendTo(dropdown);
+        $.each(reverseMapData, function(key, val) {
+            if (key.search("role:") < 0 && (key.search("baddata:") < 0)) {
+                $("<option>").attr("value", this.id).html(key).appendTo(dropdown);
             }
         });
 
@@ -181,12 +199,12 @@ var dwwFront = {
 $(document).ready(function() {
     dwwFront.GetMapFile();
 
-    $("#useMapButton").click(function() {
+    $("#useMapButton").button().click(function() {
         bUsemapFileData = !bUsemapFileData;
         dwwFront.BuildMappingTable(mapQueryData);
     });
 
-    $("#uploadMap").click(function() {
+    $("#uploadMap").button().click(function() {
         $.ajax({
             url: document.URL,
             type: "POST",
@@ -194,7 +212,7 @@ $(document).ready(function() {
             contentType: "application/json",
             success: function(data) {
                 $.pnotify({
-                    title: 'Info',
+                    title: 'Finished',
                     text: 'Mappings updated.',
                     type: 'info',
                     animate_speed: 'fast'

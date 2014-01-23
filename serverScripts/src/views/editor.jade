@@ -1,6 +1,7 @@
 extends layout
 
 block includes
+  link(rel='stylesheet', href='/stylesheets/editorStyle.css')
   script(src='/js/dwwFront.js')
   script.
     var mapType = "#{mappingType}";
@@ -34,7 +35,7 @@ block content
         thead
           td.searchHeader Search
           td.nameHeader= capitalize(mappingType)
-          td.searchCountHeader Search Count
+          td.searchCountHeader Count
           td.verifyControls
         tbody
 

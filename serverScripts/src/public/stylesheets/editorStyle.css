@@ -13,8 +13,12 @@ div.top{
 }
 
 thead{
-	background-color: #DDD;
+	background-color: #CCC;
 	font-weight: bold;
+}
+
+table {
+	background-color: #EAEAEA;
 }
 
 .verified {
@@ -29,14 +33,25 @@ thead{
 	background-color: #F87531;
 }
 
-.verifySection, #newMapName, #newMapId{
+.verifySection {
+	float: left;
+	width: 275px;
+}
+
+#newMapName, #newMapId {
 	width: 275px;
 	float: left;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+#saveFieldButton {
+	float:left;
 }
 
 tr {
-	border: solid;
-	border-width: 1px 0;
-	border-color: #DDD;
+	border-bottom: solid;
+	border-bottom-width: 1px 0;
+	border-bottom-color: #FFF;
 	vertical-align: top;
 }
