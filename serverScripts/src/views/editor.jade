@@ -6,6 +6,7 @@ block includes
     var mapType = "#{mappingType}";
     var mapListUrl = "#{mappingListUrl}";
     var mapFileUrl = "#{mappingFile}";
+  - var capitalize = function(str) {return str.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });};
 
 block content
   div.top
@@ -29,6 +30,13 @@ block content
       button#uploadMap Save changes
       button#useMapButton Toggle map file
     div#datatable
+      table
+        thead
+          td.searchHeader Search
+          td.nameHeader= capitalize(mappingType)
+          td.searchCountHeader Search Count
+          td.verifyControls
+        tbody
 
   div.footer
 

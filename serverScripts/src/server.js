@@ -52,6 +52,7 @@ app.all('/', function(req, res, next) {
     next();
 });
 
+//Gets
 app.get('/', dww.index);
 app.get('/all/json', dww.dumpJSON);
 app.get('/all/csv', dww.dumpCSV);
@@ -60,9 +61,11 @@ app.get('/list/searches', dww.companySearchList);
 app.get('/list/companymap', dww.companyMappings);
 app.get('/list/roles', dww.roleList);
 app.get('/companymap', dww.companyMapper);
-app.post('/companymap', dww.editCompanyMap);
 app.get('/rolemap', dww.roleMapper);
-app.post('/companymap', dww.editRoleMap);
+
+//Posts
+app.post('/companymap', dww.editCompanyMap);
+app.post('/rolemap', dww.editRoleMap);
 
 
 /*

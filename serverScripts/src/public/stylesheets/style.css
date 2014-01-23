@@ -29,8 +29,9 @@ thead{
 	background-color: #F87531;
 }
 
-.verifySection, #newCompanyName, #newCompanyId{
+.verifySection, #newMapName, #newMapId{
 	width: 275px;
+	float: left;
 }
 
 tr {

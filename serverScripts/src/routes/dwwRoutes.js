@@ -60,7 +60,7 @@ exports.index = function(req, res) {
 
 exports.companyMapper = function(req, res) {
     res.render('editor', {
-        title: 'DWW - Company Search Mappings',
+        title: 'DWW - Company Search maps',
         mappingType: "company",
         mappingListUrl: "list/companymap",
         mappingFile: "js/" + companyMapFile
@@ -69,7 +69,7 @@ exports.companyMapper = function(req, res) {
 
 exports.roleMapper = function(req, res) {
     res.render('editor', {
-        title: 'DWW - Role Search Mappings',
+        title: 'DWW - Role maps',
         mappingType: "role",
         mappingListUrl: "list/roles",
         mappingFile: "js/" + roleMapFile

@@ -1,50 +1,78 @@
 var mapFileData;
-var companyQueryData;
+var mapQueryData;
 var bUsemapFileData = true;
 
+var capitalize = function(str) {
+    return str.replace(/(?:^|\s)\S/g, function(a) {
+        return a.toUpperCase();
+    });
+};
+
 var dwwFront = {
-    GetCompanyTable: function() {
+    GetMappingListTable: function() {
         $.ajax({
             url: mapListUrl,
             type: "GET",
             dataType: "json",
             contentType: "application/json",
-            success: dwwFront.BuildCompanyTable,
+            success: dwwFront.BuildMappingTable,
             error: function(xhr, status) {
                 console.log("HTTP problem!");
             }
         });
     },
 
-    BuildCompanyTable: function(json) {
-        companyQueryData = json;
-        $('#datatable').html("");
-        $('#datatable').append("<table />");
-        $('#datatable table').append("<thead />").append("<tbody />");
-        $('#datatable thead')
-            .append("<td>Search</td>")
-            .append("<td>Company</td>")
-            .append("<td>Search count</td>")
-            .append("<td></td>");
+    GetMapFile: function() {
+        $.ajax({
+            url: mapFileUrl,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            success: function(json) {
+                mapFileData = dwwFront.RemoveDuplicateMaps(json);
+                console.log(mapFileData);
+                dwwFront.GetMappingListTable();
+            },
+            error: function(xhr, status) {
+                console.log("HTTP problem!");
+            }
+        });
+    },
+
+    RemoveDuplicateMaps: function(mapFile) {
+        var cleanMap = {};
+        $.each(mapFile, function(key, val) {
+            cleanMap[key] = val;
+        });
+        return cleanMap;
+    },
+
+    BuildMappingTable: function(json) {
+        mapQueryData = json;
+        $('#datatable tbody').html("");
 
         //Build table
         $.each(json, function() {
+            var rowStr = "<tr><td class='searchHeader'>" + this.search + "</td>";
+            rowStr += "<td class='nameHeader'>" + this.name + "</td>";
+            rowStr += "<td class='searchCountHeader'>" + this.searchcount + "</td>";
+            rowStr += "<td class='verifyControls'></td></tr>";
             var table = $('#datatable tbody');
-            var row = $("<tr><td class='companySearch'>" + this.search + "</td><td class='companyName'>" + this.company + "</td><td>" + this.searchcount + "</td></tr>").appendTo(table);
-            var cell = $("<td class='verifyControls'>").appendTo(row);
+            var row = $(rowStr).appendTo(table);
+            var cell = $(row).find("td.verifyControls");
             $("<div>").addClass("verifySection").appendTo(cell);
             $("<button>").addClass("verifyButton").appendTo(cell).html("Verify").click(dwwFront.MapControls);
 
             if (bUsemapFileData) {
                 if (this.search in mapFileData) {
                     $(row).addClass('verified');
-                    $(row).find(".companyName").html(mapFileData[this.search].company);
+                    $(row).find(".nameHeader").html(mapFileData[this.search].name);
 
                     //Tag rows if they require special formatting based on identifiers (role/bad data etc)
-                    if (mapFileData[this.search].company.search("role:") > -1) {
+                    if (mapFileData[this.search].name.search("role:") > -1) {
                         $(row).addClass('role');
                     }
-                    if (mapFileData[this.search].company.search("baddata:") > -1) {
+                    if (mapFileData[this.search].name.search("baddata:") > -1) {
                         $(row).addClass('baddata');
                     }
                 } else {
@@ -53,32 +81,31 @@ var dwwFront = {
             } else {
                 $(row).addClass("unverified");
             }
-
         });
     },
 
     MapControls: function() {
         if ($(this).hasClass("open")) {
 
-            var newCompanyName = $("#newCompanyName").val();
-            var newCompanyId = $("#newCompanyId").val();
-            var companySearch = $(this).parent().parent().find(".companySearch").text();
+            var newMapName = $("#newMapName").val();
+            var newMapId = $("#newMapId").val();
+            var searchHeader = $(this).parent().parent().find(".searchHeader").text();
             var dropdownOption = $(this).parent().find(".verifySection select :selected");
 
             //Link search to existing company
-            if (newCompanyName || newCompanyId) {
-                if (newCompanyName) {
+            if (newMapName || newMapId) {
+                if (newMapName) {
                     var id = -1;
-                    if (newCompanyId) {
-                        id = newCompanyId;
+                    if (newMapId) {
+                        id = newMapId;
                     }
-
-                    mapFileData[companySearch] = {
-                        company: newCompanyName,
-                        id: id
+                    mapFileData[searchHeader] = {
+                        "name": newMapName,
+                        "id": id
                     }
                     $(this).parent().parent().removeClass("unverified").addClass("verified");
                     //$(this).parent().parent().find(".verifyControls");
+                    mapFileData = dwwFront.RemoveDuplicateMaps(mapFileData);
                 } else {
                     $.pnotify({
                         title: 'Mapping error',
@@ -88,7 +115,7 @@ var dwwFront = {
                 }
             }
 
-            dwwFront.BuildCompanyTable(companyQueryData);
+            dwwFront.BuildMappingTable(mapQueryData);
 
             console.log(mapFileData);
 
@@ -102,38 +129,40 @@ var dwwFront = {
             $(".verifyButton").html("Verify");
             $(this).html("Save");
             $(this).addClass("open");
-            dwwFront.BuildCompanyDropdown($(this).parent().find(".verifySection"));
-            var newCompanyName = $("<input id='newCompanyName' type='text' placeholder='Company Name'>").appendTo($(this).parent().find(".verifySection"));
-            var newCompanyId = $("<input id='newCompanyId' type='text' placeholder='Company ID'>").appendTo($(this).parent().find(".verifySection"));
+            dwwFront.BuildMapDropdown($(this).parent().find(".verifySection"));
+            var newMapName = $("<input id='newMapName' type='text' placeholder='" + capitalize(mapType) + " name'>").appendTo($(this).parent().find(".verifySection"));
+            var newMapId = $("<input id='newMapId' type='text' placeholder='" + capitalize(mapType) + " ID'>").appendTo($(this).parent().find(".verifySection"));
         }
     },
 
-    BuildCompanyDropdown: function(parent) {
+    BuildMapDropdown: function(parent) {
         var dropdown = $("<select>").appendTo($(parent)).change(function() {
             var name = $("select :selected").html();
             var id = $("select :selected").val()
             if ($("select :selected").html() == "-Role-") {
-                name = "role:" + $(this).parent().parent().parent().find(".companySearch").text();
+                name = "role:" + $(this).parent().parent().parent().find(".searchHeader").text();
                 id = "-1";
             } else if ($("select :selected").html() == "-Bad Data-") {
-                name = "baddata:" + $(this).parent().parent().parent().find(".companySearch").text();
+                name = "baddata:" + $(this).parent().parent().parent().find(".searchHeader").text();
                 id = "-1";
-            } else if ($("select :selected").html() == "--New Company--") {
+            } else if ($("select :selected").html() == "--New " + capitalize(mapType) + "--") {
                 name = ""
                 id = ""
             }
 
-            $(parent).find("#newCompanyName").val(name);
-            $(parent).find("#newCompanyId").val(id);
+            $(parent).find("#newMapName").val(name);
+            $(parent).find("#newMapId").val(id);
         });
 
-        $("<option>").attr("value", this.id).html("--New Company--").appendTo(dropdown);
-        $("<option>").attr("value", this.id).html("-Role-").appendTo(dropdown);
+        $("<option>").attr("value", this.id).html("--New " + capitalize(mapType) + "--").appendTo(dropdown);
         $("<option>").attr("value", this.id).html("-Bad Data-").appendTo(dropdown);
+        if (mapType == "company") {
+            $("<option>").attr("value", this.id).html("-Role-").appendTo(dropdown);
+        }
 
-        $.each(mapFileData, function() {
-            if (this.company.search("role:") < 0 && (this.company.search("baddata:") < 0)) {
-                $("<option>").attr("value", this.id).html(this.company).appendTo(dropdown);
+        $.each(reverseMapData, function() {
+            if (this.name.search("role:") < 0 && (this.name.search("baddata:") < 0)) {
+                $("<option>").attr("value", this.id).html(this.name).appendTo(dropdown);
             }
         });
 
@@ -145,45 +174,16 @@ var dwwFront = {
         $.each(listitems, function(idx, itm) {
             dropdown.append(itm);
         });
-    },
-
-    GetCompanyMap: function() {
-        $.ajax({
-            url: mapFileUrl,
-            type: "GET",
-            dataType: "json",
-            contentType: "application/json",
-            success: function(json) {
-                // //Get entries that match the map first to build up ui controls
-                // reversemapFileData = {}
-                // $.each(json, function(d) {
-                //     //Build reverse list
-                //     if (this.company in reversemapFileData) {
-                //         reversemapFileData[this.company].searches.push(d);
-                //     } else {
-                //         reversemapFileData[this.company] = {
-                //             id: this.id,
-                //             searches: [d]
-                //         }
-                //     }
-                // });
-                mapFileData = json;
-                dwwFront.GetCompanyTable();
-            },
-            error: function(xhr, status) {
-                console.log("HTTP problem!");
-            }
-        });
     }
 };
 
 
 $(document).ready(function() {
-    dwwFront.GetCompanyMap();
+    dwwFront.GetMapFile();
 
     $("#useMapButton").click(function() {
         bUsemapFileData = !bUsemapFileData;
-        dwwFront.BuildCompanyTable(companyQueryData);
+        dwwFront.BuildMappingTable(mapQueryData);
     });
 
     $("#uploadMap").click(function() {
@@ -199,7 +199,7 @@ $(document).ready(function() {
                     type: 'info',
                     animate_speed: 'fast'
                 });
-                dwwFront.BuildCompanyTable(companyQueryData);
+                dwwFront.BuildMappingTable(mapQueryData);
             },
             error: function(xhr, status) {
                 console.log("HTTP problem!");

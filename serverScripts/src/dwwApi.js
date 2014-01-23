@@ -146,8 +146,8 @@ exports.getCompanyList = function(callbackComplete) {
 exports.getRoleList = function(callbackComplete) {
     var query = [
         "MATCH (p:person)-[r:WORKED_FOR]-(c:company)",
-        "RETURN DISTINCT r.role AS role, COUNT(r.role) AS count",
-        "ORDER BY count DESC, r.role"
+        "RETURN DISTINCT r.role AS search, COUNT(r.role) AS searchcount",
+        "ORDER BY searchcount DESC, r.role"
     ].join("\n");
     var outJson = [];
 
@@ -157,8 +157,8 @@ exports.getRoleList = function(callbackComplete) {
         var outJson = [];
         for (var i = 0; i < results.length; i++) {
             outJson.push({
-                'role': results[i]['role'],
-                'count': results[i]['count']
+                'search': results[i]['search'],
+                'searchcount': results[i]['searchcount']
             });
         }
         callbackComplete(outJson);
@@ -171,7 +171,7 @@ exports.getCompanySearchMappings = function(callbackComplete) {
         "MATCH (p:person)-[r:WORKED_FOR]-(c:company)",
         "RETURN DISTINCT r.company AS search,",
         "COUNT(r.company) AS searchcount,",
-        "c.name AS company,",
+        "c.name AS name,",
         "c.id AS id,",
         "r.matchRatio AS match",
         "ORDER BY search"
@@ -186,7 +186,7 @@ exports.getCompanySearchMappings = function(callbackComplete) {
             outJson.push({
                 "search": results[i]['search'],
                 "searchcount": results[i]['searchcount'],
-                "company": results[i]['company'],
+                "name": results[i]['name'],
                 "id": results[i]['id'],
                 "match": results[i]['match'],
             });
