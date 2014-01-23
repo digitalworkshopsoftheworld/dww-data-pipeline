@@ -1,3 +1,2 @@
 #!/bin/bash
-
-node serverScripts/src/server.js &
+./serverScripts/src/node_modules/forever/bin/forever start serverScripts/src/server.js
