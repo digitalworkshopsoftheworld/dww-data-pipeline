@@ -6,6 +6,9 @@ var dww = require('../dwwApi.js'),
     queryString = require("querystring"),
     fs = require('fs');
 
+var companyMapFile = "companyMap.json";
+var roleMapFile = "roleMap.json";
+
 
 /*
  * Raw data routes
@@ -55,21 +58,44 @@ exports.index = function(req, res) {
     });
 };
 
-exports.getCompanyMap = function(req, res) {
+exports.companyMapper = function(req, res) {
     res.render('editor', {
-        title: 'DWW - Company Search Mappings'
+        title: 'DWW - Company Search Mappings',
+        mappingType: "company",
+        mappingListUrl: "list/companymap",
+        mappingFile: "js/" + companyMapFile
+    });
+};
+
+exports.roleMapper = function(req, res) {
+    res.render('editor', {
+        title: 'DWW - Role Search Mappings',
+        mappingType: "role",
+        mappingListUrl: "list/roles",
+        mappingFile: "js/" + roleMapFile
     });
 };
 
 exports.editCompanyMap = function(req, res) {
-    //console.log(req.body);
-    fs.writeFile(__dirname + '/../public/js/mapFile.json', JSON.stringify(req.body), function(err) {
+    fs.writeFile(__dirname + '/../public/js/' + companyMapFile, JSON.stringify(req.body), function(err) {
         if (err) return console.log(err);
-        console.log('Wrote mappings to > mapFile.json');
+        console.log('Wrote mappings to > ' + companyMapFile);
     });
 
     res.writeHead(200, {
         'Content-Type': 'text/html'
     });
-    res.end('updated mappings');
+    res.end('Updated mappings');
+};
+
+exports.editRoleMap = function(req, res) {
+    fs.writeFile(__dirname + '/../public/js/' + roleMapFile, JSON.stringify(req.body), function(err) {
+        if (err) return console.log(err);
+        console.log('Wrote mappings to > ' + roleMapFile);
+    });
+
+    res.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    res.end('Updated mappings');
 };

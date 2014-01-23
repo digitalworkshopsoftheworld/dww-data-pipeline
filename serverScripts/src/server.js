@@ -59,8 +59,11 @@ app.get('/list/companies', dww.companyList);
 app.get('/list/searches', dww.companySearchList);
 app.get('/list/companymap', dww.companyMappings);
 app.get('/list/roles', dww.roleList);
-app.get('/companymap', dww.getCompanyMap);
+app.get('/companymap', dww.companyMapper);
 app.post('/companymap', dww.editCompanyMap);
+app.get('/rolemap', dww.roleMapper);
+app.post('/companymap', dww.editRoleMap);
+
 
 /*
  * Start server

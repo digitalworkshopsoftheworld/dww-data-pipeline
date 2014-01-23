@@ -2,23 +2,28 @@ extends layout
 
 block includes
   script(src='/js/dwwFront.js')
+  script.
+    var mapType = "#{mappingType}";
+    var mapListUrl = "#{mappingListUrl}";
+    var mapFileUrl = "#{mappingFile}";
 
 block content
   div.top
-    h1 DWW Company Mappings
+    h1= title
     h3 Legend:
     p
       ul
         li
           span.verified &nbsp&nbsp&nbsp&nbsp
-          span  Mapping exists between search and company.
-        li
-          span.verified.role &nbsp&nbsp&nbsp&nbsp
-          span  Search term is a role rather than a company.
+          span  Mapping exists between search and #{mappingType}.
+        if mappingType == "company"
+          li
+            span.verified.role &nbsp&nbsp&nbsp&nbsp
+            span  Search term is a role rather than a #{mappingType}.
         li
           span.verified.baddata &nbsp&nbsp&nbsp&nbsp
-          span  Bad search term. Everything that isn't a role or an actual company search.
-          
+          span  Bad search term. Everything that isn't a proper search.
+
   div.container
     div#controls
       button#uploadMap Save changes
