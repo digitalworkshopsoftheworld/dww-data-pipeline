@@ -168,20 +168,17 @@ var dwwFront = {
                 }
             }
 
-            target.show();
-            //$(document.body).trigger("sticky_kit:recalc")
-
             //Cleanup
+            target.removeClass("open").show();
             verifySection.html("");
-            target.removeClass("open");
             openDialog = null;
+            //$(document.body).trigger("sticky_kit:recalc")
 
         } else {
             //Clear existing open dialogs
             target.addClass("open").hide();
-
             if (openDialog) {
-                $(openDialog).find("button .verifyButton.open").removeClass("open").show();
+                $(openDialog).find("button").removeClass("open").show();
                 $(openDialog).find("div.verifySection").html("");
             }
 
