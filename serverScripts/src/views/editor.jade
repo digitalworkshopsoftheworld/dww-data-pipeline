@@ -3,8 +3,9 @@ extends layout
 block includes
   link(rel='stylesheet', href='/stylesheets/editorStyle.css')
   script(src='/js/jquery.sticky-kit.min.js')
-  script(src='/js/stupidtable.min.js')
+  script(src='/js/stupidtable.min.js')    
   script.
+    var blacklist = "#{blacklist}".split(",");
     var mapType = "#{mappingType}";
     var mapListUrl = "#{mappingListUrl}";
     var mapFileUrl = "#{mappingFile}";

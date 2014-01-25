@@ -23,8 +23,8 @@ table {
 
 tr {
 	border-bottom: solid;
-	border-bottom-width: 1px 0;
-	border-bottom-color: #FFF;
+	border-bottom-width: 2px;
+	border-color: #FFF;
 	vertical-align: top;
 }
 
@@ -88,19 +88,19 @@ tbody.scroll {
 }
 
 #tableseperator{
-	width: 4%;
+	width: 2%;
 	display: inline-block;
 }
 
 #datatable { 
-	width: 62%;
+	width: 74%;
 	display: inline-block;
 	padding: 0px;
 	margin:0px;
 }
 
 #sidebar { 
-	width: 34%;
+	width: 24%;
 	display: inline-block;
 	left right top bottom: auto;
 	vertical-align: top;

@@ -63,7 +63,8 @@ exports.companyMapper = function(req, res) {
         title: 'DWW - Company Search maps',
         mappingType: "company",
         mappingListUrl: "list/companymap",
-        mappingFile: "js/" + companyMapFile + ".json"
+        mappingFile: "js/" + companyMapFile + ".json",
+        blacklist: []
     });
 };
 
@@ -72,7 +73,25 @@ exports.roleMapper = function(req, res) {
         title: 'DWW - Role maps',
         mappingType: "role",
         mappingListUrl: "list/roles",
-        mappingFile: "js/" + roleMapFile + ".json"
+        mappingFile: "js/" + roleMapFile + ".json",
+        blacklist: [
+            "2D",
+            "3D",
+            "Assistant",
+            "Associate",
+            "Supervisor",
+            "Digital",
+            "Head of",
+            "Senior",
+            "Supervising",
+            "Stereoscopic",
+            "Stereo",
+            "Junior",
+            "Lead",
+            "On Set",
+            "Runner",
+            "Modelmaker"
+        ]
     });
 };
 

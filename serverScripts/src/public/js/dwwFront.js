@@ -41,6 +41,7 @@ var dwwFront = {
         });
     },
 
+
     BuildReverseMap: function(mapFile) {
         //Get entries that match the map first to build up ui controls
         reverseMapFile = {}
@@ -102,18 +103,33 @@ var dwwFront = {
         }
 
         var nameHeaderTd = $("#s_" + data.orderid + " .nameHeader");
+        var searchHeaderTd = $("#s_" + data.orderid + " .searchHeader");
         var row = nameHeaderTd.parent();
 
         if (bUsemapFileData) {
+
+            //Blacklist
+            var clean = data.search.toLowerCase();
+            for (var i = 0; i < blacklist.length; i++) {
+                var term = blacklist[i].toLowerCase();
+                if (clean.search(term) > -1) {
+                    clean = clean.replace(term, '').trim();
+                }
+            }
+
+            searchHeaderTd.html(clean + " (" + searchHeaderTd.html() + ")");
+            //data[clean] = data.search;
+
+
             if (data.search in mapFileData) {
                 row.addClass('verified');
                 nameHeaderTd.html(mapFileData[data.search].name);
 
                 //Tag rows if they require special formatting based on identifiers (role/bad data etc)
-                if (mapFileData[data.search].name.search("role:") > -1) {
+                if (mapFileData[data.search].name.search("zzz_role:") > -1) {
                     row.addClass('role');
                 }
-                if (mapFileData[data.search].name.search("baddata:") > -1) {
+                if (mapFileData[data.search].name.search("zzz_baddata:") > -1) {
                     row.addClass('baddata');
                 }
             } else {
@@ -127,7 +143,7 @@ var dwwFront = {
     BuildTotalsTable: function() {
         $("#sidebar tbody").html("");
         $.each(reverseMapData, function(key, value) {
-            if (value.total < minSearchFilter) {
+            if (value.total < minSearchFilter || key.search("zzz_") > -1) {
                 return;
             }
             var row = $("<tr>").addClass("verified").appendTo($("#sidebar tbody"));
@@ -172,7 +188,6 @@ var dwwFront = {
             target.removeClass("open").show();
             verifySection.html("");
             openDialog = null;
-            //$(document.body).trigger("sticky_kit:recalc")
 
         } else {
             //Clear existing open dialogs
@@ -200,10 +215,10 @@ var dwwFront = {
             var name = $("select :selected").html();
             var id = $("select :selected").val()
             if ($("select :selected").html() == "-Role-") {
-                name = "role:" + $(this).parent().parent().parent().find(".searchHeader").text();
+                name = "zzz_role:" + $(this).parent().parent().parent().find(".searchHeader").text();
                 id = "-1";
             } else if ($("select :selected").html() == "-Bad Data-") {
-                name = "baddata:" + $(this).parent().parent().parent().find(".searchHeader").text();
+                name = "zzz_baddata:" + $(this).parent().parent().parent().find(".searchHeader").text();
                 id = "-1";
             } else if ($("select :selected").html() == "--New " + capitalize(mapType) + "--") {
                 name = ""
@@ -221,7 +236,7 @@ var dwwFront = {
         }
 
         $.each(reverseMapData, function(key, val) {
-            if (key.search("role:") < 0 && (key.search("baddata:") < 0)) {
+            if (key.search("zzz_role:") < 0 && (key.search("zzz_baddata:") < 0)) {
                 $("<option>").attr("value", this.id).html(key).appendTo(dropdown);
             }
         });
