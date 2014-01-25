@@ -6,8 +6,8 @@ var dww = require('../dwwApi.js'),
     queryString = require("querystring"),
     fs = require('fs');
 
-var companyMapFile = "companyMap.json";
-var roleMapFile = "roleMap.json";
+var companyMapFile = "companyMap";
+var roleMapFile = "roleMap";
 
 
 /*
@@ -63,7 +63,7 @@ exports.companyMapper = function(req, res) {
         title: 'DWW - Company Search maps',
         mappingType: "company",
         mappingListUrl: "list/companymap",
-        mappingFile: "js/" + companyMapFile
+        mappingFile: "js/" + companyMapFile + ".json"
     });
 };
 
@@ -72,14 +72,19 @@ exports.roleMapper = function(req, res) {
         title: 'DWW - Role maps',
         mappingType: "role",
         mappingListUrl: "list/roles",
-        mappingFile: "js/" + roleMapFile
+        mappingFile: "js/" + roleMapFile + ".json"
     });
 };
 
 exports.editCompanyMap = function(req, res) {
-    fs.writeFile(__dirname + '/../public/js/' + companyMapFile, JSON.stringify(req.body), function(err) {
+    var source = __dirname + '/../public/js/' + companyMapFile + ".json";
+    var dest = __dirname + '/../public/js/map_backups/' + companyMapFile + "_" + Math.round(new Date().getTime() / 1000) + ".json";
+    console.log("Backing up " + source + "\nto\n" + dest);
+    copyFileSync(source, dest);
+
+    fs.writeFile(__dirname + '/../public/js/' + companyMapFile + ".json", JSON.stringify(req.body), function(err) {
         if (err) return console.log(err);
-        console.log('Wrote mappings to > ' + companyMapFile);
+        console.log('Wrote mappings to > ' + companyMapFile + ".json");
     });
 
     res.writeHead(200, {
@@ -89,9 +94,14 @@ exports.editCompanyMap = function(req, res) {
 };
 
 exports.editRoleMap = function(req, res) {
-    fs.writeFile(__dirname + '/../public/js/' + roleMapFile, JSON.stringify(req.body), function(err) {
+    var source = __dirname + '/../public/js/' + roleMapFile + ".json";
+    var dest = __dirname + '/../public/js/map_backups/' + roleMapFile + "_" + Math.round(new Date().getTime() / 1000) + ".json";
+    console.log("Backing up " + source + "\nto\n" + dest);
+    copyFileSync(source, dest);
+
+    fs.writeFile(__dirname + '/../public/js/' + roleMapFile + ".json", JSON.stringify(req.body), function(err) {
         if (err) return console.log(err);
-        console.log('Wrote mappings to > ' + roleMapFile);
+        console.log('Wrote mappings to > ' + roleMapFile + ".json");
     });
 
     res.writeHead(200, {
@@ -99,3 +109,12 @@ exports.editRoleMap = function(req, res) {
     });
     res.end('Updated mappings');
 };
+
+copyFileSync = function(source, dest) {
+    data = fs.readFileSync(source, "utf8");
+    fs.writeFile(dest, data, function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+}

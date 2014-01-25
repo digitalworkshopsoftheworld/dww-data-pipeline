@@ -2,6 +2,8 @@ var mapFileData;
 var reverseMapData;
 var mapQueryData;
 var bUsemapFileData = true;
+var minSearchFilter = 1;
+var openDialog;
 
 var capitalize = function(str) {
     return str.replace(/(?:^|\s)\S/g, function(a) {
@@ -31,8 +33,6 @@ var dwwFront = {
             contentType: "application/json",
             success: function(json) {
                 mapFileData = json;
-                reverseMapData = dwwFront.BuildReverseMap(mapFileData);
-                console.log(reverseMapData);
                 dwwFront.GetMappingListTable();
             },
             error: function(xhr, status) {
@@ -51,9 +51,14 @@ var dwwFront = {
             } else {
                 reverseMapFile[this.name] = {
                     "id": this.id,
-                    "searches": [d]
+                    "searches": [d],
+                    "total": 0
                 }
             }
+        });
+
+        $("#datatable .verified").each(function(d) {
+            reverseMapFile[$(this).find(".nameHeader").text()].total += parseInt($(this).find(".searchCountHeader").text());
         });
 
         return reverseMapFile;
@@ -64,49 +69,84 @@ var dwwFront = {
         $('#datatable tbody').html("");
 
         //Build table
-        $.each(json, function() {
-            var rowStr = "<tr><td class='searchHeader'>" + this.search + "</td>";
-            rowStr += "<td class='nameHeader'>" + this.name + "</td>";
-            rowStr += "<td class='searchCountHeader'>" + this.searchcount + "</td>";
-            rowStr += "<td class='verifyControls'><div class='verifySection'></div><button class='verifyButton'></button></td></tr>";
-            var table = $('#datatable tbody');
-            var row = $(rowStr).appendTo(table);
-            var editButton = $(row).find(".verifyControls button").button({
-                text: false,
-                icons: {
-                    primary: "ui-icon-pencil"
+        $.each(json, dwwFront.BuildRow);
+
+        //Build totals table
+        reverseMapData = dwwFront.BuildReverseMap(mapFileData);
+        dwwFront.BuildTotalsTable();
+        $(document.body).trigger("sticky_kit:recalc")
+
+        console.log(reverseMapData);
+    },
+
+    BuildRow: function() {
+        if (this.searchcount < minSearchFilter) {
+            return;
+        }
+
+        var table = $('#datatable tbody');
+        var row = $("<tr>").attr("id", "s_" + this.orderid).appendTo(table);
+        var searchHeaderTd = $("<td>").addClass('searchHeader').text(this.search).appendTo(row);
+        var nameHeaderTd = $("<td>").addClass('nameHeader').text(this.name).appendTo(row);
+        var searchCountTd = $("<td>").addClass('searchCountHeader').text(this.searchcount).appendTo(row);
+        var verifyControls = $("<td>").addClass('verifyControls').appendTo(row);
+        var verifySection = $("<div>").addClass('verifySection').appendTo(verifyControls);
+        var verifyButton = $("<button>").addClass('verifyButton').click(dwwFront.MapControls).appendTo(verifyControls);
+
+        dwwFront.UpdateRow(this);
+    },
+
+    UpdateRow: function(key, data) {
+        if (!data) {
+            data = key;
+        }
+
+        var nameHeaderTd = $("#s_" + data.orderid + " .nameHeader");
+        var row = nameHeaderTd.parent();
+
+        if (bUsemapFileData) {
+            if (data.search in mapFileData) {
+                row.addClass('verified');
+                nameHeaderTd.html(mapFileData[data.search].name);
+
+                //Tag rows if they require special formatting based on identifiers (role/bad data etc)
+                if (mapFileData[data.search].name.search("role:") > -1) {
+                    row.addClass('role');
                 }
-            }).click(dwwFront.MapControls);
-
-            if (bUsemapFileData) {
-                if (this.search in mapFileData) {
-                    $(row).addClass('verified');
-                    $(row).find(".nameHeader").html(mapFileData[this.search].name);
-
-                    //Tag rows if they require special formatting based on identifiers (role/bad data etc)
-                    if (mapFileData[this.search].name.search("role:") > -1) {
-                        $(row).addClass('role');
-                    }
-                    if (mapFileData[this.search].name.search("baddata:") > -1) {
-                        $(row).addClass('baddata');
-                    }
-                } else {
-                    $(row).addClass("unverified");
+                if (mapFileData[data.search].name.search("baddata:") > -1) {
+                    row.addClass('baddata');
                 }
             } else {
-                $(row).addClass("unverified");
+                row.addClass("unverified");
             }
+        } else {
+            row.addClass("unverified");
+        }
+    },
+
+    BuildTotalsTable: function() {
+        $("#sidebar tbody").html("");
+        $.each(reverseMapData, function(key, value) {
+            if (value.total < minSearchFilter) {
+                return;
+            }
+            var row = $("<tr>").addClass("verified").appendTo($("#sidebar tbody"));
+            var mappedNameTd = $("<td>").addClass("mappedNameHeader").html(key).appendTo(row);
+            var countTotalTd = $("<td>").addClass("countTotalHeader").html(value.total).appendTo(row);
         });
     },
 
     MapControls: function() {
-        var editButton = $(this);
-        if ($(this).hasClass("open")) {
+        var target = $(this);
+        var verifySection = target.parent().find("div.verifySection");
+
+        //Close editor dialog and update table
+        if (target.hasClass("open")) {
 
             var newMapName = $("#newMapName").val();
             var newMapId = $("#newMapId").val();
-            var searchHeader = $(this).parent().parent().find(".searchHeader").text();
-            var dropdownOption = $(this).parent().find(".verifySection select :selected");
+            var searchHeader = target.parent().parent().find("td.searchHeader").text();
+            var dropdownOption = target.parent().find("div.verifySection select :selected");
 
             //Link search to existing company
             if (newMapName || newMapId) {
@@ -119,37 +159,42 @@ var dwwFront = {
                         "name": newMapName,
                         "id": id
                     }
-                    $(this).parent().parent().removeClass("unverified").addClass("verified");
-                    dwwFront.BuildMappingTable(mapQueryData);
+                    $(target).parent().parent().removeClass("unverified").addClass("verified");
+
+                    //Update table values
+                    $.each(mapQueryData, dwwFront.UpdateRow);
                     reverseMapData = dwwFront.BuildReverseMap(mapFileData);
-                } else {
-                    $.pnotify({
-                        title: 'Mapping error',
-                        text: 'Need to provide a name!',
-                        animate_speed: 'fast'
-                    });
+                    dwwFront.BuildTotalsTable();
                 }
             }
 
-            $(editButton).show();
+            target.show();
+            //$(document.body).trigger("sticky_kit:recalc")
 
             //Cleanup
-            //$(this).html("Verify");
-            $(this).parent().find(".verifySection").html("");
-            $(this).removeClass("open");
+            verifySection.html("");
+            target.removeClass("open");
+            openDialog = null;
+
         } else {
             //Clear existing open dialogs
-            $(this).hide();
-            $(".verifySection").html("");
-            $(this).addClass("open");
-            dwwFront.BuildMapDropdown($(this).parent().find(".verifySection"));
-            $("<input id='newMapName' type='text' placeholder='" + capitalize(mapType) + " name'>").appendTo($(this).parent().find(".verifySection"));
-            if (mapType != "role") {
-                $("<input id='newMapId' type='text' placeholder='" + capitalize(mapType) + " ID'>").appendTo($(this).parent().find(".verifySection"));
+            target.addClass("open").hide();
+
+            if (openDialog) {
+                $(openDialog).find("button .verifyButton.open").removeClass("open").show();
+                $(openDialog).find("div.verifySection").html("");
             }
-            $("<button id='saveFieldButton'>Save</button>").button().click(function() {
-                $(editButton).click();
-            }).appendTo($(this).parent().find(".verifySection"));
+
+            openDialog = target.parent();
+
+            dwwFront.BuildMapDropdown(verifySection);
+            $("<input id='newMapName' type='text' placeholder='" + capitalize(mapType) + " name'>").appendTo(verifySection);
+            if (mapType != "role") {
+                $("<input id='newMapId' type='text' placeholder='" + capitalize(mapType) + " ID'>").appendTo(verifySection);
+            }
+            $("<button id='saveFieldButton'>Save</button>").click(function() {
+                target.click();
+            }).appendTo(verifySection);
         }
     },
 
@@ -195,33 +240,38 @@ var dwwFront = {
     }
 };
 
-
 $(document).ready(function() {
     dwwFront.GetMapFile();
 
-    $("#useMapButton").button().click(function() {
+    //$("#sidebar").stick_in_parent();
+    $("#maintable").stupidtable().bind('aftertablesort', function(event, data) {
+        $("#maintable button").click(dwwFront.MapControls);
+    });
+    $("#totalstable").stupidtable();
+
+    $("#useMapButton").click(function() {
         bUsemapFileData = !bUsemapFileData;
         dwwFront.BuildMappingTable(mapQueryData);
     });
 
-    $("#uploadMap").button().click(function() {
+    $("#uploadMap").click(function() {
         $.ajax({
             url: document.URL,
             type: "POST",
             data: JSON.stringify(mapFileData),
             contentType: "application/json",
             success: function(data) {
-                $.pnotify({
-                    title: 'Finished',
-                    text: 'Mappings updated.',
-                    type: 'info',
-                    animate_speed: 'fast'
-                });
-                dwwFront.BuildMappingTable(mapQueryData);
+                alert("Upload complete");
+                //dwwFront.BuildMappingTable(mapQueryData);
             },
             error: function(xhr, status) {
                 console.log("HTTP problem!");
             }
         });
+    });
+
+    $("#searchCutoff").change(function() {
+        minSearchFilter = $(this).val();
+        dwwFront.BuildMappingTable(mapQueryData);
     });
 });

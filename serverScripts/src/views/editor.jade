@@ -2,12 +2,14 @@ extends layout
 
 block includes
   link(rel='stylesheet', href='/stylesheets/editorStyle.css')
-  script(src='/js/dwwFront.js')
+  script(src='/js/jquery.sticky-kit.min.js')
+  script(src='/js/stupidtable.min.js')
   script.
     var mapType = "#{mappingType}";
     var mapListUrl = "#{mappingListUrl}";
     var mapFileUrl = "#{mappingFile}";
   - var capitalize = function(str) {return str.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });};
+  script(src='/js/dwwFront.js')
 
 block content
   div.top
@@ -30,16 +32,36 @@ block content
     div#controls
       button#uploadMap Save changes
       button#useMapButton Toggle map file
+      input(id='searchCutoff', type='number', min='0', step='1', placeholder='Minimum number of searches')
     div#datatable
-      table
+      table#maintable
         thead
-          td.searchHeader Search
-          td.nameHeader= capitalize(mappingType)
-          td.searchCountHeader Count
-          td.verifyControls
-        tbody
+          tr
+            th(data-sort='string', class='searchHeader') 
+              a(href='#') Search
+            th(data-sort='string', class='nameHeader')
+              a(href='#')= capitalize(mappingType)
+            th(data-sort='int', class='searchCountHeader') 
+              a(href='#') Count
+            th.verifyControls
+        tbody.scroll
+    div#tableseperator
+    div#sidebar
+      table#totalstable
+        thead
+          tr
+            th(data-sort='string', class='nameHeader') 
+              a(href='#') Mapped #{capitalize(mappingType)}
+            if mappingType == "company"
+              th(data-sort='int', class='countTotalHeader') 
+                a(href='#') Total Companies
+            if mappingType == "role"
+              th(data-sort='int', class='countTotalHeader') 
+                a(href='#') Total Roles
+        tbody.scroll
 
   div.footer
+  
 
   div#companydropdown.dropdown.dropdown-tip.dropdown-scroll
     ul.dropdown-menu

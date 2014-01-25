@@ -21,6 +21,36 @@ table {
 	background-color: #EAEAEA;
 }
 
+tr {
+	border-bottom: solid;
+	border-bottom-width: 1px 0;
+	border-bottom-color: #FFF;
+	vertical-align: top;
+}
+
+th a {
+	color: #000000;
+	text-decoration: none;
+}
+
+tbody.scroll {
+	overflow-x: hidden;
+	overflow-y: scroll; 
+	height: 500px;
+}
+
+.nameHeader {
+	width:30%;
+}
+
+.mappedNameHeader {
+	width:70%;
+}
+
+.countTotalHeader {
+	width:30%;
+}
+
 .verified {
 	background-color: #63D1F4;
 }
@@ -39,7 +69,7 @@ table {
 }
 
 #newMapName, #newMapId {
-	width: 275px;
+	width: 270px;
 	float: left;
 	padding-left: 0px;
 	padding-right: 0px;
@@ -49,9 +79,31 @@ table {
 	float:left;
 }
 
-tr {
-	border-bottom: solid;
-	border-bottom-width: 1px 0;
-	border-bottom-color: #FFF;
+.container {
+	width: 100%;
+}
+
+#searchCutoff{
+	width: 200px;
+}
+
+#tableseperator{
+	width: 4%;
+	display: inline-block;
+}
+
+#datatable { 
+	width: 62%;
+	display: inline-block;
+	padding: 0px;
+	margin:0px;
+}
+
+#sidebar { 
+	width: 34%;
+	display: inline-block;
+	left right top bottom: auto;
 	vertical-align: top;
+	padding:0px;
+	margin-left:0px;
 }

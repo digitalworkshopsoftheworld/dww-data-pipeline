@@ -154,9 +154,12 @@ exports.getRoleList = function(callbackComplete) {
     db.query(query, params = {}, function(err, results) {
         if (err) throw err;
 
+        console.log(results);
+
         var outJson = [];
         for (var i = 0; i < results.length; i++) {
             outJson.push({
+                'orderid': i,
                 'search': results[i]['search'],
                 'searchcount': results[i]['searchcount']
             });
@@ -184,6 +187,7 @@ exports.getCompanySearchMappings = function(callbackComplete) {
         var outJson = [];
         for (var i = 0; i < results.length; i++) {
             outJson.push({
+                'orderid': i,
                 "search": results[i]['search'],
                 "searchcount": results[i]['searchcount'],
                 "name": results[i]['name'],
