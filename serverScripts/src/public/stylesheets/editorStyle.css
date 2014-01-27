@@ -21,16 +21,20 @@ table {
 	background-color: #EAEAEA;
 }
 
-tr {
-	border-bottom: solid;
-	border-bottom-width: 2px;
-	border-color: #FFF;
-	vertical-align: top;
-}
-
 th a {
 	color: #000000;
 	text-decoration: none;
+}
+
+th{
+	background-color: #CCC;
+}
+
+td {
+	border-bottom: solid;
+	border-bottom-width: 1px;
+	border-color: #FFF;
+	vertical-align: top;
 }
 
 tbody.scroll {
@@ -39,17 +43,35 @@ tbody.scroll {
 	height: 500px;
 }
 
-.nameHeader {
+.searchHeader{
 	width:30%;
 }
 
-.mappedNameHeader {
-	width:70%;
+.searchFilteredHeader{
+	width:27.5%;
+}
+
+.nameHeader{
+	width:27.5%;
+}
+
+.searchCountHeader{
+	width:10%;
+}
+
+.verifyControls {
+	width: 35%;
+}
+
+.mappedNameHeader  {
+	width:90%;
 }
 
 .countTotalHeader {
-	width:30%;
+	width:10%;
 }
+
+
 
 .verified {
 	background-color: #63D1F4;
@@ -65,18 +87,24 @@ tbody.scroll {
 
 .verifySection {
 	float: left;
-	width: 275px;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
-#newMapName, #newMapId {
-	width: 270px;
+#newMapName, #newMapId, .dropdown {
+	width: 100%;
 	float: left;
 	padding-left: 0px;
 	padding-right: 0px;
 }
 
-#saveFieldButton {
+.verifyButton {
 	float:left;
+	width: 100%;
+}
+
+#saveFieldButton {
+	width:left;
 }
 
 .container {
@@ -98,6 +126,19 @@ tbody.scroll {
 	padding: 0px;
 	margin:0px;
 }
+
+#blacklisttable { 
+	width:100%;
+	display: inline-block;
+	margin-top:10px;
+}
+
+
+#totalstable { 
+	width:100%;
+	display: inline-block;
+}
+
 
 #sidebar { 
 	width: 24%;

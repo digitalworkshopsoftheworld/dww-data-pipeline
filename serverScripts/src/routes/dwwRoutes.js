@@ -77,6 +77,8 @@ exports.roleMapper = function(req, res) {
         blacklist: [
             "2D",
             "3D",
+            "2-d",
+            "3-d",
             "Assistant",
             "Associate",
             "Supervisor",

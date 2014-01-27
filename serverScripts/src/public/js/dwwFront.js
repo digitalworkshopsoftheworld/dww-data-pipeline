@@ -4,6 +4,13 @@ var mapQueryData;
 var bUsemapFileData = true;
 var minSearchFilter = 1;
 var openDialog;
+var firstRun = true;
+var showOnlyFiltered = false;
+
+var blacklistTotals = {};
+$.each(blacklist, function() {
+    blacklistTotals[this] = 0;
+});
 
 var capitalize = function(str) {
     return str.replace(/(?:^|\s)\S/g, function(a) {
@@ -57,8 +64,8 @@ var dwwFront = {
                 }
             }
         });
-
-        $("#datatable .verified").each(function(d) {
+        $("#maintable tbody .verified").each(function(d) {
+            //console.log($(this).find(".nameHeader"), reverseMapFile);
             reverseMapFile[$(this).find(".nameHeader").text()].total += parseInt($(this).find(".searchCountHeader").text());
         });
 
@@ -67,88 +74,131 @@ var dwwFront = {
 
     BuildMappingTable: function(json) {
         mapQueryData = json;
-        $('#datatable tbody').html("");
+        var table = $('#datatable tbody').html("");
 
         //Build table
-        $.each(json, dwwFront.BuildRow);
+        var table = $('#datatable tbody');
+        var uniqueRows = {};
+        $.each(json, function() {
+            if (this.searchcount < minSearchFilter) {
+                return;
+            }
+            var builtRow = dwwFront.BuildRow(this);
+            uniqueRows[builtRow.filter] = builtRow.row;
+        });
+
+        $.each(uniqueRows, function() {
+            $(this).appendTo(table);
+        });
 
         //Build totals table
         reverseMapData = dwwFront.BuildReverseMap(mapFileData);
         dwwFront.BuildTotalsTable();
+        dwwFront.BuildBlacklistTable();
         $(document.body).trigger("sticky_kit:recalc")
 
-        console.log(reverseMapData);
+        //console.log(reverseMapData);
+        //console.log(blacklistTotals);
+        if (firstRun) {
+            $("#maintable .searchFilteredHeader").hide();
+            firstRun = false;
+        }
     },
 
-    BuildRow: function() {
-        if (this.searchcount < minSearchFilter) {
-            return;
-        }
-
-        var table = $('#datatable tbody');
-        var row = $("<tr>").attr("id", "s_" + this.orderid).appendTo(table);
-        var searchHeaderTd = $("<td>").addClass('searchHeader').text(this.search).appendTo(row);
-        var nameHeaderTd = $("<td>").addClass('nameHeader').text(this.name).appendTo(row);
-        var searchCountTd = $("<td>").addClass('searchCountHeader').text(this.searchcount).appendTo(row);
+    BuildRow: function(data) {
+        var row = $("<tr>").attr("id", "s_" + data.orderid);
+        var searchHeaderTd = $("<td>").addClass('searchHeader').text(data.search).appendTo(row);
+        var searchFilterDiv = $("<td>").addClass("searchFilteredHeader").appendTo(row);
+        var nameHeaderTd = $("<td>").addClass('nameHeader').text(data.name).appendTo(row);
+        var searchCountTd = $("<td>").addClass('searchCountHeader').text(data.searchcount).appendTo(row);
         var verifyControls = $("<td>").addClass('verifyControls').appendTo(row);
         var verifySection = $("<div>").addClass('verifySection').appendTo(verifyControls);
-        var verifyButton = $("<button>").addClass('verifyButton').click(dwwFront.MapControls).appendTo(verifyControls);
+        var verifyButton = $("<button>").addClass('verifyButton').html("Edit").click(dwwFront.MapControls).appendTo(verifyControls);
 
-        dwwFront.UpdateRow(this);
+        var filteredRow = dwwFront.UpdateRow(row, data.search, data);
+        return {
+            'filter': filteredRow.cleanRow,
+            'row': row
+        };
     },
 
-    UpdateRow: function(key, data) {
-        if (!data) {
-            data = key;
-        }
-
-        var nameHeaderTd = $("#s_" + data.orderid + " .nameHeader");
-        var searchHeaderTd = $("#s_" + data.orderid + " .searchHeader");
-        var row = nameHeaderTd.parent();
+    UpdateRow: function(row, key, data) {
+        var nameHeaderTd = row.find("td.nameHeader");
+        //var searchHeaderTd = row.find("td .searchHeader");
+        var searchFilterTd = row.find("td.searchFilteredHeader");
 
         if (bUsemapFileData) {
 
+            var searchTerm = key;
+
             //Blacklist
-            var clean = data.search.toLowerCase();
+            var clean = searchTerm.toLowerCase();
+            var modified = false;
             for (var i = 0; i < blacklist.length; i++) {
                 var term = blacklist[i].toLowerCase();
                 if (clean.search(term) > -1) {
+                    blacklistTotals[blacklist[i]] += 1;
                     clean = clean.replace(term, '').trim();
+                    modified = true;
                 }
             }
 
-            searchHeaderTd.html(clean + " (" + searchHeaderTd.html() + ")");
-            //data[clean] = data.search;
+            if (modified) {
+                searchFilterTd.html(clean);
+                //console.log(data);
+                //mapQueryData[clean] = data.search;
+            } else {
+                searchFilterTd.html(searchTerm);
+            }
 
+            //console.log("Post: ", key, ", ", mapFileData);
 
-            if (data.search in mapFileData) {
-                row.addClass('verified');
-                nameHeaderTd.html(mapFileData[data.search].name);
+            if (searchTerm in mapFileData) {
+
+                row.addClass('verified').removeClass('unverified');
+                nameHeaderTd.html(mapFileData[searchTerm].name);
 
                 //Tag rows if they require special formatting based on identifiers (role/bad data etc)
-                if (mapFileData[data.search].name.search("zzz_role:") > -1) {
+                if (mapFileData[searchTerm].name.search("zzz_role:") > -1) {
                     row.addClass('role');
                 }
-                if (mapFileData[data.search].name.search("zzz_baddata:") > -1) {
+                if (mapFileData[searchTerm].name.search("zzz_baddata:") > -1) {
                     row.addClass('baddata');
                 }
             } else {
-                row.addClass("unverified");
+                row.addClass("unverified").removeClass('verified');
             }
         } else {
-            row.addClass("unverified");
+            row.addClass("unverified").removeClass('verified');
         }
+
+        return {
+            'search': key,
+            'cleanRow': clean
+        };
     },
 
     BuildTotalsTable: function() {
-        $("#sidebar tbody").html("");
+        $("#totalstable tbody").html("");
         $.each(reverseMapData, function(key, value) {
             if (value.total < minSearchFilter || key.search("zzz_") > -1) {
                 return;
             }
-            var row = $("<tr>").addClass("verified").appendTo($("#sidebar tbody"));
+            var row = $("<tr>").addClass("verified").appendTo($("#totalstable tbody"));
             var mappedNameTd = $("<td>").addClass("mappedNameHeader").html(key).appendTo(row);
             var countTotalTd = $("<td>").addClass("countTotalHeader").html(value.total).appendTo(row);
+        });
+    },
+
+    BuildBlacklistTable: function() {
+        $("#blacklisttable tbody").html("");
+        $.each(blacklistTotals, function(key, value) {
+            // if (value.total < minSearchFilter || key.search("zzz_") > -1) {
+            //     return;
+            // }
+            var row = $("<tr>").addClass("verified").appendTo($("#blacklisttable tbody"));
+            var mappedNameTd = $("<td>").addClass("mappedNameHeader").html(key).appendTo(row);
+            var countTotalTd = $("<td>").addClass("countTotalHeader").html(value).appendTo(row);
         });
     },
 
@@ -175,12 +225,14 @@ var dwwFront = {
                         "name": newMapName,
                         "id": id
                     }
-                    $(target).parent().parent().removeClass("unverified").addClass("verified");
+
+                    //console.log("Pre: ", searchHeader, ", ", newMapName, ", ", mapFileData);
 
                     //Update table values
-                    $.each(mapQueryData, dwwFront.UpdateRow);
+                    dwwFront.UpdateRow(target.parent().parent(), searchHeader, mapFileData);
                     reverseMapData = dwwFront.BuildReverseMap(mapFileData);
                     dwwFront.BuildTotalsTable();
+                    dwwFront.BuildBlacklistTable();
                 }
             }
 
@@ -211,7 +263,7 @@ var dwwFront = {
     },
 
     BuildMapDropdown: function(parent) {
-        var dropdown = $("<select>").appendTo($(parent)).change(function() {
+        var dropdown = $("<select>").addClass("dropdown").appendTo($(parent)).change(function() {
             var name = $("select :selected").html();
             var id = $("select :selected").val()
             if ($("select :selected").html() == "-Role-") {
@@ -260,6 +312,8 @@ $(document).ready(function() {
         $("#maintable button").click(dwwFront.MapControls);
     });
     $("#totalstable").stupidtable();
+    $("#blacklisttable").stupidtable();
+
 
     $("#useMapButton").click(function() {
         bUsemapFileData = !bUsemapFileData;
@@ -284,6 +338,34 @@ $(document).ready(function() {
 
     $("#searchCutoff").change(function() {
         minSearchFilter = $(this).val();
-        dwwFront.BuildMappingTable(mapQueryData);
+        $("#maintable tbody .searchCountHeader").each(function() {
+            if (parseInt($(this).text()) < minSearchFilter) {
+                $(this).parent().hide();
+            } else {
+                $(this).parent().show();
+            }
+        });
+    });
+
+    $("#showFiltered").click(function() {
+        showOnlyFiltered = !showOnlyFiltered;
+        if (showOnlyFiltered) {
+            $(this).html("Filtered searches (ON)");
+            $("#maintable .searchFilteredHeader").each(function() {
+                var filtered = $(this);
+
+                if (filtered.text()) {
+                    filtered.parent().show();
+                } else {
+                    filtered.parent().hide();
+                }
+            });
+            $("#maintable .searchFilteredHeader").show();
+            $("#maintable .searchHeader").hide();
+        } else {
+            $(this).html("Filtered searches (OFF)");
+            $("#maintable .searchFilteredHeader").hide();
+            $("#maintable .searchHeader").show();
+        };
     });
 });

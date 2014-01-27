@@ -32,7 +32,8 @@ block content
   div.container
     div#controls
       button#uploadMap Save changes
-      button#useMapButton Toggle map file
+      button#useMapButton Map file
+      button#showFiltered Filtered searches (OFF)
       input(id='searchCutoff', type='number', min='0', step='1', placeholder='Minimum number of searches')
     div#datatable
       table#maintable
@@ -40,6 +41,8 @@ block content
           tr
             th(data-sort='string', class='searchHeader') 
               a(href='#') Search
+            th(data-sort='string', class='searchFilteredHeader') 
+              a(href='#') Filtered Search
             th(data-sort='string', class='nameHeader')
               a(href='#')= capitalize(mappingType)
             th(data-sort='int', class='searchCountHeader') 
@@ -51,14 +54,18 @@ block content
       table#totalstable
         thead
           tr
-            th(data-sort='string', class='nameHeader') 
+            th(data-sort='string', class='mappedNameHeader') 
               a(href='#') Mapped #{capitalize(mappingType)}
-            if mappingType == "company"
-              th(data-sort='int', class='countTotalHeader') 
-                a(href='#') Total Companies
-            if mappingType == "role"
-              th(data-sort='int', class='countTotalHeader') 
-                a(href='#') Total Roles
+            th(data-sort='int', class='countTotalHeader') 
+              a(href='#') Total
+        tbody.scroll
+      table#blacklisttable
+        thead
+          tr
+            th(data-sort='string', class='mappedNameHeader') 
+              a(href='#') Blacklist terms
+            th(data-sort='int', class='countTotalHeader') 
+              a(href='#') Total
         tbody.scroll
 
   div.footer
