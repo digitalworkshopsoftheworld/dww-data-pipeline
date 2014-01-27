@@ -84,7 +84,20 @@ var dwwFront = {
                 return;
             }
             var builtRow = dwwFront.BuildRow(this);
-            uniqueRows[builtRow.filter] = builtRow.row;
+            var oldTotal = parseInt($(builtRow.row).find(".searchCountHeader").text());
+            var targetSearch = builtRow.search;
+            if (showOnlyFiltered) {
+                targetSearch = builtRow.filter;
+            }
+            if (uniqueRows[targetSearch]) {
+                var currentTotalHeader = $(uniqueRows[targetSearch]).find(".searchCountHeader");
+                var currentTotal = parseInt($(currentTotalHeader).text());
+                var newTotal = currentTotal += oldTotal;
+                currentTotalHeader.text(newTotal);
+                console.log("Running total for", builtRow.filter, newTotal);
+            } else {
+                uniqueRows[targetSearch] = builtRow.row;
+            }
         });
 
         $.each(uniqueRows, function() {
@@ -101,7 +114,7 @@ var dwwFront = {
         //console.log(blacklistTotals);
         if (firstRun) {
             //$("#maintable .searchFilteredHeader").hide();
-            $("#showFiltered").click();
+            //$("#showFiltered").click();
             firstRun = false;
         }
     },
@@ -118,6 +131,7 @@ var dwwFront = {
 
         var filteredRow = dwwFront.UpdateRow(row, data.search, data);
         return {
+            'search': filteredRow.search,
             'filter': filteredRow.cleanRow,
             'row': row
         };
@@ -356,6 +370,7 @@ $(document).ready(function() {
 
     $("#showFiltered").click(function() {
         showOnlyFiltered = !showOnlyFiltered;
+        dwwFront.BuildMappingTable(mapQueryData);
         if (showOnlyFiltered) {
             $(this).html("Filtered searches (ON)");
             $("#maintable .searchFilteredHeader").each(function() {
