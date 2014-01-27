@@ -100,7 +100,8 @@ var dwwFront = {
         //console.log(reverseMapData);
         //console.log(blacklistTotals);
         if (firstRun) {
-            $("#maintable .searchFilteredHeader").hide();
+            //$("#maintable .searchFilteredHeader").hide();
+            $("#showFiltered").click();
             firstRun = false;
         }
     },
