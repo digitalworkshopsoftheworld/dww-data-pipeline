@@ -212,6 +212,7 @@ var dwwFront = {
             var newMapName = $("#newMapName").val();
             var newMapId = $("#newMapId").val();
             var searchHeader = target.parent().parent().find("td.searchHeader").text();
+            var searchFilteredHeader = target.parent().parent().find("td.searchFilteredHeader").text();
             var dropdownOption = target.parent().find("div.verifySection select :selected");
 
             //Link search to existing company
@@ -221,7 +222,12 @@ var dwwFront = {
                     if (newMapId) {
                         id = newMapId;
                     }
-                    mapFileData[searchHeader] = {
+                    var searchMap = searchHeader;
+                    if (showOnlyFiltered) {
+                        searchMap = searchFilteredHeader;
+                    }
+
+                    mapFileData[searchMap] = {
                         "name": newMapName,
                         "id": id
                     }
@@ -229,7 +235,7 @@ var dwwFront = {
                     //console.log("Pre: ", searchHeader, ", ", newMapName, ", ", mapFileData);
 
                     //Update table values
-                    dwwFront.UpdateRow(target.parent().parent(), searchHeader, mapFileData);
+                    dwwFront.UpdateRow(target.parent().parent(), searchMap, mapFileData);
                     reverseMapData = dwwFront.BuildReverseMap(mapFileData);
                     dwwFront.BuildTotalsTable();
                     dwwFront.BuildBlacklistTable();

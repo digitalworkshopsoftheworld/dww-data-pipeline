@@ -30,13 +30,5 @@
     "stereo compositor": {
         "name": "Compositor",
         "id": -1
-    },
-    "animator": {
-        "name": "Animator",
-        "id": -1
-    },
-    "lead 3d animator": {
-        "name": "Animator",
-        "id": -1
     }
 }
