@@ -94,7 +94,6 @@ var dwwFront = {
                 var currentTotal = parseInt($(currentTotalHeader).text());
                 var newTotal = currentTotal += oldTotal;
                 currentTotalHeader.text(newTotal);
-                console.log("Running total for", builtRow.filter, newTotal);
             } else {
                 uniqueRows[targetSearch] = builtRow.row;
             }
