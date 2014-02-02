@@ -77,6 +77,7 @@ exports.getAllPeopleAsJson = function(callbackComplete) {
                 companySearch: line.r._data.data.company,
                 companyMatchRatio: line.r._data.data.matchRatio,
                 personRole: line.r._data.data.role,
+                personMappedRole: line.r._data.data.trueRole,
                 movieReleaseYear: line.r._data.data.release,
                 matchedCompanyId: line.c._data.data.id,
                 matchedCompanyName: line.c._data.data.name
