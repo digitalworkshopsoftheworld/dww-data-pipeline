@@ -35,7 +35,7 @@ block content
       button#useMapButton Map file
       button#showFiltered Filtered searches (OFF)
       input(id='searchCutoff', type='number', min='0', step='1', placeholder='Minimum number of searches')
-    div#datatable
+    div#datatable.activeEdit
       table#maintable
         thead
           tr
@@ -47,17 +47,23 @@ block content
               a(href='#')= capitalize(mappingType)
             th(data-sort='int', class='searchCountHeader') 
               a(href='#') Count
+            th
+              button#verifyControlsToggle.headerToggle Verify (ON)
             th.verifyControls
         tbody.scroll
     div#tableseperator
-    div#sidebar
+    div#sidebar.inactiveEdit
       table#totalstable
         thead
           tr
             th(data-sort='string', class='mappedNameHeader') 
               a(href='#') Mapped #{capitalize(mappingType)}
+            th(data-sort='string', class='locationHeader')
+              a(href='#') Location
             th(data-sort='int', class='countTotalHeader') 
               a(href='#') Total
+            th
+              button#locationControlsToggle.headerToggle Locations (OFF)
         tbody.scroll
       table#blacklisttable
         thead

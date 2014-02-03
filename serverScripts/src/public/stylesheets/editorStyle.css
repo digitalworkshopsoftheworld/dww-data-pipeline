@@ -63,8 +63,12 @@ tbody.scroll {
 	width: 35%;
 }
 
+.locationControls {
+	width: 20%;
+}
+
 .mappedNameHeader  {
-	width:90%;
+	width:30%;
 }
 
 .countTotalHeader {
@@ -85,7 +89,7 @@ tbody.scroll {
 	background-color: #F87531;
 }
 
-.verifySection {
+.editSection {
 	float: left;
 	padding-left: 2px;
 	padding-right: 2px;
@@ -98,8 +102,25 @@ tbody.scroll {
 	padding-right: 0px;
 }
 
+#newLocationName, #newLocationLat, #newLocationLong {
+	width: 49%;
+	float: left;
+}
+
+#saveFieldButton {
+	float: left;
+}
+
 .verifyButton {
 	float:left;
+}
+
+.locationButton {
+	float:left;
+	display: none;
+}
+
+.headerToggle {
 	width: 100%;
 }
 
@@ -120,11 +141,37 @@ tbody.scroll {
 	display: inline-block;
 }
 
+
+
 #datatable { 
-	width: 74%;
 	display: inline-block;
 	padding: 0px;
 	margin:0px;
+}
+
+#sidebar { 
+	display: inline-block;
+	left right top bottom: auto;
+	vertical-align: top;
+	padding:0px;
+	margin-left:0px;
+}
+
+#datatable.activeEdit{
+	width: 68%;
+}
+
+#datatable.inactiveEdit{
+	width: 49%;
+}
+
+
+#sidebar.activeEdit {
+	width: 49%;
+}
+
+#sidebar.inactiveEdit {
+	width: 30%;
 }
 
 #blacklisttable { 
@@ -133,18 +180,10 @@ tbody.scroll {
 	margin-top:10px;
 }
 
-
 #totalstable { 
 	width:100%;
 	display: inline-block;
 }
 
 
-#sidebar { 
-	width: 24%;
-	display: inline-block;
-	left right top bottom: auto;
-	vertical-align: top;
-	padding:0px;
-	margin-left:0px;
-}
+

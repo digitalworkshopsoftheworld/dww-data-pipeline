@@ -152,14 +152,16 @@ class ImdbScraper:
 
                         # Load company from pre-downloaded company or from map list
                         if options.useCompanyMap:
-                            if vfxRole.company in self.companyMap:
-                                mappedCompanyName = self.companyMap[vfxRole.company]['name']
+                            if vfxRole.company in self.companyMap['maps']:
+                                mappedCompanyName = self.companyMap['maps'][vfxRole.company]['name']
                                 if 'zzz_baddata' in mappedCompanyName:
                                     print "Found mapped baddata. Ignoring company"
                                 elif 'zzz_role' in mappedCompanyName:
                                     print "Found mapped role. Ignoring company"
                                 else:
-                                    existingCompany = Company.Company(companyID=self.companyMap[vfxRole.company]['id'], myName=self.companyMap[vfxRole.company]['name'])
+                                    existingCompany = Company.Company(
+                                        companyID=self.companyMap['maps'][vfxRole.company]['id'], 
+                                        myName=self.companyMap['maps'][vfxRole.company]['name'])
                                     companyIsMapped = True
 
                         # Only search for the company if the map or memory has no entry for the company
@@ -191,7 +193,7 @@ class ImdbScraper:
                             existingCompany = compDB[1]
 
                             # Keep a flag in the DB for mapped companies
-                            compNode.update_properties({'isMapped':companyIsMapped})
+                            compNode.update_properties({'isMapped':companyIsMapped, 'location':''})
 
                             print("Attach '" + str(personInMovie['name']) + "' to '" + 
                                 str(compNode.get_properties()['name']) + "' for '" + str(vfxRole.role) + "'")
@@ -483,8 +485,9 @@ class ImdbScraper:
             mapList[record.values[0]] = {
                 "id": record.values[3], "company": record.values[2]}
 
+        mapCombined = {"maptype":"company","locations":{},"maps":mapList}
         jsonOut = open(mapFile, 'wb')
-        json.dump(mapList, jsonOut)
+        json.dump(mapCombined, jsonOut)
         jsonOut.close()
 
         print str(len(result)) + " results written to map file " + mapFile
@@ -493,29 +496,63 @@ class ImdbScraper:
     # Database updateers
     # - Anything that modifies the database AFTER initial creation
     #
-    def SetTrueRoles(self, roleFile):
-        # Build reverse map first
-        print "== Remapping true roles with rolemap file"
-        # reverseMap = {}
-        # for role in roleFile:
-        #     if roleFile[role]['name'] in reverseMap:
-        #         reverseMap[roleFile[role]['name']]['searches'].append(roleFile[role])
-        #     else:
-        #         reverseMap[roleFile[role]['name']] = {'id':roleFile[role]['id'], 'searches':[], 'total': 0}
+    def SetTrueRoles(self):
+        if scraper.roleMap:
+            # Build reverse map first
+            print "== Remapping true roles with rolemap file"
+            # reverseMap = {}
+            # for role in roleFile:
+            #     if roleFile[role]['name'] in reverseMap:
+            #         reverseMap[roleFile[role]['name']]['searches'].append(roleFile[role])
+            #     else:
+            #         reverseMap[roleFile[role]['name']] = {'id':roleFile[role]['id'], 'searches':[], 'total': 0}
 
-        # DB query to get role relationships
-        query = neo4j.CypherQuery(
-            neo4jHandle, "MATCH (p:person)-[r:WORKED_FOR]-(c:company) RETURN r as roleRel")
-        result = query.execute()
+            # DB query to get role relationships
+            query = neo4j.CypherQuery(
+                neo4jHandle, "MATCH (p:person)-[r:WORKED_FOR]-(c:company) RETURN r as roleRel")
+            result = query.execute()
 
-        for key in result:
-            roleRel = key.values[0]
-            trueRole = ""
-            if roleRel['role'] in roleFile:
-                trueRole = roleFile[roleRel['role']]['name']
-            Log.String(
-                "Mapping " + str(roleRel['role']) + " to " + str(trueRole))
-            roleRel.update_properties({'trueRole': trueRole})
+            for key in result:
+                roleRel = key.values[0]
+                trueRole = ""
+                if roleRel['role'] in self.roleMap['maps']:
+                    trueRole = self.roleMap['maps'][roleRel['role']]['name']
+                Log.String(
+                    "Mapping " + str(roleRel['role']) + " to " + str(trueRole))
+                roleRel.update_properties({'trueRole': trueRole})
+        else:
+            print "No rolemap set!"
+
+    def SetLocations(self):
+        if scraper.companyMap:
+            print "== Setting locations from companymap file"
+            query = neo4j.CypherQuery(
+                neo4jHandle, "MATCH (c:company) RETURN c")
+            result = query.execute()
+
+            reverseMap = {}
+            companyMap = scraper.companyMap['maps']
+            for company in companyMap:
+                if companyMap[company]['name'] in reverseMap:
+                    reverseMap[companyMap[company]['name']]['searches'].append(companyMap[company])
+                else:
+                    reverseMap[companyMap[company]['name']] = {'id':companyMap[company]['id'], 'searches':[], 'total': 0}
+                    if 'location' in  companyMap[company]:
+                        reverseMap[companyMap[company]['name']]['location'] = companyMap[company]['location']
+                    else:
+                        reverseMap[companyMap[company]['name']]['location'] = ""
+
+            for key in result:
+                companyProps = key.values[0].get_properties()
+
+                if companyProps['isMapped']:
+                    if companyProps['name'] in reverseMap:
+                        if 'location' in reverseMap[companyProps['name']]:
+                            if reverseMap[companyProps['name']]['location']:
+                                latLongObj = scraper.companyMap['locations'][reverseMap[companyProps['name']]['location']]
+                                print "Setting location for '" + companyProps['name'] + "': " + latLongObj['lat'] + ", " + latLongObj['long']
+                                key.values[0].update_properties({'location': str(latLongObj['lat'] + " " + latLongObj['long'])})
+
 
     def SetJumpRoles(self):
         print "== Building jump paths"
@@ -646,9 +683,11 @@ parser.add_option("--companymap", action="store", type="string",
 parser.add_option("--rolemap", action="store", type="string",
                   dest="useRoleMap", help="Map file for remapping roles."),
 parser.add_option("--buildmappedroles", action="store_true",
-                  dest="buildMappedRoles", help="Builds true roles from map files."),
+                  dest="buildMappedRoles", help="Sets true roles from map files."),
 parser.add_option("--buildjumpnodes", action="store_true",
                   dest="buildJumpNodes", help="Builds jump nodes for company jumps."),
+parser.add_option("--buildlocations", action="store_true",
+                  dest="buildLocations", help="Sets locations from company map."),
 parser.add_option("--run", action='store_true',
                   help="Run the IMDB scraper", dest="runScraper", default=False)
 (options, args) = parser.parse_args()
@@ -702,6 +741,9 @@ if options.useCompanyMap:
     try:
         with open(options.useCompanyMap, 'rb'):
             scraper.companyMap = json.load(open(options.useCompanyMap, 'rb'))
+            if scraper.companyMap['maptype'] != "company":
+                print "Wrong map supplied. Expected 'company', got " + scraper.roleMap['maptype']
+                sys.exit(1)
     except IOError:
         print "Couldn't find company map file"
         sys.exit(1)
@@ -710,16 +752,18 @@ if options.useRoleMap:
     try:
         with open(options.useRoleMap, 'rb'):
             scraper.roleMap = json.load(open(options.useRoleMap, 'rb'))
+            if scraper.roleMap['maptype'] != "role":
+                print "Wrong map supplied. Expected 'role', got " + scraper.roleMap['maptype']
+                sys.exit(1)
     except IOError:
         print "Couldn't find role map file"
         sys.exit(1)
 
 if options.buildMappedRoles:
-    if(roleMap):
-        scraper.SetTrueRoles(roleMap)
-    else:
-        print "No rolemap file set"
-        sys.exit(1)
+    scraper.SetTrueRoles()
+    
+if options.buildLocations:
+    scraper.SetLocations()
 
 if options.buildJumpNodes:
     scraper.SetJumpRoles()
@@ -731,5 +775,7 @@ if options.runScraper:
 
     # Make connections
     scraper.ConnectPeopleToCompanies(personList)
+    if options.useRoleMap:
+        scraper.SetTrueRoles()
 
 print('===== Finished =====')

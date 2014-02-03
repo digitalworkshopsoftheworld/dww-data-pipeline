@@ -2,12 +2,8 @@
     "maptype": "company",
     "locations": {
         "Alberquerque": {
-            "lat": "45",
-            "long": "-0.4"
-        },
-        "Dubai": {
-            "lat": "1",
-            "long": "56"
+            "lat": 45,
+            "long": -0.4
         }
     },
     "maps": {
@@ -25,13 +21,11 @@
         },
         "one of us": {
             "name": "One Of Us",
-            "id": "0208242",
-            "location": "Alberquerque"
+            "id": "0208242"
         },
         "duboi": {
             "name": "Duboi",
-            "id": "0059345",
-            "location": "Dubai"
+            "id": "0059345"
         },
         "eye candy": {
             "name": "Eye Candy",
@@ -39,8 +33,7 @@
         },
         "hammerhead productions": {
             "name": "Hammerhead Productions",
-            "id": "0028079",
-            "location": "Dubai"
+            "id": "0028079"
         },
         "lux visual effects": {
             "name": "Lux Visual Effects",
