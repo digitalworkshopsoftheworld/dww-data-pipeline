@@ -209,11 +209,15 @@ var dwwFront = {
             }
             var row = $("<tr>").addClass("verified").appendTo($("#totalstable tbody"));
             var mappedNameTd = $("<td>").addClass("mappedNameHeader").html(key).appendTo(row);
-            var locationTd = $("<td>").addClass("locationHeader").html([value['location']]).appendTo(row);
+            if (mapType == "company") {
+                var locationTd = $("<td>").addClass("locationHeader").html([value['location']]).appendTo(row);
+            }
             var countTotalTd = $("<td>").addClass("countTotalHeader").html(value.total).appendTo(row);
-            var editTd = $("<td>").addClass("locationControls").appendTo(row);
-            var editSectionDiv = $("<div>").addClass("editSection").appendTo(editTd);
-            var editButton = $("<button>").addClass('locationButton headerToggle').html("Edit").click(dwwFront.LocationControls).appendTo(editTd);
+            if (mapType == "company") {
+                var editTd = $("<td>").addClass("locationControls").appendTo(row);
+                var editSectionDiv = $("<div>").addClass("editSection").appendTo(editTd);
+                var editButton = $("<button>").addClass('locationButton headerToggle').html("Edit").click(dwwFront.LocationControls).appendTo(editTd);
+            }
         });
     },
 
