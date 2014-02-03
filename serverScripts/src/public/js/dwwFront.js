@@ -59,7 +59,6 @@ var dwwFront = {
             if (this.name in reverseMapFile) {
                 reverseMapFile[this.name].searches.push(d);
             } else {
-                console.log(this);
                 reverseMapFile[this.name] = {
                     "id": this.id,
                     "searches": [d],
@@ -125,6 +124,7 @@ var dwwFront = {
             });
             $("#maintable .searchFilteredHeader").show();
             $("#maintable .searchHeader").hide();
+            $("#verifyControlsToggle").click();
             firstRun = false;
         }
     },
@@ -203,7 +203,6 @@ var dwwFront = {
     BuildTotalsTable: function() {
         $("#totalstable tbody").html("");
         $.each(reverseMapData, function(key, value) {
-            console.log(key, value);
             if (value.total < minSearchFilter || key.search("zzz_") > -1) {
                 return;
             }
@@ -301,6 +300,8 @@ var dwwFront = {
         var target = $(this);
         var editSection = target.parent().find("div.editSection");
         var mappedName = target.parent().parent().find("td.mappedNameHeader").text();
+        var locationheader = target.parent().parent().find("td.locationHeader");
+
 
         //Close editor dialog and update table
         if (target.hasClass("open")) {
@@ -321,12 +322,12 @@ var dwwFront = {
                     $.each(reverseMapData[mappedName].searches, function() {
                         console.log("Adding " + newLocationName + " to " + this);
                         mapFileData.maps[this]['location'] = newLocationName;
-                        console.log(mapFileData.maps[this])
                     });
 
                     locationData = mapFileData.locations;
                     reverseMapData = dwwFront.BuildReverseMap(mapFileData.maps);
-                    dwwFront.BuildTotalsTable();
+                    $(locationheader).text(newLocationName);
+                    //dwwFront.BuildTotalsTable();
                 }
             }
             //Cleanup
@@ -421,7 +422,9 @@ $(document).ready(function() {
     $("#maintable").stupidtable().bind('aftertablesort', function(event, data) {
         $("#maintable button").click(dwwFront.MapControls);
     });
-    $("#totalstable").stupidtable();
+    $("#totalstable").stupidtable().bind('aftertablesort', function(event, data) {
+        $("#totalstable button").click(dwwFront.LocationControls);
+    });
     $("#blacklisttable").stupidtable();
 
 
@@ -469,6 +472,7 @@ $(document).ready(function() {
         if (openDialog) {
             $(openDialog).find("button").removeClass("open");
             $(openDialog).find("div.editSection").html("");
+            openDialog = null
         }
     });
 
@@ -484,6 +488,7 @@ $(document).ready(function() {
         if (openDialog) {
             $(openDialog).find("button").removeClass("open");
             $(openDialog).find("div.editSection").html("");
+            openDialog = null
         }
     });
 
