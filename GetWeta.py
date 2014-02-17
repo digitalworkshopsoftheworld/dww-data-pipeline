@@ -305,10 +305,9 @@ class ImdbScraper:
                 Log.String(" * ...done.")
         else:
             try:
-                with open(pickleFileName, 'rb'):
+                with open(pickleFileName, 'rb') as pickleFile:
                     Log.String(
                         " * Cache file exists for '" + str(imdbObj) + "'")
-                    pickleFile = open(pickleFileName, 'rb')
                     Log.String(" * Loading " + str(nodeType) + " '" + str(
                         imdbObj) + "' from cache")
                     cachedList = pickle.load(pickleFile)
@@ -525,33 +524,35 @@ class ImdbScraper:
 
     def SetLocations(self):
         if scraper.companyMap:
+
             print "== Setting locations from companymap file"
             query = neo4j.CypherQuery(
                 neo4jHandle, "MATCH (c:company) RETURN c")
             result = query.execute()
 
-            reverseMap = {}
+            # reverseMap = {}
             companyMap = scraper.companyMap['maps']
-            for company in companyMap:
-                if companyMap[company]['name'] in reverseMap:
-                    reverseMap[companyMap[company]['name']]['searches'].append(companyMap[company])
-                else:
-                    reverseMap[companyMap[company]['name']] = {'id':companyMap[company]['id'], 'searches':[], 'total': 0}
-                    if 'location' in  companyMap[company]:
-                        reverseMap[companyMap[company]['name']]['location'] = companyMap[company]['location']
-                    else:
-                        reverseMap[companyMap[company]['name']]['location'] = ""
+            # for company in companyMap:
+            #     if companyMap[company]['name'] in reverseMap:
+            #         reverseMap[companyMap[company]['name']]['searches'].append(companyMap[company])
+            #     else:
+            #         reverseMap[companyMap[company]['name']] = {'id':companyMap[company]['id'], 'searches':[], 'total': 0}
+            #         if 'location' in  companyMap[company]:
+            #             reverseMap[companyMap[company]['name']]['location'] = companyMap[company]['location']
+            #         else:
+            #             reverseMap[companyMap[company]['name']]['location'] = ""
 
+            locations = scraper.companyMap['locations']
+            
             for key in result:
                 companyProps = key.values[0].get_properties()
+                key.values[0].update_properties({'location':"", 'region':""})
 
                 if companyProps['isMapped']:
-                    if companyProps['name'] in reverseMap:
-                        if 'location' in reverseMap[companyProps['name']]:
-                            if reverseMap[companyProps['name']]['location']:
-                                latLongObj = scraper.companyMap['locations'][reverseMap[companyProps['name']]['location']]
-                                print "Setting location for '" + companyProps['name'] + "': " + latLongObj['lat'] + ", " + latLongObj['long']
-                                key.values[0].update_properties({'location': str(latLongObj['lat'] + " " + latLongObj['long'])})
+                    if companyProps['name'] in locations:
+                        if locations[companyProps['name']]['geoLoc']:
+                            print "Setting location for '" + companyProps['name'] + "': " + locations[companyProps['name']]['geoLoc']
+                            key.values[0].update_properties({'location': locations[companyProps['name']]['geoLoc'], 'region':   locations[companyProps['name']]['region']})
 
 
     def SetJumpRoles(self):
@@ -739,8 +740,8 @@ if options.buildCompanyMapFile:
     sys.exit(0)
 if options.useCompanyMap:
     try:
-        with open(options.useCompanyMap, 'rb'):
-            scraper.companyMap = json.load(open(options.useCompanyMap, 'rb'))
+        with open(options.useCompanyMap, 'rb') as companyMapFile:
+            scraper.companyMap = json.load(companyMapFile)
             if scraper.companyMap['maptype'] != "company":
                 print "Wrong map supplied. Expected 'company', got " + scraper.roleMap['maptype']
                 sys.exit(1)
@@ -750,8 +751,8 @@ if options.useCompanyMap:
 
 if options.useRoleMap:
     try:
-        with open(options.useRoleMap, 'rb'):
-            scraper.roleMap = json.load(open(options.useRoleMap, 'rb'))
+        with open(options.useRoleMap, 'rb') as roleMapFile:
+            scraper.roleMap = json.load(roleMapFile, 'rb')
             if scraper.roleMap['maptype'] != "role":
                 print "Wrong map supplied. Expected 'role', got " + scraper.roleMap['maptype']
                 sys.exit(1)
