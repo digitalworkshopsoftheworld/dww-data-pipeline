@@ -22,10 +22,32 @@ exports.dumpCSV = function(req, res) {
 
 exports.dumpJSON = function(req, res) {
     dww.getAllPeopleAsJson(function(data) {
-        res.json({
-            people: data
-        });
+        res.json(data);
     });
+};
+
+exports.jumpList = function(req, res) {
+    var urlData = url.parse(req.url, true).query;
+
+    if (urlData['filter']) {
+        if (!urlData['target']) {
+            res.send("No target specified for filter.");
+            return;
+        }
+        //if (!urlData['dir']) urlData['dir'] = "none";
+        if (!urlData['grouping']) urlData['grouping'] = "person";
+        if (!urlData['format']) urlData['format'] = "json";
+    }
+
+    dww.getAllPeopleAsJson(function(data) {
+        if (urlData['format'] == 'json') {
+            res.json(data);
+        } else if (urlData['format'] == 'csv') {
+            res.header('content-type', 'text/csv');
+            res.header('content-disposition', 'attachment; filename=jumps_' + urlData['dir'] + '.csv');
+            res.send(data);
+        }
+    }, true, urlData);
 };
 
 exports.companyList = function(req, res) {

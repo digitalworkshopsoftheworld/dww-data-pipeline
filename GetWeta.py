@@ -159,9 +159,11 @@ class ImdbScraper:
                                 elif 'zzz_role' in mappedCompanyName:
                                     print "Found mapped role. Ignoring company"
                                 else:
+
                                     existingCompany = Company.Company(
                                         companyID=self.companyMap['maps'][vfxRole.company]['id'], 
-                                        myName=self.companyMap['maps'][vfxRole.company]['name'])
+                                        name=self.companyMap['maps'][vfxRole.company]['name'])
+                                    Log.String(" * Found company in map: " + str(existingCompany['name']))
                                     companyIsMapped = True
 
                         # Only search for the company if the map or memory has no entry for the company
@@ -285,7 +287,7 @@ class ImdbScraper:
                         date = self.ParseEarliestDate(imdbObj['release dates'])
                     elif imdbObj.has_key('year'):
                         date = imdbObj['year']
-                    nodeProperties['release'] = date
+                    nodeProperties['release'] = str(date)
                     nodeProperties['name'] = imdbObj['title']
                     nodeIndex = self.movieIndex
                 elif nodeType == "person":
@@ -344,6 +346,12 @@ class ImdbScraper:
                 splitDate[0] = year
                 splitDate[1] = str(list(calendar.month_name).index(splitDate[1]))
                 splitDate[2] = day
+
+                # Pad dates with zeroes so they become filterable
+                for i in range(len(splitDate)):
+                    if len(splitDate[i]) < 2:
+                        splitDate[i] = "0" + splitDate[i]
+
                 return "-".join(splitDate)
         return outDate
 
@@ -516,6 +524,8 @@ class ImdbScraper:
                 trueRole = ""
                 if roleRel['role'] in self.roleMap['maps']:
                     trueRole = self.roleMap['maps'][roleRel['role']]['name']
+                    if("zzz_baddata" in trueRole):
+                        trueRole = ""
                 Log.String(
                     "Mapping " + str(roleRel['role']) + " to " + str(trueRole))
                 roleRel.update_properties({'trueRole': trueRole})
@@ -639,10 +649,42 @@ class ImdbScraper:
         # Create the jump
         #if(lastJumpPath):
             #neo4jHandle.create(lastJumpPath)
+
+    def FixUnpaddedDates(self):
+        print "Padding relationship date values..."
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (p:person)-[r:WORKED_FOR]-(c:company) RETURN r")
+        result = query.execute()
+        progress = 0.0
+        total = len(result)
+        progressPercent = 0
+        lastProgressPercent = 0
+
+        for record in result:
+            date = str(record.values[0].get_properties()['release'])
+            splitDate = date.split('-')
+            if len(splitDate) > 2:
+                for i in range(len(splitDate)):
+                    if len(splitDate[i]) < 2:
+                        splitDate[i] = "0" + splitDate[i]
+                fixedDate = "-".join(splitDate)
+                record.values[0].update_properties({'release': fixedDate})
+                Log.String(" * Adjusted date:" + fixedDate)
+                
+                progress += 1
+                progressPercent = int(round((progress / total) * 100))
+                if progressPercent != lastProgressPercent:
+                    print str(progressPercent) + "%"
+                    lastProgressPercent = progressPercent
+            else:
+                record.values[0].update_properties({'release': str("-".join(splitDate))})
+
+
+
+
 #
 # Class for storing a role and associated company
 #
-
 
 class VFXRole:
 
@@ -691,6 +733,8 @@ parser.add_option("--buildlocations", action="store_true",
                   dest="buildLocations", help="Sets locations from company map."),
 parser.add_option("--run", action='store_true',
                   help="Run the IMDB scraper", dest="runScraper", default=False)
+parser.add_option("--fix-dates", action='store_true',
+                  help="Pads release dates with zeroes", dest="fixDates", default=False)
 (options, args) = parser.parse_args()
 
 # Create DB handle
@@ -734,6 +778,9 @@ if options.resetAll or options.resetCompanies or options.resetMovies or options.
     if options.resetPeople:
         scraper.ResetPeople()
 
+if options.fixDates:
+    scraper.FixUnpaddedDates()
+
 # Mappings
 if options.buildCompanyMapFile:
     scraper.BuildCompanyMap(options.companyMapFile)
@@ -752,7 +799,7 @@ if options.useCompanyMap:
 if options.useRoleMap:
     try:
         with open(options.useRoleMap, 'rb') as roleMapFile:
-            scraper.roleMap = json.load(roleMapFile, 'rb')
+            scraper.roleMap = json.load(roleMapFile)
             if scraper.roleMap['maptype'] != "role":
                 print "Wrong map supplied. Expected 'role', got " + scraper.roleMap['maptype']
                 sys.exit(1)
@@ -778,5 +825,7 @@ if options.runScraper:
     scraper.ConnectPeopleToCompanies(personList)
     if options.useRoleMap:
         scraper.SetTrueRoles()
+    if options.useCompanyMap:
+        scraper.SetLocations()
 
 print('===== Finished =====')

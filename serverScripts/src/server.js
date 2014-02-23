@@ -56,6 +56,7 @@ app.all('/', function(req, res, next) {
 app.get('/', dww.index);
 app.get('/all/json', dww.dumpJSON);
 app.get('/all/csv', dww.dumpCSV);
+app.get('/list/jumps', dww.jumpList);
 app.get('/list/companies', dww.companyList);
 app.get('/list/searches', dww.companySearchList);
 app.get('/list/companymap', dww.companyMappings);
