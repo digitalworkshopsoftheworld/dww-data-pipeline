@@ -1,25 +1,81 @@
 {
     "regions": {
-        "Toronto": "43.663898, -79.382401",
-        " Hyderabad": "17.384982,78.48669",
-        "Kaohsiung": "23.008964,120.665374",
-        "Berkeley_CA": "37.877563, -122.272682",
-        "Mumbai": "19.075665,72.877537",
-        "Sydney": "-33.770015, 151.210327‎",
-        "Piedmont_Quebec": "45.904344, -74.120636",
-        "Wellington": "-41.178654,174.81102",
-        "Burbank_CA": "34.186814, -118.307991",
-        "London": "51.526688, -0.120850",
-        "Santa Maria": "34.954337,-120.435272",
-        "New York": "40.736852, -74.001160‎",
-        "Vancouver": "49.273181, -123.112106",
-        "Location": "Lat Long",
-        "Los Angeles": "34.104982, -118.245850",
-        "Munich": "48.136767,11.582916",
-        "San Francisco": "37.785911, -122.419281",
-        "Frankfurt": "50.120138, 8.682632",
-        "Montreal": "45.546755, -73.550720",
-        "Adelaide": "-34.880580, 138.594246‎"
+        "toronto": {
+            "geoLoc": "43.663898, -79.382401",
+            "globalRegion": "canada"
+        },
+        " hyderabad": {
+            "geoLoc": "17.384982,78.48669",
+            "globalRegion": "india"
+        },
+        "kaohsiung": {
+            "geoLoc": "23.008964,120.665374",
+            "globalRegion": "taiwan"
+        },
+        "mumbai": {
+            "geoLoc": "19.075665,72.877537",
+            "globalRegion": "india"
+        },
+        "piedmont": {
+            "geoLoc": "45.904344, -74.120636",
+            "globalRegion": "canada"
+        },
+        "sydney": {
+            "geoLoc": "-33.770015, 151.210327‎",
+            "globalRegion": "australia"
+        },
+        "wellington": {
+            "geoLoc": "-41.178654,174.81102",
+            "globalRegion": "new zealand"
+        },
+        "london": {
+            "geoLoc": "51.526688, -0.120850",
+            "globalRegion": "united kingdom"
+        },
+        "munich": {
+            "geoLoc": "48.136767,11.582916",
+            "globalRegion": "germany"
+        },
+        "santa maria": {
+            "geoLoc": "34.954337,-120.435272",
+            "globalRegion": "california"
+        },
+        "new york": {
+            "geoLoc": "40.736852, -74.001160‎",
+            "globalRegion": "new york"
+        },
+        "vancouver": {
+            "geoLoc": "49.273181, -123.112106",
+            "globalRegion": "canada"
+        },
+        "burbank": {
+            "geoLoc": "34.186814, -118.307991",
+            "globalRegion": "california"
+        },
+        "los angeles": {
+            "geoLoc": "34.104982, -118.245850",
+            "globalRegion": "california"
+        },
+        "berkeley": {
+            "geoLoc": "37.877563, -122.272682",
+            "globalRegion": "california"
+        },
+        "san francisco": {
+            "geoLoc": "37.785911, -122.419281",
+            "globalRegion": "california"
+        },
+        "frankfurt": {
+            "geoLoc": "50.120138, 8.682632",
+            "globalRegion": "germany"
+        },
+        "montreal": {
+            "geoLoc": "45.546755, -73.550720",
+            "globalRegion": "canada"
+        },
+        "adelaide": {
+            "geoLoc": "-34.880580, 138.594246‎",
+            "globalRegion": "australia"
+        }
     },
     "maps": {
         "pre-vis": {
@@ -75,6 +131,10 @@
             "name": "Crimson",
             "id": "0213639"
         },
+        "esc": {
+            "name": "zzz_baddata:esc",
+            "id": "-1"
+        },
         "post mango": {
             "name": "Post Mango",
             "id": "0384167"
@@ -112,6 +172,10 @@
             "name": "Weta Digital",
             "id": "0005031"
         },
+        "mpc vancouver": {
+            "name": "Moving Picture Company",
+            "id": "0323573"
+        },
         "sony": {
             "name": "Sony",
             "id": "0001799"
@@ -119,6 +183,10 @@
         "dreamworks": {
             "name": "Dreamworks",
             "id": "0151275"
+        },
+        "prpvfx": {
+            "name": "PRPVFX Limited",
+            "id": "0097347"
         },
         "ca scanline productions": {
             "name": "CA Scanline Production",
@@ -181,8 +249,8 @@
             "id": "0326735"
         },
         "cfx": {
-            "name": "CFX",
-            "id": "0064023"
+            "name": "Centropolis Effects",
+            "id": "0063439"
         },
         "frantic films": {
             "name": "Frantic Films",
@@ -217,6 +285,10 @@
             "id": "0016492"
         },
         "svengali visual effects": {
+            "name": "Svengali Visual Effects",
+            "id": "0115871"
+        },
+        "svengali fx": {
             "name": "Svengali Visual Effects",
             "id": "0115871"
         },
@@ -359,6 +431,10 @@
         "lookfx": {
             "name": "Look FX",
             "id": "0276862"
+        },
+        "'blawp' animation unit": {
+            "name": "zzz_baddata:'blawp' animation unit",
+            "id": "-1"
         },
         "pixar": {
             "name": "Pixar",
@@ -531,6 +607,10 @@
             "name": "Mill Film",
             "id": "0200573"
         },
+        "gray matter": {
+            "name": "Gray Matter FX",
+            "id": "0087090"
+        },
         "lipsync post": {
             "name": "Lipsync Post",
             "id": "0110638"
@@ -583,6 +663,10 @@
             "name": "Logan",
             "id": "0251136"
         },
+        "london": {
+            "name": "zzz_baddata:london",
+            "id": "-1"
+        },
         "lead modeler": {
             "name": "zzz_role:lead modeler",
             "id": "-1"
@@ -610,6 +694,10 @@
         "teamworks digital": {
             "name": "Teamworks Digital",
             "id": "0124873"
+        },
+        "'red sea' sequence": {
+            "name": "zzz_baddata:'red sea' sequence",
+            "id": "-1"
         },
         "the imaginarium studios": {
             "name": "The Imaginarium Studios",
@@ -709,6 +797,10 @@
             "name": "BlueBolt",
             "id": "0286378"
         },
+        "title sequence": {
+            "name": "zzz_role:title sequence",
+            "id": "-1"
+        },
         "rainmaker animation & visual effects": {
             "name": "Rainmaker Animation & Visual Effects",
             "id": "0157814"
@@ -754,6 +846,7 @@
             "id": "0451280"
         },
         "the senate vfx": {
+            "location": "London",
             "name": "The Senate VFX",
             "id": -1
         },
@@ -841,6 +934,10 @@
             "name": "Cutting Edge",
             "id": "0423260"
         },
+        "dqi": {
+            "name": "Dream Quest Images",
+            "id": "0042356"
+        },
         "method design": {
             "name": "Method Design",
             "id": "0372080"
@@ -921,6 +1018,10 @@
             "name": "Digital Frontier",
             "id": "0142006"
         },
+        "framestore ny": {
+            "name": "Framestore",
+            "id": "0103818"
+        },
         "michael kaelin & associates": {
             "name": "Michael Kaelin & Associates",
             "id": "0200533"
@@ -928,6 +1029,10 @@
         "3dsite": {
             "name": "3DSite",
             "id": "0122531"
+        },
+        "the magic camera company": {
+            "name": "Magic Camera Company",
+            "id": "0050003"
         },
         "boy wonder": {
             "name": "Boy Wonder Visual Effects",
@@ -1360,6 +1465,10 @@
             "name": "Imageworks",
             "id": "0228524"
         },
+        "pdi": {
+            "name": "Pacific Data Images (PDI)",
+            "id": "0069464"
+        },
         "giant studios": {
             "name": "Giant Studios",
             "id": "0102416"
@@ -1388,9 +1497,17 @@
             "name": "RISE Visual Effects Berlin",
             "id": "0232486"
         },
+        "millfilm": {
+            "name": "Mill Film",
+            "id": "0200573"
+        },
         "peerless camera co.": {
             "name": "Peerless Camera Company",
             "id": "0105097"
+        },
+        "hybride": {
+            "name": "Hybride Technologies",
+            "id": "0071495"
         },
         "mass. illusion": {
             "name": "Mass. Illusions",
@@ -1533,6 +1650,10 @@
             "name": "MK12",
             "id": "0188483"
         },
+        "gvfx": {
+            "name": "Gajdecki Visual Effects (GVFX)",
+            "id": "0058716"
+        },
         "fido": {
             "name": "Fido",
             "id": "0342387"
@@ -1561,9 +1682,17 @@
             "name": "Flash Film Works",
             "id": "0002487"
         },
+        "digital doman": {
+            "name": "Digital Domain",
+            "id": "0011313"
+        },
         "outback post": {
             "name": "Outback Post",
             "id": "0260347"
+        },
+        "warner digital": {
+            "name": "Warner Digital Studios",
+            "id": "0065669"
         },
         "modus fx": {
             "name": "Modus Fx",
@@ -1600,6 +1729,10 @@
         "zoic studios": {
             "name": "Zoic Studios",
             "id": "0081109"
+        },
+        "flame artist": {
+            "name": "zzz_role:flame artist",
+            "id": "-1"
         },
         "rise visual effects studios": {
             "name": "RISE Visual Effects Studios",
@@ -1745,6 +1878,10 @@
             "name": "Sequence",
             "id": "0290192"
         },
+        "tvt": {
+            "name": "TVT .Film Vfx",
+            "id": "0386759"
+        },
         "footage": {
             "name": "Footage",
             "id": "0241756"
@@ -1814,6 +1951,10 @@
             "name": "Core",
             "id": "0206357"
         },
+        "lola vfx": {
+            "name": "Lola Visual Effects",
+            "id": "0129378"
+        },
         "sony imageworks": {
             "name": "Sony Pictures Imageworks (SPI)",
             "id": "0042679"
@@ -1837,6 +1978,10 @@
         "3d color and lighting": {
             "name": "zzz_role:3d color and lighting",
             "id": "-1"
+        },
+        "manex visual effects": {
+            "name": "Manex Visual Effects (MVFX)",
+            "id": "0048620"
         },
         "pipeline": {
             "name": "Pipeline",
@@ -1886,6 +2031,10 @@
             "name": "Crazy Horse Effects",
             "id": "0266642"
         },
+        "cfx la": {
+            "name": "Centropolis Effects",
+            "id": "0063439"
+        },
         "pleasantville visual effects": {
             "name": "Pleasantville Visual Effects",
             "id": "0010791"
@@ -1934,6 +2083,10 @@
             "name": "BUF",
             "id": "0060901"
         },
+        "magic camera co": {
+            "name": "Magic Camera Company",
+            "id": "0050003"
+        },
         "mr. x": {
             "name": "Mr. X",
             "id": "0016889"
@@ -1954,9 +2107,17 @@
             "name": "Prime Focus",
             "id": "0250049"
         },
+        "method studios vancouver": {
+            "name": "Method Studios",
+            "id": "0078782"
+        },
         "cinesite hollywood": {
             "name": "Cinesite (Hollywood)",
             "id": "0089996"
+        },
+        "scanline vfx": {
+            "name": "ScanlineVFX",
+            "id": "0235204"
         },
         "park road post": {
             "name": "Park Road Post",
@@ -2099,6 +2260,10 @@
             "name": "Colorado FX",
             "id": "0082404"
         },
+        "digital domain london": {
+            "name": "Digital Domain London",
+            "id": -1
+        },
         "exile vfx": {
             "name": "Exile VFX",
             "id": "0222522"
@@ -2116,1875 +2281,1919 @@
             "id": "-1"
         },
         "weta": {
-            "name": "WETA",
-            "id": "0083965"
+            "name": "Weta Digital",
+            "id": "0005031"
         },
         "luxanimation": {
             "name": "Luxanimation",
             "id": "0180605"
         }
     },
+    "globalRegions": {
+        "Canada": "57.774542, -101.676850",
+        "Australia": "-25.004829, 134.339317",
+        "United Kingdom": "55.027726, -2.622371",
+        "Germany": "51.082644, 10.412666",
+        "California": "36.83, -119.47",
+        "New Zealand": "-41.30528,174.823492"
+    },
     "maptype": "company",
     "locations": {
         "Canada": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Molinare": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pixel Envy": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Stetson Visual Services": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:atmosphere feature effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Whiskytree": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Filmworks/FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Crimson": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:3d adaptation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Todd-AO": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "TVT .Film Vfx": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:lighting": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Embassy Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Farm Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Todd-AO Digital Images": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "SPI": {
             "geoLoc": "34.025081,-118.391229",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "TheLab": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Photon VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Framestore CFC": {
             "geoLoc": "51.515313,-0.13671",
-            "region": "london"
+            "location": "london"
         },
         "Stan Winston Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "EFilm": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "SBS": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "RedFx": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:3d version": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Stargate Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Spans & Partner": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Krypton": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Catapult Reliance Mediaworks": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Sassoon Film Design": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Double Negative": {
             "geoLoc": "51.521148,-0.143083",
-            "region": "London"
+            "location": "london"
         },
         "Vine FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Arcane": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Raven Software": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Gradient Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "The Mill": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:miniature unit": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Look Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "EVP": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "3D": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Santa Barbara Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Luxanimation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Hybride Technologies": {
             "geoLoc": "45.903461,-74.13924",
-            "region": "Montreal"
+            "location": "montreal"
         },
         "Oktobor": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Sandbox F/X": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Trixter Film": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "3DCGI": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Beeps": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Station X Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Switch VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "IMAX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Technicolor": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Filmgate": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Toybox": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Shockwave Entertainment": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Reel FX Entertainment": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rodeo FX": {
             "geoLoc": "45.497414,-73.554629",
-            "region": "Montreal"
+            "location": "montreal"
         },
         "Five VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Synopsis Video": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "PRPVFX Limited": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Matte World Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:effects sequence supervisor": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Comen VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Warner Brothers": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cinesite (Europe)": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rushes Film & TV": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital Backlot": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Mill Film": {
             "geoLoc": "34.029509,-118.374302",
-            "region": "London"
+            "location": "london"
         },
         "Pixar": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Core": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "VisionArt": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Intelligent Creatures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "MK12": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Magicon": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rhythm & Hues": {
             "geoLoc": "33.918421,-118.390674",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Flat Earth Productions": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Weta Digital": {
             "geoLoc": "-41.30528,174.823492",
-            "region": "Wellington"
+            "location": "wellington"
         },
         "Teamworks Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "DIVE": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Imageworks": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Eye Candy": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "RhinoFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Outback Post": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Montreal": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Praxis": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pacific Ocean Post": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "Magic Camera Company": {
+            "geoLoc": "",
+            "location": ""
         },
         "Footage": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cinesite Digital Imaging": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pacific": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Will Vinton Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Luma Pictures": {
             "geoLoc": "34.014259,-118.496531",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Asylum": {
             "geoLoc": "34.021489,-118.495878",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Digital Magic": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cinesite Digital Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Big Primate Pictures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Lux Monkey": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rhythm &amp; Hues": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital Film": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Prime Focus World": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Bren Entertainment": {
             "geoLoc": "",
-            "region": ""
-        },
-        "Wavefront Technologies": {
-            "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:lighting and compositing": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Oompa Loompas": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "RISE Visual Effects Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "The Orphanage": {
             "geoLoc": "37.798594,-122.457436",
-            "region": "Los Angeles"
-        },
-        "WETA": {
-            "geoLoc": "",
-            "region": ""
+            "location": "los angeles"
         },
         "Sub/Par Pix": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Iloura": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "The PostHouse AG": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:concept artist": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:cloth/hair": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Buena Vista Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "Manex Visual Effects (MVFX)": {
+            "geoLoc": "",
+            "location": ""
         },
         "Reality Check Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "zzz_role:flame artist": {
+            "geoLoc": "",
+            "location": ""
         },
         "zzz_role:pre-production": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Entity FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pleasantville Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Prologue": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Framestore": {
             "geoLoc": "51.515313,-0.13671",
-            "region": "London"
+            "location": "london"
         },
         "Boss Film": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "SPIN West VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Buzz Image Group": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital Post": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:facial modeler": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pacific Title and Art Studio": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "CFC": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "CafeFX": {
             "geoLoc": "34.954337,-120.435272",
-            "region": "Santa Maria"
+            "location": "santa maria"
         },
         "Duboicolor": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Logan": {
             "geoLoc": "",
-            "region": ""
-        },
-        "CFX": {
-            "geoLoc": "34.036247,-118.354014",
-            "region": "Los Angeles"
+            "location": ""
         },
         "Image Metrics": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Walt Disney Feature Animation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Tippett Studio": {
             "geoLoc": "37.856457,-122.28895",
-            "region": "San Francisco"
+            "location": "san francisco"
         },
         "Industrial Light &amp; Magic (ILM)": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:preproduction": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Engine Room": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:lighting & pre-vis": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "La Maison": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Hammerhead": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Soho VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Third Floor, The": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pixel Playground": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Collateral Image": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Boss Film Corporation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Lux Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Furious FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Dilated Pixels": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "Gajdecki Visual Effects (GVFX)": {
+            "geoLoc": "",
+            "location": ""
         },
         "Pixomondo Images": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Photon NZFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Studio Ex-centris": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Optical Film Effects": {
             "geoLoc": "",
-            "region": ""
-        },
-        "Stan Winston Studio": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Giant Killer Robots": {
-            "geoLoc": "37.780442,-122.392986",
-            "region": "San Francisco"
-        },
-        "BarXseven": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Asylum VFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "FuseFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Bullet Time": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "zzz_role:modeler": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Lunapark": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Stereo D": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "zzz_role:concept modeler": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "zzz_role:3d animation": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Anthem Visual Effects": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Hatch": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "The USC Computer Animation Laboratory": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Gradient FX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "The Senate VFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "The Syndicate": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "OCS/Freeze Frame/Pixel Magic": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "CIS London": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Prime Focus": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "China": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Storm Studio": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Mirada": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Reel FX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Photon Stockman": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Simple Tricks & Nonsense": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Look FX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "zzz_role:previz": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Elektrofilm": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "PDI DreamWorks": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Warner Bros. Animation": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Northwest Imaging & FX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "MetroLight Studios": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "CREO": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Nvizage": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "CIS Hollywood": {
-            "geoLoc": "34.092118,-118.33619",
-            "region": "Los Angeles"
-        },
-        "Peerless Camera Company": {
-            "geoLoc": "51.510893,-0.125767",
-            "region": "london"
-        },
-        "Beeps Pty": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Wizz": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Atomic Fiction": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "L'E.S.T.": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Pinnacle Studios": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Digital Factory": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Hollywood": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Meteor Studios": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Frantic Films": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Metrocel Animation Studios": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Peerless": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "SW Digital": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "DreamWorks Animation": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Square USA": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "IMD": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Post Mango": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Sandbox Pictures": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Michael Kaelin & Associates": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Eclair VFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Halon Entertainment": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Fuel VFX": {
-            "geoLoc": "-33.892768,151.185594",
-            "region": "Sydney"
-        },
-        "USFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Digital Productions": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Mr. X": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Weta Workshop": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Universal": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "LaB Sydney, The": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Digital Frontier": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "ImageMovers Digital": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Magic Media Company": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Rainmaker Digital Pictures": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Machine": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Postmodern sydney": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Animation": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "David Allen Productions": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Park Road Post": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Moving Picture Company (MPC)": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Numb Robot": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Minimo VFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Photon": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "ARRI Digital": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "POP": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Blur Studio": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "CIS Visual Effects Group": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Blue Sky/VIFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "VCE": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Pacific Title Digital": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Square Pictures": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "DFILM Services": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Pop Film": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Reliance Media Works VFX": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Digiscope": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Amalgamated Pixels": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "ESC Entertainment": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "FUEL": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "visual distractions": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Lola": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Vision Globale": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Entertainment Effects Group": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Digital Sandbox": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Reliance": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Sony Pictures Imageworks (SPI)": {
-            "geoLoc": "34.025063,-118.391313",
-            "region": "Los Angeles"
-        },
-        "zzz_role:pre-vis": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Double Negative Visual Effects": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "ScanlineVFX": {
-            "geoLoc": "33.983261,-118.427174",
-            "region": "Los Angeles"
-        },
-        "zzz_role:3-d": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Giant Studios": {
-            "geoLoc": "",
-            "region": ""
-        },
-        "Digital Firepower": {
-            "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Clarke Associates": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "Stan Winston Studio": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Giant Killer Robots": {
+            "geoLoc": "37.780442,-122.392986",
+            "location": "san francisco"
+        },
+        "BarXseven": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Asylum VFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "FuseFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Bullet Time": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "zzz_role:modeler": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Lunapark": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Stereo D": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "zzz_role:concept modeler": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "zzz_role:3d animation": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Anthem Visual Effects": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Hatch": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "The USC Computer Animation Laboratory": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Gradient FX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "The Senate VFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "The Syndicate": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "OCS/Freeze Frame/Pixel Magic": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "CIS London": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Prime Focus": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "China": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Storm Studio": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Mirada": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Reel FX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Photon Stockman": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Simple Tricks & Nonsense": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Look FX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "zzz_role:previz": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Elektrofilm": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "PDI DreamWorks": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Warner Bros. Animation": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Northwest Imaging & FX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "MetroLight Studios": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "CREO": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Nvizage": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "CIS Hollywood": {
+            "geoLoc": "34.092118,-118.33619",
+            "location": "los angeles"
+        },
+        "Peerless Camera Company": {
+            "geoLoc": "51.510893,-0.125767",
+            "location": "london"
+        },
+        "Beeps Pty": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Wizz": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Atomic Fiction": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "L'E.S.T.": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Pinnacle Studios": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Digital Factory": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Hollywood": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Meteor Studios": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Frantic Films": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Metrocel Animation Studios": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Peerless": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "zzz_baddata:'red sea' sequence": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "SW Digital": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "DreamWorks Animation": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Square USA": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "IMD": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Post Mango": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Sandbox Pictures": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Michael Kaelin & Associates": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Eclair VFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Halon Entertainment": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Fuel VFX": {
+            "geoLoc": "-33.892768,151.185594",
+            "location": "sydney"
+        },
+        "USFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Digital Productions": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Mr. X": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Weta Workshop": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Universal": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "LaB Sydney, The": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Digital Frontier": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "ImageMovers Digital": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Magic Media Company": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "zzz_baddata:esc": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Rainmaker Digital Pictures": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Digital Domain London": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Machine": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Postmodern sydney": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Animation": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "David Allen Productions": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Park Road Post": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Moving Picture Company (MPC)": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Numb Robot": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Minimo VFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Photon": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "ARRI Digital": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "POP": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Blur Studio": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "CIS Visual Effects Group": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Blue Sky/VIFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "VCE": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Pacific Title Digital": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Square Pictures": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "DFILM Services": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Pop Film": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Reliance Media Works VFX": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Digiscope": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Amalgamated Pixels": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "ESC Entertainment": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "FUEL": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "visual distractions": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Lola": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Vision Globale": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Entertainment Effects Group": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Digital Sandbox": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Reliance": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Sony Pictures Imageworks (SPI)": {
+            "geoLoc": "34.025063,-118.391313",
+            "location": "los angeles"
+        },
+        "zzz_role:pre-vis": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Double Negative Visual Effects": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "ScanlineVFX": {
+            "geoLoc": "33.983261,-118.427174",
+            "location": "los angeles"
+        },
+        "zzz_role:3-d": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Giant Studios": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Digital Firepower": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "Wavefront Technologies": {
+            "geoLoc": "",
+            "location": ""
         },
         "Krypton Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Faction Creative": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Lipsync Post": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "FLY Studio": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:matte painter / senior visual effects matte painter": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "The Film Factory at VTR": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Bain VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "C.O.R.E. Feature Animation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Screen Scene": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "CA Scanline Production": {
             "geoLoc": "33.983261,-118.427174",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Jim Henson's Creature Shop": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Shade VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Men From Mars": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Threshold Digital Research Labs": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:lighting and effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "VisionArt Design & Animation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:prep team technicolor": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Los Angeles": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Sony": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "BUF": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rising Sun Pictures": {
             "geoLoc": "-34.925894,138.606752",
-            "region": "Adelaide"
+            "location": "adelaide"
         },
         "Pulse FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Technicolor Creative Services": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Stargate Digital Vancouver": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:digital colorist": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Matte World": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Evil Eye Pictures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cinesite (Hollywood)": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Lola Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Warner Bros.": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cine-FN": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Jellyfish Pictures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Fido Films": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital.Art.Media": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Duboi": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pictorion_das Werk": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Mokko Studio": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "FilmBox": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Mass. Illusions": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Available Light": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Whodoo EFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "In-Three": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "CoSA VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pacific Title Imaging": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pacific Title": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "DKP Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rainmaker Animation & Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Media Principia": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Channel One": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Dream Quest Images": {
             "geoLoc": "34.104982, -118.245850",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Modus Fx": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Flash Film Works": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Gray Matter FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:model construction": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Mac Guff Ligne": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital Dimension": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Crazy Horse Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Title House Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Resin": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pacific Title/Mirage": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Fantavision": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "BlueBolt": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Double Edge Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Level 256": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "2G Digital Post": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Method Studios": {
             "geoLoc": "34.020546,-118.493217",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Technicolor Creative Services VFX Vancouver": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Nvizible": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "LUX VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Computer Cafe": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:digital compositor": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital Domain": {
             "geoLoc": "33.980271,-118.416763",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Prologue Films": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Electronic Arts": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Image Engine Design": {
             "geoLoc": "49.266628,-123.105157",
-            "region": "Vancouver"
+            "location": "vancouver"
         },
         "Cantina Pictures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Kleiser-Walczak Digital Effects\t": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Dreamscape Imagery": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Tvt. postproduction": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "RISE Visual Effects Berlin": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Platige Image": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Def2shoot": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cutting Edge": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "New Line": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Momentum Lab": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Sirenae Film Post": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "HOAX Films": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Giantsteps": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cinematics": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "CIS Vancouver": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Movies": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Windmill Lane": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Glendale": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:3d color and lighting": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:3d animator": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Baseblack": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Animatrik Film Design": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_baddata:vancouver": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:3d lighting": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Post Modern": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "POV": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Mechnology": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Threshold": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Tweak Films": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Uncharted Territory": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Max Ink Cafe": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Mattes & Miniatures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Vanguard Animation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Ã‰clair NumÃ©rique": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Animal Logic": {
             "geoLoc": "-33.892861,151.228649",
-            "region": "Sydney"
+            "location": "sydney"
         },
         "Pixel Magic": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rising Sun": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "CG Factory": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "JellyFish": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Guru Animation Studio": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "The Imaginarium Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Boss": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Brainstorm Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Modern VideoFilm": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Special Projects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "FX Cartel": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "zzz_baddata:london": {
+            "geoLoc": "",
+            "location": ""
+        },
+        "zzz_baddata:'blawp' animation unit": {
+            "geoLoc": "",
+            "location": ""
         },
         "zzz_role:compositing": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Industrial Light & Magic (Singapore)": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Fake Studio": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Boy Wonder Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_baddata:llc": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Arri": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Fugitive Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Lost Boys Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cafe FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Ntropic": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Exile VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Chimney Pot": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Take2 Interactive Software": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Rainmaker": {
             "geoLoc": "49.263954,-123.150968",
-            "region": "Vancouver"
+            "location": "vancouver"
         },
         "Parthenon": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "VIFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Cinesite": {
             "geoLoc": "51.515152,-0.134843",
-            "region": "London"
+            "location": "london"
         },
         "Newbreed Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "3DSite": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Synthespian Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Stranger": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:miniature and optical effects unit": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital Pictures Iloura": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:2d and 3d": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Spin VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "UPP": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "The Base Studio": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "MPC": {
             "geoLoc": "51.51598,-0.135809",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Radium": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Polygon Pictures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Vortex Media Arts": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pixomondo": {
             "geoLoc": "34.018074,-118.487295",
-            "region": "Frankfurt"
+            "location": "frankfurt"
         },
         "Arcca Animation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "MadPix": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Optima Digital": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:lighting & compositing": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "C.O.R.E. Digital Pictures": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Reliance MediaWorks": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Creo Collective": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Blue Castle Games": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Fido": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Meteor": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Persistence of Vision": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_baddata:2007": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_baddata:2002": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_baddata:2003": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Svengali Visual Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "One Of Us": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "ARRI Munich": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "No Strings Attached": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Centropolis Effects": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Big Red Pixel": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Industrial Light & Magic (ILM)": {
             "geoLoc": "37.802189,-122.449204",
-            "region": "San Francisco"
+            "location": "san francisco"
         },
         "Core Feature Animation": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Matte Painting UK": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Pipeline": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "DNA": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "zzz_role:title sequence": {
+            "geoLoc": "",
+            "location": ""
         },
         "Hammerhead Productions": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Interactive": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Das Werk": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Digital Slaves VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:cloth animation/modeling": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Fuel International": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
+        },
+        "Pacific Data Images (PDI)": {
+            "geoLoc": "",
+            "location": ""
         },
         "Stingray VFX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "USA": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Griffin Interplanetary Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "CIS": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Mobius MC": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "422 South": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Complete Post": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Maya": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "zzz_role:lead modeler": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "SoHo": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Garner MacLennan Design": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Postmodern": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Dreamworks": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Moving Picture Company": {
             "geoLoc": "51.51598,-0.135809",
-            "region": "Los Angeles"
+            "location": "los angeles"
         },
         "Colorado FX": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Space Monkey": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "yU+Co.": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Boss Film Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Warner Digital Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Manga Video": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Method Design": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Sequence": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Zoic Studios": {
             "geoLoc": "",
-            "region": ""
+            "location": ""
         },
         "Hydraulx": {
             "geoLoc": "33.976294,-118.421761",
-            "region": "Los Angeles"
+            "location": "los angeles"
         }
     }
 }

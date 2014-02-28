@@ -86,7 +86,8 @@ class ImdbScraper:
             movieList.append(companyObj['special effects companies'][i])
 
         for movie in movieList:
-            movDB = self.GetCachedListAndNode(movie, "movie", ["visual effects"], False, "release dates")
+            movDB = self.GetCachedListAndNode(
+                movie, "movie", ["visual effects"], False, "release dates")
             movNode = movDB[0]
             movLists = movDB[1]
             vfxCrew = None
@@ -109,7 +110,8 @@ class ImdbScraper:
                     len(vfxCrew)) + " people. Total found: " + str(len(personList)))
 
         print("--- Total unique employees found: " + str(len(personList)))
-        Log.String('!!! Memory usage: %s (mb)' % str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000000))
+        Log.String('!!! Memory usage: %s (mb)' %
+                   str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000000))
         return personList
 
     def ConnectPeopleToCompanies(self, personList):
@@ -150,10 +152,12 @@ class ImdbScraper:
                         existingCompany = None
                         companyIsMapped = False
 
-                        # Load company from pre-downloaded company or from map list
+                        # Load company from pre-downloaded company or from map
+                        # list
                         if options.useCompanyMap:
                             if vfxRole.company in self.companyMap['maps']:
-                                mappedCompanyName = self.companyMap['maps'][vfxRole.company]['name']
+                                mappedCompanyName = self.companyMap[
+                                    'maps'][vfxRole.company]['name']
                                 if 'zzz_baddata' in mappedCompanyName:
                                     print "Found mapped baddata. Ignoring company"
                                 elif 'zzz_role' in mappedCompanyName:
@@ -161,15 +165,19 @@ class ImdbScraper:
                                 else:
 
                                     existingCompany = Company.Company(
-                                        companyID=self.companyMap['maps'][vfxRole.company]['id'], 
+                                        companyID=self.companyMap[
+                                            'maps'][vfxRole.company]['id'],
                                         name=self.companyMap['maps'][vfxRole.company]['name'])
-                                    Log.String(" * Found company in map: " + str(existingCompany['name']))
+                                    Log.String(
+                                        " * Found company in map: " + str(existingCompany['name']))
                                     companyIsMapped = True
 
-                        # Only search for the company if the map or memory has no entry for the company
+                        # Only search for the company if the map or memory has
+                        # no entry for the company
                         if not existingCompany:
                             if vfxRole.company in self.companyWhitelist:
-                                existingCompany = self.companyWhitelist[vfxRole.company]
+                                existingCompany = self.companyWhitelist[
+                                    vfxRole.company]
                             else:
                                 if len(vfxRole.company) > 0:
                                     print("Searching for " + vfxRole.company)
@@ -195,13 +203,16 @@ class ImdbScraper:
                             existingCompany = compDB[1]
 
                             # Keep a flag in the DB for mapped companies
-                            compNode.update_properties({'isMapped':companyIsMapped, 'location':''})
+                            compNode.update_properties(
+                                {'isMapped': companyIsMapped, 'location': ''})
 
-                            print("Attach '" + str(personInMovie['name']) + "' to '" + 
+                            print("Attach '" + str(personInMovie['name']) + "' to '" +
                                 str(compNode.get_properties()['name']) + "' for '" + str(vfxRole.role) + "'")
-                            self.ConnectPersonToCompany(personNode, compNode, vfxRole, movNode, personInMovie.notes)
+                            self.ConnectPersonToCompany(
+                                personNode, compNode, vfxRole, movNode, personInMovie.notes)
                         else:
-                            print("No company called '" + str(vfxRole.company) + "' for " + str(personInMovie['name']) + "' under role '" + str(vfxRole.role) + "'")
+                            print("No company called '" + str(vfxRole.company) + "' for " + str(
+                                personInMovie['name']) + "' under role '" + str(vfxRole.role) + "'")
                     else:
                         print("Couldn't find person in movie")
             else:
@@ -344,7 +355,8 @@ class ImdbScraper:
                 month = splitDate[1]
                 year = splitDate[2]
                 splitDate[0] = year
-                splitDate[1] = str(list(calendar.month_name).index(splitDate[1]))
+                splitDate[1] = str(
+                    list(calendar.month_name).index(splitDate[1]))
                 splitDate[2] = day
 
                 # Pad dates with zeroes so they become filterable
@@ -492,7 +504,7 @@ class ImdbScraper:
             mapList[record.values[0]] = {
                 "id": record.values[3], "company": record.values[2]}
 
-        mapCombined = {"maptype":"company","locations":{},"maps":mapList}
+        mapCombined = {"maptype": "company", "locations": {}, "maps": mapList}
         jsonOut = open(mapFile, 'wb')
         json.dump(mapCombined, jsonOut)
         jsonOut.close()
@@ -553,16 +565,23 @@ class ImdbScraper:
             #             reverseMap[companyMap[company]['name']]['location'] = ""
 
             locations = scraper.companyMap['locations']
-            
+            regions = scraper.companyMap['regions']
+
             for key in result:
                 companyProps = key.values[0].get_properties()
-                key.values[0].update_properties({'location':"", 'region':""})
+                key.values[0].update_properties({'location': "", 'region': ""})
 
                 if companyProps['isMapped']:
                     if companyProps['name'] in locations:
                         if locations[companyProps['name']]['geoLoc']:
-                            print "Setting location for '" + companyProps['name'] + "': " + locations[companyProps['name']]['geoLoc']
-                            key.values[0].update_properties({'location': locations[companyProps['name']]['geoLoc'], 'region':   locations[companyProps['name']]['region']})
+
+                            geoLocStr = locations[companyProps['name']]['geoLoc'].lower()
+                            locationStr = locations[companyProps['name']]['location'].lower()
+                            regionStr = regions[locationStr]['globalRegion'].lower()
+
+                            print "Setting location for '" + companyProps['name'] + "': " + locationStr + ", " + regionStr
+
+                            key.values[0].update_properties({'geoLoc': geoLocStr, 'location': locationStr, 'region': regionStr})
 
 
     def SetJumpRoles(self):
@@ -598,12 +617,13 @@ class ImdbScraper:
                             if not jointPath:
                                 jointPath = path
                             else:
-                                jointPath = neo4j.Path.join( jointPath, "JUMP", path )
-                        
+                                jointPath = neo4j.Path.join(
+                                    jointPath, "JUMP", path )
+
                         jointPath.create(neo4jHandle)
-                    
+
                     Log.String("--- Total jumps: " + str(jumpCount))
-                
+
                 jumpCount = 0
                 sameCompanyCount = 0
                 tallyCount = 0
@@ -623,11 +643,13 @@ class ImdbScraper:
                 Log.String("Jumping ship to '" + str(
                     key.values[1]['company']) + "'")
 
-                jumpNode = neo4jHandle.get_or_create_indexed_node('jump', 'combinedJumpId', str(currentPersonId) + "-" + str(key.values[2]['id']), {'personId': currentPersonId})
+                jumpNode = neo4jHandle.get_or_create_indexed_node('jump', 'combinedJumpId', str(
+                    currentPersonId) + "-" + str(key.values[2]['id']), {'personId': currentPersonId})
                 jumpNode.add_labels("jump")
                 if not lastCompany:
                     print "No last company. Setting to " + str(key.values[2]['name'])
-                    jumpPath = neo4j.Path(key.values[0], "JUMP", jumpNode, "JUMP", key.values[2])
+                    jumpPath = neo4j.Path(
+                        key.values[0], "JUMP", jumpNode, "JUMP", key.values[2])
                     pathNodeList = []
                     pathNodeList.append(jumpPath)
                 else:
@@ -647,8 +669,8 @@ class ImdbScraper:
                     key.values[1]['company']) + "' for " + tallyStr + " films (" + str(tallyCount) + ")")
 
         # Create the jump
-        #if(lastJumpPath):
-            #neo4jHandle.create(lastJumpPath)
+        # if(lastJumpPath):
+            # neo4jHandle.create(lastJumpPath)
 
     def FixUnpaddedDates(self):
         print "Padding relationship date values..."
@@ -670,14 +692,15 @@ class ImdbScraper:
                 fixedDate = "-".join(splitDate)
                 record.values[0].update_properties({'release': fixedDate})
                 Log.String(" * Adjusted date:" + fixedDate)
-                
+
                 progress += 1
                 progressPercent = int(round((progress / total) * 100))
                 if progressPercent != lastProgressPercent:
                     print str(progressPercent) + "%"
                     lastProgressPercent = progressPercent
             else:
-                record.values[0].update_properties({'release': str("-".join(splitDate))})
+                record.values[0].update_properties(
+                    {'release': str("-".join(splitDate))})
 
 
 
@@ -809,7 +832,7 @@ if options.useRoleMap:
 
 if options.buildMappedRoles:
     scraper.SetTrueRoles()
-    
+
 if options.buildLocations:
     scraper.SetLocations()
 

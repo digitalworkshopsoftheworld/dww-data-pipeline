@@ -2,7 +2,9 @@
  * DB setup
  */
 var neo4j = require('neo4j');
+var fs = require('fs');
 var locUtils = require('./locUtils.js');
+var companyMapFile = __dirname + '/../../utils/compMerged.json';
 
 var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
@@ -44,12 +46,27 @@ exports.getAllPeopleAsCSV = function(callbackComplete) {
 };
 
 exports.getAllPeopleAsJson = function(callbackComplete, jumpsOnly, filterArgs) {
+
+    //Load company map for region lookups
+    fs.readFile(companyMapFile, 'utf8', function(err, data) {
+        if (err) {
+            console.log('Error: ' + err);
+            return;
+        }
+
+        companyMap = JSON.parse(data);
+    });
+
+    var key = GetRelKeyFromFilter(filterArgs['filter']);
+
+    //DB query
     var query = [
         'MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
-        'WHERE c.isMapped = true AND NOT c.location = ""',
+        'WHERE c.isMapped = true AND NOT c.geoLoc = "" AND NOT c.location = ""',
         'RETURN p,r,c',
         'ORDER BY p.id, str(r.release)'
     ].join('\n');
+
     var outJson = {};
     var peopleList = [];
 
@@ -125,7 +142,7 @@ exports.getAllPeopleAsJson = function(callbackComplete, jumpsOnly, filterArgs) {
         peopleList.push(lastPersonObject);
         if (jumpsOnly) {
             peopleList = FormatRels(peopleList, filterArgs);
-            csvString = "person,role,date,company,region\n";
+            csvString = "person,role,date,company,location,region\n";
             //Render groupings
             if (filterArgs) {
                 if (filterArgs['filter']) {
@@ -133,16 +150,17 @@ exports.getAllPeopleAsJson = function(callbackComplete, jumpsOnly, filterArgs) {
                     if (filterArgs['grouping'] != 'person') {
                         var jumpList = null;
                         for (var person in peopleList) {
-
                             person = peopleList[person];
                             if (person) {
                                 for (var r in person.rels) {
                                     rel = person.rels[r];
+                                    //console.log(rel.location, companyMap['regions'][rel.location]);
                                     jump = {
                                         "person": person.name,
                                         "role": rel.personMappedRole,
                                         "date": rel.movieReleaseYear,
-                                        "region": rel.region,
+                                        "location": rel.location.toLowerCase(),
+                                        "region": companyMap['regions'][rel.location.toLowerCase()]['globalRegion'],
                                         "company": rel.matchedCompanyName
                                     };
                                     // if (filterArgs['filter'] == 'company') {
@@ -156,23 +174,25 @@ exports.getAllPeopleAsJson = function(callbackComplete, jumpsOnly, filterArgs) {
                                         jumpList.push(jump);
 
                                     } else if (filterArgs['grouping'] == 'keys') {
-                                        if (!jumpList) jumpList = {};
+                                        var key = GetRelKeyFromFilter(filterArgs['filter']);
 
-                                        if (!jumpList[rel.matchedCompanyName]) {
-                                            jumpList[rel.matchedCompanyName] = {
+                                        if (!jumpList) jumpList = {};
+                                        if (!jumpList[rel[key]]) {
+                                            jumpList[rel[key]] = {
                                                 people: [],
                                                 total: 0
                                             };
                                         }
 
-                                        jumpList[rel.matchedCompanyName].people.push(jump);
-                                        jumpList[rel.matchedCompanyName].total += 1;
+                                        jumpList[rel[key]].people.push(jump);
+                                        jumpList[rel[key]].total += 1;
                                     }
 
                                     csvString += jump.person + "," +
                                         jump.role + "," +
                                         jump.date + "," +
                                         jump.company + "," +
+                                        jump.location + "," +
                                         jump.region + "\n";
                                 }
                             }
@@ -182,7 +202,6 @@ exports.getAllPeopleAsJson = function(callbackComplete, jumpsOnly, filterArgs) {
 
                         if (filterArgs['format'] == "csv") {
                             callbackComplete(csvString);
-                            console.log(csvString);
                         } else {
                             callbackComplete(outJson);
                         }
@@ -196,8 +215,10 @@ exports.getAllPeopleAsJson = function(callbackComplete, jumpsOnly, filterArgs) {
         if (!peopleList) {
             callbackComplete("Filter failed. Check args. (Valid: 'companies', 'regions')");
         }
-        outJson['people'] = peopleList;
+        outJson['jumps'] = peopleList;
         outJson['locations'] = companyLocations;
+        outJson['regions'] = companyMap['regions'];
+        outJson['globalRegions'] = companyMap['globalRegions'];
         callbackComplete(outJson);
     });
 };
@@ -206,10 +227,22 @@ var DaysToMs = function(days) {
     return days * 24 * 60 * 60 * 1000;
 }
 
+var GetRelKeyFromFilter = function(filterArg) {
+    var key = "";
+    if (filterArg == "company") {
+        key = "matchedCompanyName";
+    } else if (filterArg == "location") {
+        key = "location";
+    } else if (filterArg == "region") {
+        key = "region";
+    }
+
+    return key;
+}
+
 var FormatRels = function(peopleList, args) {
 
     //Add dummy relationships to pad depature/arrival animations
-    var jumpCount = 0;
     for (var p in peopleList) {
         var person = peopleList[p];
         var tempRels = [];
@@ -225,7 +258,7 @@ var FormatRels = function(peopleList, args) {
                     return;
                 }
 
-                var key = ((args['filter'] == "company") ? "matchedCompanyName" : "region");
+                var key = GetRelKeyFromFilter(args['filter']);
 
                 if (args['dir'] == "in" || !args['dir']) {
                     if (p < 5) console.log(person.name, "Checking", person.rels[i][key].toLowerCase());
@@ -260,7 +293,6 @@ var FormatRels = function(peopleList, args) {
                 };
                 tempRels.push(dummyRel);
                 tempRels.push(person.rels[i]);
-                jumpCount += 1;
             }
         }
 
@@ -272,7 +304,6 @@ var FormatRels = function(peopleList, args) {
             person.rels = tempRels;
         }
     }
-    console.log("Total jumps: " + jumpCount);
 
     var filteredList = [];
     for (var p in peopleList) {
