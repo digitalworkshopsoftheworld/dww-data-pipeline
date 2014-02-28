@@ -1,0 +1,188 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+div.top{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+thead{
+	background-color: #CCC;
+	font-weight: bold;
+}
+
+table {
+	background-color: #EAEAEA;
+}
+
+th a {
+	color: #000000;
+	text-decoration: none;
+}
+
+th{
+	background-color: #CCC;
+}
+
+td {
+	border-bottom: solid;
+	border-bottom-width: 1px;
+	border-color: #FFF;
+	vertical-align: top;
+}
+
+tbody.scroll {
+	overflow-x: hidden;
+	overflow-y: scroll; 
+	height: 500px;
+}
+
+.searchHeader{
+	width:30%;
+}
+
+.searchFilteredHeader{
+	width:27.5%;
+}
+
+.nameHeader{
+	width:27.5%;
+}
+
+.searchCountHeader{
+	width:10%;
+}
+
+.verifyControls {
+	width: 35%;
+}
+
+.locationControls {
+	width: 20%;
+}
+
+.mappedNameHeader  {
+	width:30%;
+}
+
+.countTotalHeader {
+	width:10%;
+}
+
+
+
+.verified {
+	background-color: #63D1F4;
+}
+
+.role.verified{
+	background-color: #F0A804;
+}
+
+.baddata.verified{
+	background-color: #F87531;
+}
+
+.editSection {
+	float: left;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+#newMapName, #newMapId, .dropdown {
+	width: 100%;
+	float: left;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+#newLocationName, #newLocationLat, #newLocationLong {
+	width: 49%;
+	float: left;
+}
+
+#saveFieldButton {
+	float: left;
+}
+
+.verifyButton {
+	float:left;
+}
+
+.locationButton {
+	float:left;
+}
+
+.headerToggle {
+	width: 100%;
+}
+
+#saveFieldButton {
+	width:left;
+}
+
+.container {
+	width: 100%;
+}
+
+#searchCutoff{
+	width: 200px;
+}
+
+#tableseperator{
+	width: 2%;
+	display: inline-block;
+}
+
+
+
+#datatable { 
+	display: inline-block;
+	padding: 0px;
+	margin:0px;
+}
+
+#sidebar { 
+	display: inline-block;
+	left right top bottom: auto;
+	vertical-align: top;
+	padding:0px;
+	margin-left:0px;
+}
+
+#datatable.activeEdit{
+	width: 68%;
+}
+
+#datatable.inactiveEdit{
+	width: 49%;
+}
+
+
+#sidebar.activeEdit {
+	width: 49%;
+}
+
+#sidebar.inactiveEdit {
+	width: 30%;
+}
+
+#blacklisttable { 
+	width:100%;
+	display: inline-block;
+	margin-top:10px;
+}
+
+#totalstable { 
+	width:100%;
+	display: inline-block;
+}
+
+
+

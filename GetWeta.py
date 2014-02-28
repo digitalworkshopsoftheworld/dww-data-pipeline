@@ -4,7 +4,15 @@ import sys
 import re
 import resource
 import pdb
+import os
 import gc
+import cPickle as pickle
+import time
+import shutil
+import json
+from optparse import OptionParser
+from Utils import Logger
+import calendar
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -12,6 +20,7 @@ sys.setdefaultencoding("utf-8")
 # Import the IMDbPY package.
 try:
     import imdb
+    from imdb import Movie, Person, Character, Company
     from py2neo import neo4j, node, rel
     from fuzzywuzzy import fuzz
 
@@ -19,189 +28,397 @@ except ImportError:
     print('Missing neo4j or imdbpy or fuzzywuzzy')
     sys.exit(1)
 
+
 class ImdbScraper:
 
     def __init__(self):
+        # Company whitelists
+        self.cachedCompanySearches = {}
+        self.companyWhitelist = {}
+        self.companyMap = None
+        self.roleMap = None
+
+        # Test neo4j connection
+        try:
+            # Indexes
+            self.companyIndex = neo4jHandle.get_or_create_index(
+                neo4j.Node, "company")
+            self.movieIndex = neo4jHandle.get_or_create_index(
+                neo4j.Node, "movie")
+            self.personIndex = neo4jHandle.get_or_create_index(
+                neo4j.Node, "person")
+            self.jumpIndex = neo4jHandle.get_or_create_index(
+                neo4j.Node, "jump")
+        except:
+            print "No connection to neo4j"
+            sys.exit(1)
+
+    def InitIMDB(self):
         # IMDB interface
         self.i = imdb.IMDb()
-        self.cachedCompanySearches = {}
-
-        # Neo4j interface
-        self.graph_db = neo4j.GraphDatabaseService(
-            "http://localhost:7474/db/data/")
 
     def SetRootCompany(self, companyID, companySearchTag):
         self.companyID = companyID
         self.companySearchTag = companySearchTag
         self.rootCompany = self.i.get_company(self.companyID)
-        print("Searching IMDB for employees of '" +
-              str(self.rootCompany['name']) + "':")
 
-        # List of companies for quick checking for existing companies
+        # List of companies for quick checking against existing companies
         self.companyList = [self.rootCompany]
 
     def GetPeopleInFilmography(self, filmographyDepth):
-        personNodeDict = {}
+        print("Root company is '" + str(companyID) +
+              "', search term is '" + str(companySearchTag) + "'")
 
-        self.companyIndex = self.graph_db.get_or_create_index(
-            neo4j.Node, "company")
-        self.movieIndex = self.graph_db.get_or_create_index(
-            neo4j.Node, "movie")
-        self.personIndex = self.graph_db.get_or_create_index(
-            neo4j.Node, "person")
+        personList = {}
 
-        companyNode = self.FindOrCreateCompanyNode(self.rootCompany)
+        rootCompanyDB = self.GetCachedListAndNode(self.rootCompany, "company")
+        companyNode = rootCompanyDB[0]
+        companyObj = rootCompanyDB[1]
 
         # Dummy movie list of first n movies
         movieList = []
 
         if(filmographyDepth < 0):
             filmographyDepth = len(
-                self.rootCompany['special effects companies'])
+                companyObj['special effects companies'])
 
         for i in range(filmographyDepth):
-            movieList.append(self.rootCompany['special effects companies'][i])
+            movieList.append(companyObj['special effects companies'][i])
 
         for movie in movieList:
-            while True:
-                try:
-                    self.i.update(movie)
-                except imdb.IMDbDataAccessError:
-                    print("*** HTTP error. Redialing")
-                    continue
-                break
-            movNode = self.FindOrCreateMovieNode(movie)
+            movDB = self.GetCachedListAndNode(
+                movie, "movie", ["visual effects"], False, "release dates")
+            movNode = movDB[0]
+            movLists = movDB[1]
+            vfxCrew = None
+            if 'visual effects' in movLists:
+                vfxCrew = movLists['visual effects']
 
-            movCompanyRelationship = list(
-                self.graph_db.match(start_node=companyNode, end_node=movNode))
-            if(len(movCompanyRelationship) < 1):
-                self.graph_db.create(rel(companyNode, "FILMOGRAPHY", movNode))
+            if(vfxCrew):
+                movCompanyRelationship = list(
+                    neo4jHandle.match(start_node=companyNode, end_node=movNode))
+                if(len(movCompanyRelationship) < 1):
+                    neo4jHandle.create(
+                        rel(companyNode, "FILMOGRAPHY", movNode))
 
-            if movie.has_key('visual effects'):
-                for person in movie['visual effects']:
-                    vfxRole = self.FindCompanyFromPersonNotes(
-                        person, self.companySearchTag)
+                for person in vfxCrew:
+                    vfxRole = self.ParseCompanyFromPersonNotes(
+                        person.notes, self.companySearchTag)
                     if(len(vfxRole.matchedTag) > 0):
-                        personNode = self.FindOrCreatePersonNode(person)
-                        personNodeDict[person] = personNode
-                print("--- '" + movie['title'] + "'. Scanned " + str(len(movie['visual effects'])) + " people. Total found: " + str(len(personNodeDict)))
-            else:
-                print("--- No vfx employees in " + str(movie['title']))
-            movie.clear()
-        print("--- Total unique employees found: " + str(len(personNodeDict)) )
-        print '!!! Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        return personNodeDict
+                        personList[person.getID()] = person
+                print("--- '" + movNode.get_properties()['name'] + "'. Scanned " + str(
+                    len(vfxCrew)) + " people. Total found: " + str(len(personList)))
 
-    def ConnectPeopleToCompanies(self, personNodeDict):
+        print("--- Total unique employees found: " + str(len(personList)))
+        Log.String('!!! Memory usage: %s (mb)' %
+                   str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000000))
+        return personList
+
+    def ConnectPeopleToCompanies(self, personList):
         print("---------------------------------")
         self.ResetRelationships()
 
         self.personCount = 0
-        self.personTotal = len(personNodeDict)
+        self.personTotal = len(personList)
 
         print("Searching employee filmographies")
-        for person, personNode in personNodeDict.iteritems():
-            startmem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        for personID, person in personList.iteritems():
+            startmem = resource.getrusage(
+                resource.RUSAGE_SELF).ru_maxrss / 1000000
 
-            while True:
-                try:
-                    self.i.update(person)
-                except imdb.IMDbDataAccessError:
-                    print("*** HTTP error. Redialing")
+            personDB = self.GetCachedListAndNode(
+                person, "person", ["visual effects", "notes"], False)
+            personNode = personDB[0]
+            person = personDB[1]
+
+            if person['visual effects']:
+                if len(person['visual effects']) < 1:
+                    print(
+                        " === " + str(person['name']) + " has no VFX filmography.")
+                    print(person)
+                    print(" === Skipping...")
                     continue
-                break
 
-            if not person.has_key('visual effects'):
-                print(" === " + str(person['name']) + " has no VFX filmography.")
-                print(person)
-                print(" === Skipping...")
-                continue
+                for movie in person['visual effects']:
+                    movDB = self.GetCachedListAndNode(
+                        movie, "movie", ["visual effects"], False, "release dates")
+                    movNode = movDB[0]
+                    vfxCrew = movDB[1]['visual effects']
 
-            for i in range(len(person['visual effects'])):
+                    personInMovie = self.FindPersonInList(vfxCrew, personNode)
+                    if personInMovie:
+                        vfxRole = self.ParseCompanyFromPersonNotes(
+                            personInMovie.notes)
+                        existingCompany = None
+                        companyIsMapped = False
 
-                if i >= len(person['visual effects']):
-                    break
+                        # Load company from pre-downloaded company or from map
+                        # list
+                        if options.useCompanyMap:
+                            if vfxRole.company in self.companyMap['maps']:
+                                mappedCompanyName = self.companyMap[
+                                    'maps'][vfxRole.company]['name']
+                                if 'zzz_baddata' in mappedCompanyName:
+                                    print "Found mapped baddata. Ignoring company"
+                                elif 'zzz_role' in mappedCompanyName:
+                                    print "Found mapped role. Ignoring company"
+                                else:
 
-                movie = person['visual effects'][i]
-                while True:
-                    try:
-                        self.i.update(movie)
-                    except imdb.IMDbDataAccessError:
-                        print("*** HTTP error. Redialing")
-                        continue
-                    break
+                                    existingCompany = Company.Company(
+                                        companyID=self.companyMap[
+                                            'maps'][vfxRole.company]['id'],
+                                        name=self.companyMap['maps'][vfxRole.company]['name'])
+                                    Log.String(
+                                        " * Found company in map: " + str(existingCompany['name']))
+                                    companyIsMapped = True
 
-                vfxRole = self.FindCompanyFromPersonNotes(movie)
-                existingCompany = None
-                if vfxRole.company in self.cachedCompanySearches:
-                    existingCompany = self.cachedCompanySearches[vfxRole.company]
+                        # Only search for the company if the map or memory has
+                        # no entry for the company
+                        if not existingCompany:
+                            if vfxRole.company in self.companyWhitelist:
+                                existingCompany = self.companyWhitelist[
+                                    vfxRole.company]
+                            else:
+                                if len(vfxRole.company) > 0:
+                                    print("Searching for " + vfxRole.company)
+                                    compList = self.i.search_company(
+                                        vfxRole.company)
+                                    if len(compList) > 0:
+                                        existingCompany = compList[0]
+                                        self.companyWhitelist[
+                                            vfxRole.company] = existingCompany
+                                    else:
+                                        print(
+                                            "No results found for '" + str(vfxRole.company) + "'")
+                                        continue
+                                else:
+                                    print "Skipping role '" + str(vfxRole.role) + "', '" + str(vfxRole.company) + "'. No associated company"
+                                    continue
 
-                if not existingCompany:
-                    if(len(vfxRole.company) > 0):
-                        print("Searching for '" + str(vfxRole.company) + "'")
-                        while True:
-                            try:
-                                companyList = self.i.search_company(vfxRole.company)
-                            except imdb.IMDbDataAccessError:
-                                print("*** HTTP error. Redialling")
-                                continue
-                            break
-                        if(len(companyList) > 0):
-                            # Grab first company only
-                            existingCompany = companyList[0]
-                            self.cachedCompanySearches[vfxRole.company] = existingCompany
-                            if len(existingCompany) > 0:
-                                print("Found " + str(existingCompany['name']))
+                        if existingCompany:
+                            # Company node and lists
+                            compDB = self.GetCachedListAndNode(
+                                existingCompany, "company")
+                            compNode = compDB[0]
+                            existingCompany = compDB[1]
 
-                if existingCompany:
-                    print("Attach '" + str(person['name']) + "' to '" + str(
-                        existingCompany['name']) + "' for '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
-                    companyNode = self.FindOrCreateCompanyNode(existingCompany)
-                    self.ConnectPersonToCompany(
-                        personNode, companyNode, vfxRole, movie)
-                else:
-                    print("No company for '" + str(person['name']) + "' under role '" + str(vfxRole.role) + "' in '" + str(movie['title']) + "'")
-            
-            # Cleanup person data
+                            # Keep a flag in the DB for mapped companies
+                            compNode.update_properties(
+                                {'isMapped': companyIsMapped, 'location': ''})
+
+                            print("Attach '" + str(personInMovie['name']) + "' to '" +
+                                str(compNode.get_properties()['name']) + "' for '" + str(vfxRole.role) + "'")
+                            self.ConnectPersonToCompany(
+                                personNode, compNode, vfxRole, movNode, personInMovie.notes)
+                        else:
+                            print("No company called '" + str(vfxRole.company) + "' for " + str(
+                                personInMovie['name']) + "' under role '" + str(vfxRole.role) + "'")
+                    else:
+                        print("Couldn't find person in movie")
+            else:
+                print "No person filmography object"
+
+            personList[personID] = None
             self.personCount += 1
-            print(" === " + ((self.personCount / self.personTotal)*100) + "% - " + str(self.personCount) + "/" + str(self.personTotal) + "people processed")
-            personNodeDict[person] = None
-            person.clear()
-            del person
-            print ('!!! Delta Memory usage: %s (kb)' % (int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) - startmem) )
-            print '!!! Total Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-            gc.collect()
+            print("=== " + str(self.personCount) + "/" +
+                  str(self.personTotal) + " people processed")
+            Log.String('!!! Delta Memory usage: %s (mb)' %
+                  str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000000 - startmem))
+            Log.String('!!! Total Memory usage: %s (mb)' %
+                  str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000000))
 
-        print('===== Finished =====')
-
-    def ConnectPersonToCompany(self, personNode, companyNode, vfxrole, imdbMovie):
+    def ConnectPersonToCompany(self, personNode, companyNode, vfxrole, movieNode, rawNotes=""):
         personCompanyRelationship = list(
-            self.graph_db.match(start_node=personNode, end_node=companyNode))
+            neo4jHandle.match(start_node=personNode, end_node=companyNode))
 
-        # Use fuzzy matching to see if we need to flag this relationship as one to check the company
-        fuzzyCompanyMatch = fuzz.ratio(companyNode.get_properties()['name'].lower().strip(), vfxrole.company.lower().strip())
+        # Use fuzzy matching to see if we need to flag this relationship as one
+        # to check the company
+        fuzzyCompanyMatch = fuzz.ratio(companyNode.get_properties()[
+                                       'name'].lower().strip(), vfxrole.company.lower().strip())
 
         relExists = False
         # Check for preexisting relationships to company
         for personRel in personCompanyRelationship:
-            if(personRel.get_properties()["movieID"] == imdbMovie.getID()):
+            if(personRel.get_properties()["movieID"] == movieNode.get_properties()['id']):
                 relExists = True
 
         if not relExists:
-            roleNode, =  self.graph_db.create(
+            roleNode, =  neo4jHandle.create(
                 rel(personNode, "WORKED_FOR", companyNode))
             roleNode.update_properties(
-                {'role': vfxrole.role, 'company': vfxrole.company, 'movieID': imdbMovie.getID(), 'release': imdbMovie['year'], 'matchRatio': fuzzyCompanyMatch})
-        if not silent:
-            print("Match ratio: " + str(fuzzyCompanyMatch) + ". CompRole: " + str(vfxrole.company.lower().strip()) + ". Node: " + str(companyNode.get_properties()['name'].lower().strip()) )
-    
+                {'role': vfxrole.role, 'company': vfxrole.company, 'movieID': movieNode.get_properties()['id'], 'release': movieNode.get_properties()['release'], 'matchRatio': fuzzyCompanyMatch, 'rawNotes': rawNotes})
+        Log.String("Match ratio: " + str(fuzzyCompanyMatch) + ". CompRole: " + str(vfxrole.company.lower().strip())
+                   + ". Node: " + str(companyNode.get_properties()['name'].lower().strip()))
+
+    def GetCachedListAndNode(self, imdbObj, nodeType, listKey="", forceUpdate=False, optionalKey=""):
+        cachedList = None
+        cachedListPickle = None
+        pickleFileName = str(
+            imdbCacheDir + "/" + nodeType + "/" + str(imdbObj.getID()) + ".pkl")
+        cachedNode = neo4jHandle.get_indexed_node(
+            nodeType, "id", imdbObj.getID())
+
+        if not cachedNode or forceUpdate:
+            self.UpdateImdbObj(imdbObj)
+
+            cachedList = {}
+            if listKey:
+                # Append all keys to the cached list that match
+                Log.String(" * Caching " + nodeType + " '" + str(
+                    imdbObj))
+                for key in imdbObj.keys():
+                    for searchKey in listKey:
+                        if searchKey in key:
+                            cachedList[searchKey] = imdbObj[key]
+                        if searchKey == 'notes':
+                            cachedList['notes'] = imdbObj.notes
+
+            else:
+                Log.String(
+                    " * Caching " + nodeType + " '" + str(imdbObj) + "'")
+                cachedList = imdbObj
+
+            if cachedList:
+                # Build DB node
+                if not cachedNode:
+                    cachedNode, = neo4jHandle.create(
+                        node(id=str(imdbObj.getID())))
+                cachedNode.add_labels(nodeType)
+
+                # Set node properties
+                nodeProperties = {}
+                nodeIndex = None
+
+                if(optionalKey):
+                    self.i.update(imdbObj, optionalKey)
+
+                if nodeType == "movie":
+                    date = "none"
+                    if imdbObj.has_key('release dates'):
+                        date = self.ParseEarliestDate(imdbObj['release dates'])
+                    elif imdbObj.has_key('year'):
+                        date = imdbObj['year']
+                    nodeProperties['release'] = str(date)
+                    nodeProperties['name'] = imdbObj['title']
+                    nodeIndex = self.movieIndex
+                elif nodeType == "person":
+                    nodeProperties['name'] = imdbObj['name']
+                    nodeIndex = self.personIndex
+                elif nodeType == "company":
+                    nodeProperties['name'] = imdbObj['name']
+                    nodeIndex = self.companyIndex
+
+                cachedNode.update_properties(nodeProperties)
+                nodeIndex.add("id", cachedNode['id'], cachedNode)
+
+                # Save key list into pickle file
+                pickleFile = open(pickleFileName, 'wb')
+                cachedListPickle = pickle.dump(cachedList, pickleFile)
+                pickleFile.close()
+                Log.String(" * ...done.")
+        else:
+            try:
+                with open(pickleFileName, 'rb') as pickleFile:
+                    Log.String(
+                        " * Cache file exists for '" + str(imdbObj) + "'")
+                    Log.String(" * Loading " + str(nodeType) + " '" + str(
+                        imdbObj) + "' from cache")
+                    cachedList = pickle.load(pickleFile)
+                    pickleFile.close()
+            except IOError:
+                Log.String(" * No pickle found, recreating cache")
+                cachedNode.delete()
+                del cachedNode
+                rebuiltDB = self.GetCachedListAndNode(
+                    imdbObj, nodeType, listKey, True)
+                cachedNode = rebuiltDB[0]
+                cachedList = rebuiltDB[1]
+
+        return cachedNode, cachedList
+
+    def UpdateImdbObj(self, imdbObj):
+        while True:
+            try:
+                self.i.update(imdbObj)
+            except imdb.IMDbDataAccessError:
+                print("*** HTTP error. Redialing")
+                continue
+            break
+
+    def ParseEarliestDate(self, dateList):
+        outDate = ""
+        for date in dateList:
+            cleanDate = re.sub(r'\([^)]+\)|^[^::]*::', '', date).strip()
+            splitDate = cleanDate.split(" ")
+            if len(splitDate) == 3:
+                day = splitDate[0]
+                month = splitDate[1]
+                year = splitDate[2]
+                splitDate[0] = year
+                splitDate[1] = str(
+                    list(calendar.month_name).index(splitDate[1]))
+                splitDate[2] = day
+
+                # Pad dates with zeroes so they become filterable
+                for i in range(len(splitDate)):
+                    if len(splitDate[i]) < 2:
+                        splitDate[i] = "0" + splitDate[i]
+
+                return "-".join(splitDate)
+        return outDate
+
+    def ParseCompanyFromPersonNotes(self, notes, companyTag=""):
+        outRole = VFXRole()
+        # Remove symbols
+        filtered = re.sub(r'[!@#*$\(\)\\\[\]]', '', notes).lower()
+        filtered = re.sub("\"", "\'", filtered)
+        # Remove episode lists
+        filtered = re.sub(
+            r'(\w+)\s(\bepisodes),?(\s\w+)?(-\w+)?', '', filtered)
+        # Remove alternate name credits and uncredited roles
+        filtered = re.sub(r'\suncredited|\sas\s.*$', '', filtered)
+        # Remove company types
+        filtered = re.sub(r'(?:\sltd|\sinc)\.|(?:\sltd|\sinc)', '', filtered)
+        filtered = filtered.strip()
+
+        splitRole = []
+        splitRole = filtered.split(":")
+
+        role = ""
+        comp = ""
+        Log.String(
+            str("Filtered: '" + str(filtered) + "'. Original: '" + str(notes) + "'"))
+        if(len(splitRole) > 1):
+            role = str(splitRole[0]).strip()
+            comp = str(splitRole[1]).strip()
+            splitComp = comp.split(' - ')
+            if(len(companyTag) > 0):
+                if comp.find(self.companySearchTag) > -1:
+                    outRole.matchedTag = companyTag
+            outRole.role = role
+            splitCompDivision = splitComp[0].split(",")
+            if(len(splitCompDivision) > 1):
+                outRole.company = splitCompDivision[1]
+                outRole.role += (", " + splitCompDivision[0].strip())
+            else:
+                outRole.company = splitCompDivision[0]
+        else:
+            outRole.role = role
+
+        outRole.company = outRole.company.strip()
+        outRole.role = outRole.role.strip()
+
+        return outRole
+
+    #
+    # Find functions
+    #
     def FindOrCreateCompanyNode(self, imdbCompany):
-        companyNode = self.graph_db.get_indexed_node(
+        companyNode = neo4jHandle.get_indexed_node(
             "company", "id", imdbCompany.getID())
         if not companyNode:
-            if not silent:
-                print("Couldn't find company node. Searched for '" +
-                  str(imdbCompany['name']) + "'. Creating...")
+            Log.String("Couldn't find company node. Searched for '" +
+                       str(imdbCompany['name']) + "'. Creating...")
             while True:
                 try:
                     self.i.update(imdbCompany)
@@ -209,75 +426,18 @@ class ImdbScraper:
                     print("*** HTTP error. Redialling")
                     continue
                 break
-            companyNode, = self.graph_db.create(node(id=imdbCompany.getID()))
+            companyNode, = neo4jHandle.create(node(id=imdbCompany.getID()))
             companyNode.add_labels("company")
             companyNode.update_properties({'name': imdbCompany['name']})
             self.companyIndex.add("id", companyNode['id'], companyNode)
 
         return companyNode
 
-    def FindOrCreateMovieNode(self, imdbMovie):
-        movNode = self.graph_db.get_indexed_node(
-            "movie", "id", imdbMovie.getID())
-        if not movNode:
-            if not silent:
-                print("Couldn't find movie node. Searched for " + str(imdbMovie.getID() + ". Creating..."))
-            movNode, = self.graph_db.create(node(id=int(imdbMovie.getID())))
-            movNode.add_labels("movie")
-
-            year = ""
-            if imdbMovie.has_key('year'):
-                year = imdbMovie['year']
-
-            movNode.update_properties(
-                {'title': imdbMovie['title'], 'release': year})
-            self.movieIndex.add("id", movNode['id'], movNode)
-
-        return movNode
-
-    def FindOrCreatePersonNode(self, imdbPerson):
-        personNode = self.graph_db.get_indexed_node(
-            "person", "id", imdbPerson.getID())
-
-        if not personNode:
-            if not silent:
-                print("Couldn't find person node. Searched for " + str(imdbPerson.getID() + ". Creating..."))
-            personNode, = self.graph_db.create(node(id=imdbPerson.getID()))
-            personNode.add_labels("person")
-            personNode.update_properties({'name': imdbPerson['name']})
-            self.personIndex.add("id", personNode['id'], personNode)
-
-        return personNode
-
-    def FindCompanyFromPersonNotes(self, person, companyTag=""):
-        outRole = VFXRole()
-        filtered = re.sub('[!@#$\(\)\[\]]', '', person.notes).rstrip()
-        #filtered = re.sub('r[^\w]', '', person.notes).rstrip()
-        
-        splitRole = []
-
-        try:
-            splitRole = filtered.split(": ")
-        except:
-            print("Something went wrong splitting roles")
-
-        role = ""
-        comp = ""
-        if not silent:
-            print(str("Finding company from notes: '" + str(filtered) + "'"))
-        if(len(splitRole) > 1):
-            role = str(splitRole[0])
-            comp = str(splitRole[1]).lower()
-            splitComp = comp.split(' - ')
-            if(len(companyTag) > 0):
-                if comp.find(self.companySearchTag) > -1:
-                    outRole.matchedTag = companyTag
-            outRole.role = role
-            outRole.company = splitComp[0]
-        else:
-            outRole.role = role
-
-        return outRole
+    def FindPersonInList(self, crewList, personNode):
+        for p in crewList:
+            if p.getID() == personNode.get_properties()['id']:
+                return p
+        return None
 
     def FindCompanyInNodes(self, imdbCompany):
         for comp in self.companyList:
@@ -285,17 +445,270 @@ class ImdbScraper:
                 return comp
         return None
 
+    # Reset functions
     def ResetDb(self):
-        print("Clearing neo4j db")
-        scraper.graph_db.clear()
+        print("Clearing nodes")
+        query = neo4j.CypherQuery(neo4jHandle, "start n = node(*) delete n")
+        query.execute()
+        self.ResetCache(["movie", "company", "person"])
 
     def ResetRelationships(self):
         print("Clearing relationships")
-        neo4j.CypherQuery(self.graph_db, 'start r=relationship(*) delete r').execute()
+        query = neo4j.CypherQuery(
+            neo4jHandle, "start r = relationship(*) delete r")
+        query.execute()
+
+    def ResetCompanies(self):
+        print("Clearing company nodes")
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (c:company) DELETE c")
+        query.execute()
+        self.ResetCache(["company"])
+
+    def ResetMovies(self):
+        print("Clearing movie nodes")
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (m:movie) DELETE m")
+        query.execute()
+        self.ResetCache(["movie"])
+
+    def ResetPeople(self):
+        print("Clearing people nodes")
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (p:person) DELETE p")
+        query.execute()
+        self.ResetCache(["person"])
+
+    def ResetCache(self, dirList):
+        for cacheDir in dirList:
+            print "Clearing %s cache" % cacheDir
+            os.chdir(imdbCacheDir + "/" + cacheDir)
+            dirlist = [f for f in os.listdir(".") if f.endswith(".pkl")]
+            for f in dirlist:
+                os.remove(f)
+
+    #
+    # Mappings
+    #
+    def BuildCompanyMap(self, mapFile):
+        mapList = {}
+        query = neo4j.CypherQuery(
+            neo4jHandle, "\n".join(["MATCH (p:person)-[r:WORKED_FOR]-(c:company)",
+                                    "WHERE r.matchRatio > 90",
+                                    "RETURN DISTINCT r.company AS search,",
+                                    "COUNT(r.company) AS searchcount,",
+                                    "c.name AS company,", "c.id AS id,", "r.matchRatio AS match",
+                                    "ORDER BY match"]))
+        result = query.execute()
+        for record in result:
+            mapList[record.values[0]] = {
+                "id": record.values[3], "company": record.values[2]}
+
+        mapCombined = {"maptype": "company", "locations": {}, "maps": mapList}
+        jsonOut = open(mapFile, 'wb')
+        json.dump(mapCombined, jsonOut)
+        jsonOut.close()
+
+        print str(len(result)) + " results written to map file " + mapFile
+
+    #
+    # Database updateers
+    # - Anything that modifies the database AFTER initial creation
+    #
+    def SetTrueRoles(self):
+        if scraper.roleMap:
+            # Build reverse map first
+            print "== Remapping true roles with rolemap file"
+            # reverseMap = {}
+            # for role in roleFile:
+            #     if roleFile[role]['name'] in reverseMap:
+            #         reverseMap[roleFile[role]['name']]['searches'].append(roleFile[role])
+            #     else:
+            #         reverseMap[roleFile[role]['name']] = {'id':roleFile[role]['id'], 'searches':[], 'total': 0}
+
+            # DB query to get role relationships
+            query = neo4j.CypherQuery(
+                neo4jHandle, "MATCH (p:person)-[r:WORKED_FOR]-(c:company) RETURN r as roleRel")
+            result = query.execute()
+
+            for key in result:
+                roleRel = key.values[0]
+                trueRole = ""
+                if roleRel['role'] in self.roleMap['maps']:
+                    trueRole = self.roleMap['maps'][roleRel['role']]['name']
+                    if("zzz_baddata" in trueRole):
+                        trueRole = ""
+                Log.String(
+                    "Mapping " + str(roleRel['role']) + " to " + str(trueRole))
+                roleRel.update_properties({'trueRole': trueRole})
+        else:
+            print "No rolemap set!"
+
+    def SetLocations(self):
+        if scraper.companyMap:
+
+            print "== Setting locations from companymap file"
+            query = neo4j.CypherQuery(
+                neo4jHandle, "MATCH (c:company) RETURN c")
+            result = query.execute()
+
+            # reverseMap = {}
+            companyMap = scraper.companyMap['maps']
+            # for company in companyMap:
+            #     if companyMap[company]['name'] in reverseMap:
+            #         reverseMap[companyMap[company]['name']]['searches'].append(companyMap[company])
+            #     else:
+            #         reverseMap[companyMap[company]['name']] = {'id':companyMap[company]['id'], 'searches':[], 'total': 0}
+            #         if 'location' in  companyMap[company]:
+            #             reverseMap[companyMap[company]['name']]['location'] = companyMap[company]['location']
+            #         else:
+            #             reverseMap[companyMap[company]['name']]['location'] = ""
+
+            locations = scraper.companyMap['locations']
+            regions = scraper.companyMap['regions']
+
+            for key in result:
+                companyProps = key.values[0].get_properties()
+                key.values[0].update_properties({'location': "", 'region': ""})
+
+                if companyProps['isMapped']:
+                    if companyProps['name'] in locations:
+                        if locations[companyProps['name']]['geoLoc']:
+
+                            geoLocStr = locations[companyProps['name']]['geoLoc'].lower()
+                            locationStr = locations[companyProps['name']]['location'].lower()
+                            regionStr = regions[locationStr]['globalRegion'].lower()
+
+                            print "Setting location for '" + companyProps['name'] + "': " + locationStr + ", " + regionStr
+
+                            key.values[0].update_properties({'geoLoc': geoLocStr, 'location': locationStr, 'region': regionStr})
+
+
+    def SetJumpRoles(self):
+        print "== Building jump paths"
+        currentPerson = None
+        lastCompany = ""
+        pathNodeList = None
+        startNode = None
+        tallyStr = ""
+        tallyCount = 0
+        jumpCount = 0
+        sameCompanyCount = 0
+        query = neo4j.CypherQuery(neo4jHandle, "\n".join(
+            ['MATCH (p:person)-[r:WORKED_FOR]-(c:company)',
+             'RETURN p,r,c',
+             'ORDER BY p.id, r.release']))
+        result = query.execute()
+        for key in result:
+
+            # Get current person
+            currentPersonId = "start"
+            if currentPerson:
+                currentPersonId = currentPerson['id']
+
+            if key.values[0]['id'] != currentPersonId:
+                # Build path for last person
+
+                if(currentPerson):
+                    # Build path
+                    if(len(pathNodeList) > 0):
+                        jointPath = None
+                        for path in pathNodeList:
+                            if not jointPath:
+                                jointPath = path
+                            else:
+                                jointPath = neo4j.Path.join(
+                                    jointPath, "JUMP", path )
+
+                        jointPath.create(neo4jHandle)
+
+                    Log.String("--- Total jumps: " + str(jumpCount))
+
+                jumpCount = 0
+                sameCompanyCount = 0
+                tallyCount = 0
+                tallyStr = ""
+                lastCompany = None
+                Log.String(
+                    "=== New person: '" + str(key.values[0]['name']) + "'")
+                currentPerson = key.values[0]
+
+            # Get current company for person
+            companyId = "start"
+            if lastCompany:
+                companyId = lastCompany['id']
+
+            if key.values[2]['id'] != companyId:
+                # New jump
+                Log.String("Jumping ship to '" + str(
+                    key.values[1]['company']) + "'")
+
+                jumpNode = neo4jHandle.get_or_create_indexed_node('jump', 'combinedJumpId', str(
+                    currentPersonId) + "-" + str(key.values[2]['id']), {'personId': currentPersonId})
+                jumpNode.add_labels("jump")
+                if not lastCompany:
+                    print "No last company. Setting to " + str(key.values[2]['name'])
+                    jumpPath = neo4j.Path(
+                        key.values[0], "JUMP", jumpNode, "JUMP", key.values[2])
+                    pathNodeList = []
+                    pathNodeList.append(jumpPath)
+                else:
+                    jumpPath = neo4j.Path(jumpNode, "JUMP", key.values[2])
+                    pathNodeList.append(jumpPath)
+
+                tallyStr = ""
+                tallyCount = 0
+                lastCompany = key.values[2]
+                jumpCount += 1
+            else:
+                # Tally up consecutive roles at the company
+                sameCompanyCount += 1
+                tallyStr += "-"
+                tallyCount += 1
+                Log.String("Stayed at '" + str(
+                    key.values[1]['company']) + "' for " + tallyStr + " films (" + str(tallyCount) + ")")
+
+        # Create the jump
+        # if(lastJumpPath):
+            # neo4jHandle.create(lastJumpPath)
+
+    def FixUnpaddedDates(self):
+        print "Padding relationship date values..."
+        query = neo4j.CypherQuery(
+            neo4jHandle, "MATCH (p:person)-[r:WORKED_FOR]-(c:company) RETURN r")
+        result = query.execute()
+        progress = 0.0
+        total = len(result)
+        progressPercent = 0
+        lastProgressPercent = 0
+
+        for record in result:
+            date = str(record.values[0].get_properties()['release'])
+            splitDate = date.split('-')
+            if len(splitDate) > 2:
+                for i in range(len(splitDate)):
+                    if len(splitDate[i]) < 2:
+                        splitDate[i] = "0" + splitDate[i]
+                fixedDate = "-".join(splitDate)
+                record.values[0].update_properties({'release': fixedDate})
+                Log.String(" * Adjusted date:" + fixedDate)
+
+                progress += 1
+                progressPercent = int(round((progress / total) * 100))
+                if progressPercent != lastProgressPercent:
+                    print str(progressPercent) + "%"
+                    lastProgressPercent = progressPercent
+            else:
+                record.values[0].update_properties(
+                    {'release': str("-".join(splitDate))})
+
+
+
 
 #
 # Class for storing a role and associated company
 #
+
 class VFXRole:
 
     def __init__(self):
@@ -306,34 +719,136 @@ class VFXRole:
 
 # Script start
 # -----------------------------------------------------
+
+print "\n"
+print "*----------------------------------*"
+print "***** DWW Data Parser for IMDB *****"
+print "*----------------------------------*"
+
+
+# Args
+parser = OptionParser()
+parser.add_option("-v", "--verbose",
+                  action="store_true", dest="verbose", default=False)
+parser.add_option("--reset-movies", action="store_true",
+                  dest="resetMovies", help="Reset all movie nodes.", default=False)
+parser.add_option("--reset-people", action="store_true",
+                  dest="resetPeople", help="Reset all people nodes.", default=False)
+parser.add_option("--reset-companies", action="store_true",
+                  dest="resetCompanies", help="Reset all company nodes.", default=False)
+parser.add_option("--reset-all", action="store_true",
+                  dest="resetAll", help="Reset DB and cache.", default=False)
+parser.add_option("-c", "--company", action="store_true",
+                  dest="startCompany", help="IMDB id of root company.", default=False)
+parser.add_option("-s", "--search", action="store_true",
+                  dest="startSearch", help="Search term for root company", default=False)
+parser.add_option("--buildCompanyMap", action="store", type="string",
+                  dest="buildCompanyMapFile", help="Builds initial company map file. (matchRatio > 90)")
+parser.add_option("--companymap", action="store", type="string",
+                  dest="useCompanyMap", help="Map file for remapping companies."),
+parser.add_option("--rolemap", action="store", type="string",
+                  dest="useRoleMap", help="Map file for remapping roles."),
+parser.add_option("--buildmappedroles", action="store_true",
+                  dest="buildMappedRoles", help="Sets true roles from map files."),
+parser.add_option("--buildjumpnodes", action="store_true",
+                  dest="buildJumpNodes", help="Builds jump nodes for company jumps."),
+parser.add_option("--buildlocations", action="store_true",
+                  dest="buildLocations", help="Sets locations from company map."),
+parser.add_option("--run", action='store_true',
+                  help="Run the IMDB scraper", dest="runScraper", default=False)
+parser.add_option("--fix-dates", action='store_true',
+                  help="Pads release dates with zeroes", dest="fixDates", default=False)
+(options, args) = parser.parse_args()
+
+# Create DB handle
+neo4jHandle = neo4j.GraphDatabaseService(
+    "http://localhost:7474/db/data/")
+
+# Logging
+Log = Logger(options.verbose)
+
+# IMdb scraper class
 scraper = ImdbScraper()
+scraper.InitIMDB()
 
-
-# Start arguments
+# Recurse limits
 filmographyDepth = -1
 
-# Hardcoded Weta company id
+# Cache locations
+imdbCacheDir = os.path.abspath("imdbCache")
+
+# Root company ID and search terms
 companyID = 5031
 companySearchTag = 'weta'
 
-silent = True
+if options.startCompany or options.startSearch:
+    if options.startCompany and options.startSearch:
+        companyID = options.startCompany
+        companySearchTag = options.startSearch
+    else:
+        print "Both the root company ID and company search term need to be set!"
+        sys.exit(1)
 
-if len(sys.argv) <= 1:
-    print("Usage: python2 GetWeta.py (employees/connections/reset/reset_relationships)")
-
-if len(sys.argv) > 1:
-    print("Starting...")
-    scraper.SetRootCompany(companyID, companySearchTag)
-
-    if(sys.argv[1] == "reset"):
+# Resets
+if options.resetAll or options.resetCompanies or options.resetMovies or options.resetPeople:
+    scraper.ResetRelationships()
+    if options.resetAll:
         scraper.ResetDb()
-    elif(sys.argv[1] == "reset_relationships"):
-        scraper.ResetRelationships()
-    elif(sys.argv[1] == "employees"):
-        print("Searching for employees in filmography...")
-        scraper.GetPeopleInFilmography(filmographyDepth)
-    elif(sys.argv[1] == "connections"):
-        print("Searching for employees in filmography...")
-        personList = scraper.GetPeopleInFilmography(filmographyDepth)
-        scraper.ConnectPeopleToCompanies(personList)
-    
+    if options.resetCompanies:
+        scraper.ResetCompanies()
+    if options.resetMovies:
+        scraper.ResetMovies()
+    if options.resetPeople:
+        scraper.ResetPeople()
+
+if options.fixDates:
+    scraper.FixUnpaddedDates()
+
+# Mappings
+if options.buildCompanyMapFile:
+    scraper.BuildCompanyMap(options.companyMapFile)
+    sys.exit(0)
+if options.useCompanyMap:
+    try:
+        with open(options.useCompanyMap, 'rb') as companyMapFile:
+            scraper.companyMap = json.load(companyMapFile)
+            if scraper.companyMap['maptype'] != "company":
+                print "Wrong map supplied. Expected 'company', got " + scraper.roleMap['maptype']
+                sys.exit(1)
+    except IOError:
+        print "Couldn't find company map file"
+        sys.exit(1)
+
+if options.useRoleMap:
+    try:
+        with open(options.useRoleMap, 'rb') as roleMapFile:
+            scraper.roleMap = json.load(roleMapFile)
+            if scraper.roleMap['maptype'] != "role":
+                print "Wrong map supplied. Expected 'role', got " + scraper.roleMap['maptype']
+                sys.exit(1)
+    except IOError:
+        print "Couldn't find role map file"
+        sys.exit(1)
+
+if options.buildMappedRoles:
+    scraper.SetTrueRoles()
+
+if options.buildLocations:
+    scraper.SetLocations()
+
+if options.buildJumpNodes:
+    scraper.SetJumpRoles()
+
+if options.runScraper:
+    # Get list of people to search from root company
+    scraper.SetRootCompany(companyID, companySearchTag)
+    personList = scraper.GetPeopleInFilmography(filmographyDepth)
+
+    # Make connections
+    scraper.ConnectPeopleToCompanies(personList)
+    if options.useRoleMap:
+        scraper.SetTrueRoles()
+    if options.useCompanyMap:
+        scraper.SetLocations()
+
+print('===== Finished =====')

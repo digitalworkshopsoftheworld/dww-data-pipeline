@@ -1,0 +1,2091 @@
+{
+    "maptype": "company",
+    "locations": {
+        "Alberquerque": {
+            "lat": 45,
+            "long": -0.4
+        }
+    },
+    "maps": {
+        "2002": {
+            "name": "zzz_baddata:2002",
+            "id": "-1"
+        },
+        "2003": {
+            "name": "zzz_baddata:2003",
+            "id": "-1"
+        },
+        "2007": {
+            "name": "zzz_baddata:2007",
+            "id": "-1"
+        },
+        "one of us": {
+            "name": "One Of Us",
+            "id": "0208242"
+        },
+        "duboi": {
+            "name": "Duboi",
+            "id": "0059345"
+        },
+        "eye candy": {
+            "name": "Eye Candy",
+            "id": "0077053"
+        },
+        "hammerhead productions": {
+            "name": "Hammerhead Productions",
+            "id": "0028079"
+        },
+        "lux visual effects": {
+            "name": "Lux Visual Effects",
+            "id": "0242161"
+        },
+        "sandbox pictures": {
+            "name": "Sandbox Pictures",
+            "id": "0093485"
+        },
+        "uncharted territory": {
+            "name": "Uncharted Territory",
+            "id": "0086813"
+        },
+        "soho vfx": {
+            "name": "Soho VFX",
+            "id": "0092169"
+        },
+        "gray matter fx": {
+            "name": "Gray Matter FX",
+            "id": "0087090"
+        },
+        "filmworks/fx": {
+            "name": "Filmworks/FX",
+            "id": "0081136"
+        },
+        "crimson": {
+            "name": "Crimson",
+            "id": "0213639"
+        },
+        "digital sandbox": {
+            "name": "Digital Sandbox",
+            "id": "0156591"
+        },
+        "buzz image group": {
+            "name": "Buzz Image Group",
+            "id": "0073242"
+        },
+        "mpc": {
+            "name": "MPC",
+            "id": "0065057"
+        },
+        "sandbox f/x": {
+            "name": "Sandbox F/X",
+            "id": "0267082"
+        },
+        "cinesite": {
+            "name": "Cinesite",
+            "id": "0055855"
+        },
+        "pdi/dreamworks": {
+            "name": "PDI DreamWorks",
+            "id": "0168624"
+        },
+        "warner brothers": {
+            "name": "Warner Brothers",
+            "id": "0025059"
+        },
+        "weta digital -": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "sony": {
+            "name": "Sony",
+            "id": "0001799"
+        },
+        "dreamworks": {
+            "name": "Dreamworks",
+            "id": "0151275"
+        },
+        "ca scanline productions": {
+            "name": "CA Scanline Production",
+            "id": "0060787"
+        },
+        "sirenae filmpost": {
+            "name": "Sirenae Film Post",
+            "id": "0127091"
+        },
+        "digital pictures iloura": {
+            "name": "Digital Pictures Iloura",
+            "id": "0126852"
+        },
+        "lux vfx": {
+            "name": "LUX VFX",
+            "id": "0256668"
+        },
+        "evp": {
+            "name": "EVP",
+            "id": "0129650"
+        },
+        "upp": {
+            "name": "UPP",
+            "id": "0313591"
+        },
+        "pacific ocean post": {
+            "name": "Pacific Ocean Post",
+            "id": "0087561"
+        },
+        "gradient effects": {
+            "name": "Gradient Effects",
+            "id": "0407696"
+        },
+        "metrocel animation studios": {
+            "name": "Metrocel Animation Studios",
+            "id": "0288902"
+        },
+        "core": {
+            "name": "Core",
+            "id": "0206357"
+        },
+        "buena vista visual effects": {
+            "name": "Buena Vista Visual Effects",
+            "id": "0006390"
+        },
+        "cfc": {
+            "name": "CFC",
+            "id": "0326735"
+        },
+        "cfx": {
+            "name": "CFX",
+            "id": "0064023"
+        },
+        "platige image": {
+            "name": "Platige Image",
+            "id": "0091558"
+        },
+        "frantic films": {
+            "name": "Frantic Films",
+            "id": "0116480"
+        },
+        "ntropic": {
+            "name": "Ntropic",
+            "id": "0116746"
+        },
+        "ocs/freeze frame/pixelmagic": {
+            "name": "OCS/Freeze Frame/Pixel Magic",
+            "id": "0066712"
+        },
+        "photon vfx": {
+            "name": "Photon VFX",
+            "id": "0068865"
+        },
+        "422 south": {
+            "name": "422 South",
+            "id": "0128811"
+        },
+        "3d": {
+            "name": "3D",
+            "id": "0058219"
+        },
+        "the base studio": {
+            "name": "The Base Studio",
+            "id": "0292714"
+        },
+        "stereo d": {
+            "name": "Stereo D",
+            "id": "0294624"
+        },
+        "visionart design and animation": {
+            "name": "VisionArt Design & Animation",
+            "id": "0113227"
+        },
+        "eclair vfx": {
+            "name": "Eclair VFX",
+            "id": "0226086"
+        },
+        "china": {
+            "name": "China",
+            "id": "0257203"
+        },
+        "imagemovers digital": {
+            "name": "ImageMovers Digital",
+            "id": "0291775"
+        },
+        "framestore-cfc": {
+            "name": "Framestore CFC",
+            "id": "0014175"
+        },
+        "david allen productions": {
+            "name": "David Allen Productions",
+            "id": "0092167"
+        },
+        "vdouble negative": {
+            "name": "Double Negative",
+            "id": "0105115"
+        },
+        "reliance media works": {
+            "name": "Reliance Media Works VFX",
+            "id": "0304239"
+        },
+        "glendale": {
+            "name": "Glendale",
+            "id": "0009538"
+        },
+        "double negative": {
+            "name": "Double Negative",
+            "id": "0105115"
+        },
+        "whiskytree": {
+            "name": "Whiskytree",
+            "id": "0310620"
+        },
+        "square usa": {
+            "name": "Square USA",
+            "id": "0040831"
+        },
+        "montreal": {
+            "name": "Montreal",
+            "id": "0147053"
+        },
+        "image engine": {
+            "name": "Image Engine Design",
+            "id": "0069055"
+        },
+        "beeps pty": {
+            "name": "Beeps Pty",
+            "id": "0427735"
+        },
+        "vision globale": {
+            "name": "Vision Globale",
+            "id": "0120521"
+        },
+        "animatrik film design": {
+            "name": "Animatrik Film Design",
+            "id": "0334974"
+        },
+        "rainmaker digital pictures": {
+            "name": "Rainmaker Digital Pictures",
+            "id": "0003502"
+        },
+        "c.o.r.e. digital pictures": {
+            "name": "C.O.R.E. Digital Pictures",
+            "id": "0070662"
+        },
+        "redfx": {
+            "name": "RedFx",
+            "id": "0264301"
+        },
+        "pixomondo": {
+            "name": "Pixomondo",
+            "id": "0166347"
+        },
+        "filmgate": {
+            "name": "Filmgate",
+            "id": "0187613"
+        },
+        "digital backlot": {
+            "name": "Digital Backlot",
+            "id": "0062100"
+        },
+        "dna": {
+            "name": "DNA",
+            "id": "0392675"
+        },
+        "usa": {
+            "name": "USA",
+            "id": "0019361"
+        },
+        "threshold digital research labs": {
+            "name": "Threshold Digital Research Labs",
+            "id": "0037920"
+        },
+        "cis london": {
+            "name": "CIS London",
+            "id": "0230651"
+        },
+        "rhythm and hues": {
+            "name": "Rhythm &amp; Hues",
+            "id": "0304671"
+        },
+        "pixar": {
+            "name": "Pixar",
+            "id": "0348691"
+        },
+        "weta digitral": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "dilated pixels": {
+            "name": "Dilated Pixels",
+            "id": "0296183"
+        },
+        "todd-ao digital images": {
+            "name": "Todd-AO Digital Images",
+            "id": "0045815"
+        },
+        "trixter film": {
+            "name": "Trixter Film",
+            "id": "0079389"
+        },
+        "pacific title": {
+            "name": "Pacific Title",
+            "id": "0001256"
+        },
+        "metrolight studios": {
+            "name": "MetroLight Studios",
+            "id": "0065431"
+        },
+        "weta digitals": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "cinesite europe": {
+            "name": "Cinesite (Europe)",
+            "id": "0377209"
+        },
+        "movies": {
+            "name": "Movies",
+            "id": "0202019"
+        },
+        "computer cafÃ©": {
+            "name": "Computer Cafe",
+            "id": "0353982"
+        },
+        "digital magic": {
+            "name": "Digital Magic",
+            "id": "0296144"
+        },
+        "matte painting uk": {
+            "name": "Matte Painting UK",
+            "id": "0282897"
+        },
+        "madpix": {
+            "name": "MadPix",
+            "id": "0180444"
+        },
+        "mass. illusions": {
+            "name": "Mass. Illusions",
+            "id": "0042573"
+        },
+        "digital film": {
+            "name": "Digital Film",
+            "id": "0147596"
+        },
+        "mattes & miniatures": {
+            "name": "Mattes & Miniatures",
+            "id": "0222473"
+        },
+        "spi": {
+            "name": "SPI",
+            "id": "0186587"
+        },
+        "windmill lane": {
+            "name": "Windmill Lane",
+            "id": "0236605"
+        },
+        "hydrau'lx": {
+            "name": "Hydraulx",
+            "id": "0109632"
+        },
+        "dreamscape imagery": {
+            "name": "Dreamscape Imagery",
+            "id": "0006413"
+        },
+        "tvt postproduction": {
+            "name": "Tvt. postproduction",
+            "id": "0118624"
+        },
+        "complete post": {
+            "name": "Complete Post",
+            "id": "0066652"
+        },
+        "hybride technologies": {
+            "name": "Hybride Technologies",
+            "id": "0071495"
+        },
+        "sub/par pix": {
+            "name": "Sub/Par Pix",
+            "id": "0169749"
+        },
+        "machine": {
+            "name": "Machine",
+            "id": "0123290"
+        },
+        "momentum lab": {
+            "name": "Momentum Lab",
+            "id": "0141751"
+        },
+        "the embassy visual effects": {
+            "name": "Embassy Visual Effects",
+            "id": "0425825"
+        },
+        "thelab": {
+            "name": "TheLab",
+            "id": "0323934"
+        },
+        "core feature animation": {
+            "name": "Core Feature Animation",
+            "id": "0122821"
+        },
+        "peerless": {
+            "name": "Peerless",
+            "id": "0056327"
+        },
+        "dive": {
+            "name": "DIVE",
+            "id": "0201347"
+        },
+        "square pictures": {
+            "name": "Square Pictures",
+            "id": "0210988"
+        },
+        "mill film": {
+            "name": "Mill Film",
+            "id": "0200573"
+        },
+        "lipsync post": {
+            "name": "Lipsync Post",
+            "id": "0110638"
+        },
+        "jellyfish": {
+            "name": "JellyFish",
+            "id": "0423687"
+        },
+        "digital post": {
+            "name": "Digital Post",
+            "id": "0009562"
+        },
+        "stetson visual services": {
+            "name": "Stetson Visual Services",
+            "id": "0074089"
+        },
+        "computer cafe": {
+            "name": "Computer Cafe",
+            "id": "0353982"
+        },
+        "technicolor creative services vancouver": {
+            "name": "Technicolor Creative Services VFX Vancouver",
+            "id": "0208059"
+        },
+        "jim hensons creature shop": {
+            "name": "Jim Henson's Creature Shop",
+            "id": "0040747"
+        },
+        "clarke associates": {
+            "name": "Clarke Associates",
+            "id": "0158534"
+        },
+        "oompa loompa": {
+            "name": "Oompa Loompas",
+            "id": "0211142"
+        },
+        "atomic fiction": {
+            "name": "Atomic Fiction",
+            "id": "0324802"
+        },
+        "logan": {
+            "name": "Logan",
+            "id": "0251136"
+        },
+        "imd": {
+            "name": "IMD",
+            "id": "0130603"
+        },
+        "brainstorm digital": {
+            "name": "Brainstorm Digital",
+            "id": "0174615"
+        },
+        "creo": {
+            "name": "CREO",
+            "id": "0068980"
+        },
+        "teamworks digital": {
+            "name": "Teamworks Digital",
+            "id": "0124873"
+        },
+        "the imaginarium studios": {
+            "name": "The Imaginarium Studios",
+            "id": "0373005"
+        },
+        "rodeo fx": {
+            "name": "Rodeo FX",
+            "id": "0209819"
+        },
+        "space monkey": {
+            "name": "Space Monkey",
+            "id": "0174472"
+        },
+        "switch vfx": {
+            "name": "Switch VFX",
+            "id": "0144163"
+        },
+        "prpvfx limited": {
+            "name": "PRPVFX Limited",
+            "id": "0097347"
+        },
+        "polygon pictures": {
+            "name": "Polygon Pictures",
+            "id": "0193258"
+        },
+        "new line": {
+            "name": "New Line",
+            "id": "0236360"
+        },
+        "baseblack": {
+            "name": "Baseblack",
+            "id": "0132581"
+        },
+        "take2 interactive software": {
+            "name": "Take2 Interactive Software",
+            "id": "0186541"
+        },
+        "warner digital studios": {
+            "name": "Warner Digital Studios",
+            "id": "0065669"
+        },
+        "lost boys studios": {
+            "name": "Lost Boys Studios",
+            "id": "0075122"
+        },
+        "cis hollywood": {
+            "name": "CIS Hollywood",
+            "id": "0063107"
+        },
+        "photon stockman": {
+            "name": "Photon Stockman",
+            "id": "0014698"
+        },
+        "2g digital post": {
+            "name": "2G Digital Post",
+            "id": "0255235"
+        },
+        "digital.art.media": {
+            "name": "Digital.Art.Media",
+            "id": "0037130"
+        },
+        "screen scene": {
+            "name": "Screen Scene",
+            "id": "0150220"
+        },
+        "tvt.postproduction": {
+            "name": "Tvt. postproduction",
+            "id": "0118624"
+        },
+        "dreamworks animation": {
+            "name": "DreamWorks Animation",
+            "id": "0129164"
+        },
+        "bluebolt": {
+            "name": "BlueBolt",
+            "id": "0286378"
+        },
+        "rainmaker animation & visual effects": {
+            "name": "Rainmaker Animation & Visual Effects",
+            "id": "0157814"
+        },
+        "warner bros.": {
+            "name": "Warner Bros.",
+            "id": "0026840"
+        },
+        "canada": {
+            "name": "Canada",
+            "id": "0184374"
+        },
+        "lola": {
+            "name": "Lola",
+            "id": "0026155"
+        },
+        "vce": {
+            "name": "VCE",
+            "id": "0146952"
+        },
+        "vifx": {
+            "name": "VIFX",
+            "id": "0024117"
+        },
+        "pacific title/mirage": {
+            "name": "Pacific Title/Mirage",
+            "id": "0045986"
+        },
+        "pacific title imaging": {
+            "name": "Pacific Title Imaging",
+            "id": "0227264"
+        },
+        "simple tricks & nonsense vfx": {
+            "name": "Simple Tricks & Nonsense",
+            "id": "0451280"
+        },
+        "sbs": {
+            "name": "SBS",
+            "id": "0018288"
+        },
+        "lux monkey": {
+            "name": "Lux Monkey",
+            "id": "0341848"
+        },
+        "oktobor": {
+            "name": "Oktobor",
+            "id": "0057106"
+        },
+        "pacific title & arts studio": {
+            "name": "Pacific Title and Art Studio",
+            "id": "0090950"
+        },
+        "cantina pictures": {
+            "name": "Cantina Pictures",
+            "id": "0042525"
+        },
+        "storm studios": {
+            "name": "Storm Studio",
+            "id": "0165834"
+        },
+        "dfilm services": {
+            "name": "DFILM Services",
+            "id": "0062195"
+        },
+        "pinnacle studios": {
+            "name": "Pinnacle Studios",
+            "id": "0034599"
+        },
+        "magic media company": {
+            "name": "Magic Media Company",
+            "id": "0075825"
+        },
+        "boss film": {
+            "name": "Boss Film",
+            "id": "0191804"
+        },
+        "das werk": {
+            "name": "Das Werk",
+            "id": "0017789"
+        },
+        "the posthouse ag": {
+            "name": "The PostHouse AG",
+            "id": "0102420"
+        },
+        "luma pictures": {
+            "name": "Luma Pictures",
+            "id": "0116745"
+        },
+        "praxis": {
+            "name": "Praxis",
+            "id": "0037602"
+        },
+        "digiscope": {
+            "name": "Digiscope",
+            "id": "0004771"
+        },
+        "cafe fx": {
+            "name": "Cafe FX",
+            "id": "0235235"
+        },
+        "digital factory": {
+            "name": "Digital Factory",
+            "id": "0037381"
+        },
+        "rising sun": {
+            "name": "Rising Sun",
+            "id": "0461484"
+        },
+        "outback post": {
+            "name": "Outback Post",
+            "id": "0260347"
+        },
+        "meteor studio": {
+            "name": "Meteor Studios",
+            "id": "0085412"
+        },
+        "method design": {
+            "name": "Method Design",
+            "id": "0372080"
+        },
+        "farm studios": {
+            "name": "Farm Studios",
+            "id": "0301246"
+        },
+        "cutting edge": {
+            "name": "Cutting Edge",
+            "id": "0423260"
+        },
+        "visual effects": {
+            "name": "Visual Effects",
+            "id": "0017466"
+        },
+        "krypton visual effects": {
+            "name": "Krypton Visual Effects",
+            "id": "0231260"
+        },
+        "hollywood": {
+            "name": "Hollywood",
+            "id": "0177489"
+        },
+        "blue sky/vifx": {
+            "name": "Blue Sky/VIFX",
+            "id": "0040176"
+        },
+        "raven software": {
+            "name": "Raven Software",
+            "id": "0068730"
+        },
+        "santa barbara studios": {
+            "name": "Santa Barbara Studios",
+            "id": "0078487"
+        },
+        "pacific title & art studio": {
+            "name": "Pacific Title and Art Studio",
+            "id": "0090950"
+        },
+        "animal logic": {
+            "name": "Animal Logic",
+            "id": "0130412"
+        },
+        "usc computer animation laboratory": {
+            "name": "The USC Computer Animation Laboratory",
+            "id": "0144955"
+        },
+        "digital productions": {
+            "name": "Digital Productions",
+            "id": "0053192"
+        },
+        "hoax films": {
+            "name": "HOAX Films",
+            "id": "0338035"
+        },
+        "entertainment effects group": {
+            "name": "Entertainment Effects Group",
+            "id": "0043180"
+        },
+        "pacific title digital": {
+            "name": "Pacific Title Digital",
+            "id": "0070142"
+        },
+        "cinematics": {
+            "name": "Cinematics",
+            "id": "0333158"
+        },
+        "digital frontier": {
+            "name": "Digital Frontier",
+            "id": "0142006"
+        },
+        "michael kaelin & associates": {
+            "name": "Michael Kaelin & Associates",
+            "id": "0200533"
+        },
+        "3dsite": {
+            "name": "3DSite",
+            "id": "0122531"
+        },
+        "framestore": {
+            "name": "Framestore",
+            "id": "0103818"
+        },
+        "interactive": {
+            "name": "Interactive",
+            "id": "0196724"
+        },
+        "stan winston studio": {
+            "name": "Stan Winston Studio",
+            "id": "0060252"
+        },
+        "rise visual effects berlin": {
+            "name": "RISE Visual Effects Berlin",
+            "id": "0232486"
+        },
+        "toybox": {
+            "name": "Toybox",
+            "id": "0432977"
+        },
+        "the syndicate": {
+            "name": "The Syndicate",
+            "id": "0265157"
+        },
+        "c.o.r.e. feature animation": {
+            "name": "C.O.R.E. Feature Animation",
+            "id": "0150935"
+        },
+        "vortex media arts": {
+            "name": "Vortex Media Arts",
+            "id": "0245264"
+        },
+        "pixel playground": {
+            "name": "Pixel Playground",
+            "id": "0101582"
+        },
+        "faction creative": {
+            "name": "Faction Creative",
+            "id": "0293896"
+        },
+        "rushes film & tv": {
+            "name": "Rushes Film & TV",
+            "id": "0322503"
+        },
+        "matte world digital": {
+            "name": "Matte World Digital",
+            "id": "0040635"
+        },
+        "numb robot": {
+            "name": "Numb Robot",
+            "id": "0169310"
+        },
+        "reel fx entertainment": {
+            "name": "Reel FX Entertainment",
+            "id": "0052541"
+        },
+        "reliance": {
+            "name": "Reliance",
+            "id": "0060662"
+        },
+        "animation": {
+            "name": "Animation",
+            "id": "0115309"
+        },
+        "optical film effects": {
+            "name": "Optical Film Effects",
+            "id": "0105098"
+        },
+        "hatch": {
+            "name": "Hatch",
+            "id": "0256487"
+        },
+        "disney feature animation": {
+            "name": "Walt Disney Feature Animation",
+            "id": "0075995"
+        },
+        "halon entertainment": {
+            "name": "Halon Entertainment",
+            "id": "0172422"
+        },
+        "framestore cfc": {
+            "name": "Framestore CFC",
+            "id": "0014175"
+        },
+        "wavefront technologies": {
+            "name": "Wavefront Technologies",
+            "id": "0143869"
+        },
+        "visionart": {
+            "name": "VisionArt",
+            "id": "0000202"
+        },
+        "vfx": {
+            "name": "VFX",
+            "id": "0366853"
+        },
+        "cinesite digital imaging": {
+            "name": "Cinesite Digital Imaging",
+            "id": "0090010"
+        },
+        "cafefx": {
+            "name": "CafeFX",
+            "id": "0115302"
+        },
+        "double edge digital": {
+            "name": "Double Edge Digital",
+            "id": "0155548"
+        },
+        "fx cartel": {
+            "name": "FX Cartel",
+            "id": "0151147"
+        },
+        "technicolor creative services": {
+            "name": "Technicolor Creative Services",
+            "id": "0092783"
+        },
+        "furious fx": {
+            "name": "Furious FX",
+            "id": "0141747"
+        },
+        "anthem visual effects": {
+            "name": "Anthem Visual Effects",
+            "id": "0184648"
+        },
+        "look fx": {
+            "name": "Look FX",
+            "id": "0276862"
+        },
+        "soho": {
+            "name": "SoHo",
+            "id": "0363411"
+        },
+        "los angeles": {
+            "name": "Los Angeles",
+            "id": "0194086"
+        },
+        "visual distractions": {
+            "name": "visual distractions",
+            "id": "0226919"
+        },
+        "post mango": {
+            "name": "Post Mango",
+            "id": "0384167"
+        },
+        "weta digita;": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "boss film studio": {
+            "name": "Boss Film Studios",
+            "id": "0031624"
+        },
+        "threshold": {
+            "name": "Threshold",
+            "id": "0309327"
+        },
+        "asylum": {
+            "name": "Asylum",
+            "id": "0005791"
+        },
+        "spans & partner": {
+            "name": "Spans & Partner",
+            "id": "0302574"
+        },
+        "jim henson's creature shop": {
+            "name": "Jim Henson's Creature Shop",
+            "id": "0040747"
+        },
+        "max ink cafe": {
+            "name": "Max Ink Cafe",
+            "id": "0020812"
+        },
+        "lunapark": {
+            "name": "Lunapark",
+            "id": "0101151"
+        },
+        "centropolis effects": {
+            "name": "Centropolis Effects",
+            "id": "0063439"
+        },
+        "rhinofx": {
+            "name": "RhinoFX",
+            "id": "0140280"
+        },
+        "fuel": {
+            "name": "FUEL",
+            "id": "0241457"
+        },
+        "entity fx": {
+            "name": "Entity FX",
+            "id": "0084547"
+        },
+        "digital firepower": {
+            "name": "Digital Firepower",
+            "id": "0005688"
+        },
+        "weta digital": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "vanguard animation": {
+            "name": "Vanguard Animation",
+            "id": "0096434"
+        },
+        "magicon": {
+            "name": "Magicon",
+            "id": "0292530"
+        },
+        "fake studio": {
+            "name": "Fake Studio",
+            "id": "0214145"
+        },
+        "pop film": {
+            "name": "Pop Film",
+            "id": "0431897"
+        },
+        "stargate digital": {
+            "name": "Stargate Digital",
+            "id": "0065348"
+        },
+        "persistence of vision": {
+            "name": "Persistence of Vision",
+            "id": "0267312"
+        },
+        "la maison": {
+            "name": "La Maison",
+            "id": "0034265"
+        },
+        "manga video": {
+            "name": "Manga Video",
+            "id": "0028689"
+        },
+        "giantsteps": {
+            "name": "Giantsteps",
+            "id": "0284515"
+        },
+        "weta workshop": {
+            "name": "Weta Workshop",
+            "id": "0076091"
+        },
+        "photon nzfx": {
+            "name": "Photon NZFX",
+            "id": "0148152"
+        },
+        "lola visual effects": {
+            "name": "Lola Visual Effects",
+            "id": "0129378"
+        },
+        "mobius mc": {
+            "name": "Mobius MC",
+            "id": "0297249"
+        },
+        "dkp effects": {
+            "name": "DKP Effects",
+            "id": "0119835"
+        },
+        "cg factory": {
+            "name": "CG Factory",
+            "id": "0383981"
+        },
+        "todd-ao": {
+            "name": "Todd-AO",
+            "id": "0259238"
+        },
+        "krypton": {
+            "name": "Krypton",
+            "id": "0150893"
+        },
+        "digital slaves vfx": {
+            "name": "Digital Slaves VFX",
+            "id": "0101577"
+        },
+        "radium": {
+            "name": "Radium",
+            "id": "0088625"
+        },
+        "no strings attached": {
+            "name": "No Strings Attached",
+            "id": "0101578"
+        },
+        "duboicolor": {
+            "name": "Duboicolor",
+            "id": "0223318"
+        },
+        "moving picture company": {
+            "name": "Moving Picture Company",
+            "id": "0323573"
+        },
+        "shockwave entertainment": {
+            "name": "Shockwave Entertainment",
+            "id": "0024848"
+        },
+        "max ink cafÃ©": {
+            "name": "Max Ink Cafe",
+            "id": "0020812"
+        },
+        "station x studios": {
+            "name": "Station X Studios",
+            "id": "0023604"
+        },
+        "svengali visual effects": {
+            "name": "Svengali Visual Effects",
+            "id": "0115871"
+        },
+        "fuel international": {
+            "name": "Fuel International",
+            "id": "0081118"
+        },
+        "arcane": {
+            "name": "Arcane",
+            "id": "0239563"
+        },
+        "postmodern sydney": {
+            "name": "Postmodern sydney",
+            "id": "0381155"
+        },
+        "arri munich": {
+            "name": "ARRI Munich",
+            "id": "0328582"
+        },
+        "creo collective": {
+            "name": "Creo Collective",
+            "id": "0132582"
+        },
+        "boss": {
+            "name": "Boss",
+            "id": "0216885"
+        },
+        "modern videofilm": {
+            "name": "Modern VideoFilm",
+            "id": "0072759"
+        },
+        "cinesite digital studios": {
+            "name": "Cinesite Digital Studios",
+            "id": "0071292"
+        },
+        "def2shoot": {
+            "name": "Def2shoot",
+            "id": "0092784"
+        },
+        "griffin interplanetary studios": {
+            "name": "Griffin Interplanetary Studios",
+            "id": "0329399"
+        },
+        "ilm": {
+            "name": "Industrial Light & Magic (ILM)",
+            "id": "0072491"
+        },
+        "blue castle games": {
+            "name": "Blue Castle Games",
+            "id": "0325801"
+        },
+        "imageworks": {
+            "name": "Imageworks",
+            "id": "0228524"
+        },
+        "giant studios": {
+            "name": "Giant Studios",
+            "id": "0102416"
+        },
+        "matte world": {
+            "name": "Matte World",
+            "id": "0053626"
+        },
+        "pictorion das werk": {
+            "name": "Pictorion_das Werk",
+            "id": "0124327"
+        },
+        "pov": {
+            "name": "POV",
+            "id": "0334070"
+        },
+        "pop": {
+            "name": "POP",
+            "id": "0447749"
+        },
+        "dream quest images": {
+            "name": "Dream Quest Images",
+            "id": "0042356"
+        },
+        "fido film": {
+            "name": "Fido Films",
+            "id": "0263045"
+        },
+        "mass. illusion": {
+            "name": "Mass. Illusions",
+            "id": "0042573"
+        },
+        "fly studio": {
+            "name": "FLY Studio",
+            "id": "0354933"
+        },
+        "bain vfx": {
+            "name": "Bain VFX",
+            "id": "0230967"
+        },
+        "reality check studios": {
+            "name": "Reality Check Studios",
+            "id": "0072032"
+        },
+        "the film factory at vtr": {
+            "name": "The Film Factory at VTR",
+            "id": "0024403"
+        },
+        "synopsis video": {
+            "name": "Synopsis Video",
+            "id": "0288103"
+        },
+        "collateral image": {
+            "name": "Collateral Image",
+            "id": "0281130"
+        },
+        "special projects": {
+            "name": "Special Projects",
+            "id": "0331998"
+        },
+        "eclair numÃ©rique": {
+            "name": "Ã‰clair NumÃ©rique",
+            "id": "0145537"
+        },
+        "tvt .film+vfx": {
+            "name": "TVT .Film Vfx",
+            "id": "0386759"
+        },
+        "photon": {
+            "name": "Photon",
+            "id": "0115600"
+        },
+        "tippett studio": {
+            "name": "Tippett Studio",
+            "id": "0044098"
+        },
+        "cis vancouver": {
+            "name": "CIS Vancouver",
+            "id": "0230649"
+        },
+        "studio ex-centris": {
+            "name": "Studio Ex-centris",
+            "id": "0120481"
+        },
+        "imax": {
+            "name": "IMAX",
+            "id": "0057495"
+        },
+        "look effects": {
+            "name": "Look Effects",
+            "id": "0194783"
+        },
+        "postmodern": {
+            "name": "Postmodern",
+            "id": "0375496"
+        },
+        "iloura": {
+            "name": "Iloura",
+            "id": "0276240"
+        },
+        "reliance mediaworks": {
+            "name": "Reliance MediaWorks",
+            "id": "0293466"
+        },
+        "amalgamated pixels": {
+            "name": "Amalgamated Pixels",
+            "id": "0012497"
+        },
+        "stingray vfx": {
+            "name": "Stingray VFX",
+            "id": "0244483"
+        },
+        "bullet time": {
+            "name": "Bullet Time",
+            "id": "0011685"
+        },
+        "digital domain": {
+            "name": "Digital Domain",
+            "id": "0011313"
+        },
+        "weta digita": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "beeps": {
+            "name": "Beeps",
+            "id": "0020441"
+        },
+        "image design": {
+            "name": "Image Engine Design",
+            "id": "0069055"
+        },
+        "optima digital": {
+            "name": "Optima Digital",
+            "id": "0266373"
+        },
+        "l'e.s.t.": {
+            "name": "L'E.S.T.",
+            "id": "0251892"
+        },
+        "meteor studios": {
+            "name": "Meteor Studios",
+            "id": "0085412"
+        },
+        "molinare": {
+            "name": "Molinare",
+            "id": "0360016"
+        },
+        "reel fx": {
+            "name": "Reel FX",
+            "id": "0128648"
+        },
+        "intelligent creatures": {
+            "name": "Intelligent Creatures",
+            "id": "0108509"
+        },
+        "mk12": {
+            "name": "MK12",
+            "id": "0188483"
+        },
+        "fido": {
+            "name": "Fido",
+            "id": "0342387"
+        },
+        "rainmaker": {
+            "name": "Rainmaker",
+            "id": "0207461"
+        },
+        "parthenon": {
+            "name": "Parthenon",
+            "id": "0276754"
+        },
+        "pixomondo images": {
+            "name": "Pixomondo Images",
+            "id": "0277401"
+        },
+        "men from mars": {
+            "name": "Men From Mars",
+            "id": "0105139"
+        },
+        "newbreed visual effects": {
+            "name": "Newbreed Visual Effects",
+            "id": "0298244"
+        },
+        "flash film works": {
+            "name": "Flash Film Works",
+            "id": "0002487"
+        },
+        "bren entertainment": {
+            "name": "Bren Entertainment",
+            "id": "0184560"
+        },
+        "modus fx": {
+            "name": "Modus Fx",
+            "id": "0216671"
+        },
+        "filmbox": {
+            "name": "FilmBox",
+            "id": "0237520"
+        },
+        "technicolor": {
+            "name": "Technicolor",
+            "id": "0105582"
+        },
+        "level 256": {
+            "name": "Level 256",
+            "id": "0283828"
+        },
+        "giant killer robots": {
+            "name": "Giant Killer Robots",
+            "id": "0081547"
+        },
+        "efilm": {
+            "name": "EFilm",
+            "id": "0046164"
+        },
+        "scanlinevfx": {
+            "name": "ScanlineVFX",
+            "id": "0235204"
+        },
+        "prime focus world": {
+            "name": "Prime Focus World",
+            "id": "0292891"
+        },
+        "rise visual effects studios": {
+            "name": "RISE Visual Effects Studios",
+            "id": "0318973"
+        },
+        "spin vfx": {
+            "name": "Spin VFX",
+            "id": "0148151"
+        },
+        "synthespian studios": {
+            "name": "Synthespian Studios",
+            "id": "0201327"
+        },
+        "jellyfish pictures": {
+            "name": "Jellyfish Pictures",
+            "id": "0190666"
+        },
+        "spin west vfx": {
+            "name": "SPIN West VFX",
+            "id": "0129374"
+        },
+        "digital dimension": {
+            "name": "Digital Dimension",
+            "id": "0129377"
+        },
+        "rhythm & hues": {
+            "name": "Rhythm & Hues",
+            "id": "0304671"
+        },
+        "arcca animation": {
+            "name": "Arcca Animation",
+            "id": "0428473"
+        },
+        "maya": {
+            "name": "Maya",
+            "id": "0191367"
+        },
+        "the mill": {
+            "name": "The Mill",
+            "id": "0105148"
+        },
+        "catapult reliance mediaworks": {
+            "name": "Catapult Reliance Mediaworks",
+            "id": "0353221"
+        },
+        "cosa vfx": {
+            "name": "CoSA VFX",
+            "id": "0381033"
+        },
+        "jim henson creature shop": {
+            "name": "Jim Henson's Creature Shop",
+            "id": "0040747"
+        },
+        "fusefx": {
+            "name": "FuseFX",
+            "id": "0340135"
+        },
+        "rising sun pictures": {
+            "name": "Rising Sun Pictures",
+            "id": "0044645"
+        },
+        "shade vfx": {
+            "name": "Shade VFX",
+            "id": "0292695"
+        },
+        "stranger": {
+            "name": "Stranger",
+            "id": "0259272"
+        },
+        "evil eye pictures": {
+            "name": "Evil Eye Pictures",
+            "id": "0178865"
+        },
+        "simple tricks & nonsense": {
+            "name": "Simple Tricks & Nonsense",
+            "id": "0451280"
+        },
+        "resin": {
+            "name": "Resin",
+            "id": "0214107"
+        },
+        "asylum vfx": {
+            "name": "Asylum VFX",
+            "id": "0065161"
+        },
+        "blur studio": {
+            "name": "Blur Studio",
+            "id": "0064973"
+        },
+        "northwest imaging & fx": {
+            "name": "Northwest Imaging & FX",
+            "id": "0130121"
+        },
+        "prologue": {
+            "name": "Prologue",
+            "id": "0450378"
+        },
+        "tweak films": {
+            "name": "Tweak Films",
+            "id": "0085810"
+        },
+        "prologue films": {
+            "name": "Prologue Films",
+            "id": "0128783"
+        },
+        "image metrics": {
+            "name": "Image Metrics",
+            "id": "0169966"
+        },
+        "sequence": {
+            "name": "Sequence",
+            "id": "0290192"
+        },
+        "footage": {
+            "name": "Footage",
+            "id": "0241756"
+        },
+        "sassoon film design": {
+            "name": "Sassoon Film Design",
+            "id": "0002615"
+        },
+        "pacific": {
+            "name": "Pacific",
+            "id": "0205388"
+        },
+        "boy wonder visual effects": {
+            "name": "Boy Wonder Visual Effects",
+            "id": "0016567"
+        },
+        "ca scanline production": {
+            "name": "CA Scanline Production",
+            "id": "0060787"
+        },
+        "flat earth productions": {
+            "name": "Flat Earth Productions",
+            "id": "0068276"
+        },
+        "double negative visual effects": {
+            "name": "Double Negative Visual Effects",
+            "id": "0187344"
+        },
+        "peerless camera company": {
+            "name": "Peerless Camera Company",
+            "id": "0105097"
+        },
+        "wizz": {
+            "name": "Wizz",
+            "id": "0160487"
+        },
+        "mac guff ligne": {
+            "name": "Mac Guff Ligne",
+            "id": "0102807"
+        },
+        "five vfx": {
+            "name": "Five VFX",
+            "id": "0304158"
+        },
+        "nvizage": {
+            "name": "Nvizage",
+            "id": "0253016"
+        },
+        "esc entertainment": {
+            "name": "ESC Entertainment",
+            "id": "0084541"
+        },
+        "big red pixel": {
+            "name": "Big Red Pixel",
+            "id": "0143325"
+        },
+        "weta digitial": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "arri digital film": {
+            "name": "ARRI Digital",
+            "id": "0033897"
+        },
+        "whodoo efx": {
+            "name": "Whodoo EFX",
+            "id": "0068360"
+        },
+        "cis visual effects group": {
+            "name": "CIS Visual Effects Group",
+            "id": "0266496"
+        },
+        "media principia": {
+            "name": "Media Principia",
+            "id": "0034333"
+        },
+        "pipeline": {
+            "name": "Pipeline",
+            "id": "0128282"
+        },
+        "sw digital": {
+            "name": "SW Digital",
+            "id": "0108508"
+        },
+        "yu+co": {
+            "name": "yU+Co.",
+            "id": "0037574"
+        },
+        "elektrofilm": {
+            "name": "Elektrofilm",
+            "id": "0204546"
+        },
+        "gradient fx": {
+            "name": "Gradient FX",
+            "id": "0377403"
+        },
+        "nvizible": {
+            "name": "Nvizible",
+            "id": "0284479"
+        },
+        "arri digital": {
+            "name": "ARRI Digital",
+            "id": "0033897"
+        },
+        "vine fx": {
+            "name": "Vine FX",
+            "id": "0454758"
+        },
+        "boss film corporation": {
+            "name": "Boss Film Corporation",
+            "id": "0116821"
+        },
+        "pulse fx": {
+            "name": "Pulse FX",
+            "id": "0196989"
+        },
+        "crazy horse effects": {
+            "name": "Crazy Horse Effects",
+            "id": "0266642"
+        },
+        "pleasantville visual effects": {
+            "name": "Pleasantville Visual Effects",
+            "id": "0010791"
+        },
+        "electronic arts": {
+            "name": "Electronic Arts",
+            "id": "0129267"
+        },
+        "in-three": {
+            "name": "In-Three",
+            "id": "0246276"
+        },
+        "/pixel envy": {
+            "name": "Pixel Envy",
+            "id": "0076227"
+        },
+        "warner bros. animation": {
+            "name": "Warner Bros. Animation",
+            "id": "0072876"
+        },
+        "fuel vfx": {
+            "name": "Fuel VFX",
+            "id": "0316005"
+        },
+        "mokko studio": {
+            "name": "Mokko Studio",
+            "id": "0124875"
+        },
+        "mirada": {
+            "name": "Mirada",
+            "id": "0320979"
+        },
+        "buf": {
+            "name": "BUF",
+            "id": "0060901"
+        },
+        "mr. x": {
+            "name": "Mr. X",
+            "id": "0016889"
+        },
+        "pixel magic": {
+            "name": "Pixel Magic",
+            "id": "0065379"
+        },
+        "cis": {
+            "name": "CIS",
+            "id": "0027342"
+        },
+        "fantavision": {
+            "name": "Fantavision",
+            "id": "0181912"
+        },
+        "prime focus": {
+            "name": "Prime Focus",
+            "id": "0250049"
+        },
+        "cinesite hollywood": {
+            "name": "Cinesite (Hollywood)",
+            "id": "0089996"
+        },
+        "park road post": {
+            "name": "Park Road Post",
+            "id": "0148369"
+        },
+        "comen vfx": {
+            "name": "Comen VFX",
+            "id": "0175947"
+        },
+        "guru animation studio": {
+            "name": "Guru Animation Studio",
+            "id": "0252477"
+        },
+        "universal": {
+            "name": "Universal",
+            "id": "0234421"
+        },
+        "chimney pot": {
+            "name": "Chimney Pot",
+            "id": "0110927"
+        },
+        "mechnology": {
+            "name": "Mechnology",
+            "id": "0191360"
+        },
+        "engine room": {
+            "name": "Engine Room",
+            "id": "0285560"
+        },
+        "boss film studios": {
+            "name": "Boss Film Studios",
+            "id": "0031624"
+        },
+        "usfx": {
+            "name": "USFX",
+            "id": "0054407"
+        },
+        "stargate digital vancouver": {
+            "name": "Stargate Digital Vancouver",
+            "id": "0335621"
+        },
+        "big primate pictures": {
+            "name": "Big Primate Pictures",
+            "id": "0135516"
+        },
+        "method studios": {
+            "name": "Method Studios",
+            "id": "0078782"
+        },
+        "available light": {
+            "name": "Available Light",
+            "id": "0089773"
+        },
+        "title house digital": {
+            "name": "Title House Digital",
+            "id": "0057408"
+        },
+        "zoic studios": {
+            "name": "Zoic Studios",
+            "id": "0081109"
+        },
+        "arri": {
+            "name": "Arri",
+            "id": "0010351"
+        },
+        "post modern": {
+            "name": "Post Modern",
+            "id": "0142766"
+        },
+        "meteor": {
+            "name": "Meteor",
+            "id": "0103207"
+        },
+        "minimo vfx": {
+            "name": "Minimo VFX",
+            "id": "0424621"
+        },
+        "cine-fn": {
+            "name": "Cine-FN",
+            "id": "0263869"
+        },
+        "tippett studios": {
+            "name": "Tippett Studio",
+            "id": "0044098"
+        },
+        "3dcgi": {
+            "name": "3DCGI",
+            "id": "0322473"
+        },
+        "hammerhead": {
+            "name": "Hammerhead",
+            "id": "0142049"
+        },
+        "barxseven": {
+            "name": "BarXseven",
+            "id": "0225156"
+        },
+        "will vinton studios": {
+            "name": "Will Vinton Studios",
+            "id": "0024670"
+        },
+        "weta": {
+            "name": "WETA",
+            "id": "0083965"
+        },
+        "fugitive studios": {
+            "name": "Fugitive Studios",
+            "id": "0240771"
+        },
+        "channel one": {
+            "name": "Channel One",
+            "id": "0191760"
+        },
+        "stan winston digital": {
+            "name": "Stan Winston Digital",
+            "id": "0120480"
+        },
+        "colorado fx": {
+            "name": "Colorado FX",
+            "id": "0082404"
+        },
+        "exile vfx": {
+            "name": "Exile VFX",
+            "id": "0222522"
+        },
+        "hydraulx": {
+            "name": "Hydraulx",
+            "id": "0109632"
+        },
+        "garner maclennan design": {
+            "name": "Garner MacLennan Design",
+            "id": "0004712"
+        },
+        "luxanimation": {
+            "name": "Luxanimation",
+            "id": "0180605"
+        },
+        "yuco": {
+            "name": "yU+Co.",
+            "id": "0037574"
+        },
+        "3d animation": {
+            "name": "zzz_role:3d animation",
+            "id": "-1"
+        },
+        "2d and 3d": {
+            "name": "zzz_role:2d and 3d",
+            "id": "-1"
+        },
+        "3d animator": {
+            "name": "zzz_role:3d animator",
+            "id": "-1"
+        },
+        "3d color and lighting": {
+            "name": "zzz_role:3d color and lighting",
+            "id": "-1"
+        },
+        "3d lighting": {
+            "name": "zzz_role:3d lighting",
+            "id": "-1"
+        },
+        "3d version": {
+            "name": "zzz_role:3d version",
+            "id": "-1"
+        },
+        "3d adaptation": {
+            "name": "zzz_role:3d adaptation",
+            "id": "-1"
+        },
+        "3-d": {
+            "name": "zzz_role:3-d",
+            "id": "-1"
+        },
+        "digital colorist": {
+            "name": "zzz_role:digital colorist",
+            "id": "-1"
+        },
+        "digital compositor": {
+            "name": "zzz_role:digital compositor",
+            "id": "-1"
+        },
+        "effects sequence supervisor": {
+            "name": "zzz_role:effects sequence supervisor",
+            "id": "-1"
+        },
+        "cafÃ©fx": {
+            "name": "Cafe FX",
+            "id": "0235235"
+        },
+        "concept artist": {
+            "name": "zzz_role:concept artist",
+            "id": "-1"
+        },
+        "concept modeler": {
+            "name": "zzz_role:concept modeler",
+            "id": "-1"
+        },
+        "preproduction": {
+            "name": "zzz_role:preproduction",
+            "id": "-1"
+        },
+        "previz": {
+            "name": "zzz_role:previz",
+            "id": "-1"
+        },
+        "pre-production": {
+            "name": "zzz_role:pre-production",
+            "id": "-1"
+        },
+        "pre-vis": {
+            "name": "zzz_role:pre-vis",
+            "id": "-1"
+        },
+        "prep team technicolor": {
+            "name": "zzz_role:prep team technicolor",
+            "id": "-1"
+        },
+        "rodeofx": {
+            "name": "Rodeo FX",
+            "id": "0209819"
+        },
+        "werta digital": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "wet digital": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "weta fx": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "wetav digital": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "wetafx": {
+            "name": "Weta Digital",
+            "id": "0005031"
+        },
+        "lead modeler": {
+            "name": "zzz_role:lead modeler",
+            "id": "-1"
+        },
+        "lighting": {
+            "name": "zzz_role:lighting",
+            "id": "-1"
+        },
+        "lighting & compositing": {
+            "name": "zzz_role:lighting & compositing",
+            "id": "-1"
+        },
+        "lighting & pre-vis": {
+            "name": "zzz_role:lighting & pre-vis",
+            "id": "-1"
+        },
+        "lighting and compositing": {
+            "name": "zzz_role:lighting and compositing",
+            "id": "-1"
+        },
+        "lighting and effects": {
+            "name": "zzz_role:lighting and effects",
+            "id": "-1"
+        },
+        "matte painter / senior visual effects matte painter": {
+            "name": "zzz_role:matte painter / senior visual effects matte painter",
+            "id": "-1"
+        },
+        "cfc framestore": {
+            "name": "Framestore CFC",
+            "id": "0014175"
+        },
+        "atmosphere feature effects": {
+            "name": "zzz_role:atmosphere feature effects",
+            "id": "-1"
+        },
+        "boy wonder": {
+            "name": "Boy Wonder Visual Effects",
+            "id": "0016567"
+        },
+        "boy wonder fx": {
+            "name": "Boy Wonder Visual Effects",
+            "id": "0016567"
+        },
+        "boy wonder vfx": {
+            "name": "Boy Wonder Visual Effects",
+            "id": "0016567"
+        },
+        "boywonder vfx": {
+            "name": "Boy Wonder Visual Effects",
+            "id": "0016567"
+        },
+        "boss film corp.": {
+            "name": "Boss Film Corporation",
+            "id": "0116821"
+        },
+        "boss film corporation 1988": {
+            "name": "Boss Film Corporation",
+            "id": "0116821"
+        },
+        "the third floor": {
+            "name": "Third Floor, The",
+            "id": "0191253"
+        },
+        "the moving picture company": {
+            "name": "Moving Picture Company",
+            "id": "0323573"
+        },
+        "facial modeler": {
+            "name": "zzz_role:facial modeler",
+            "id": "-1"
+        },
+        "ilm 1997 special edition": {
+            "name": "Industrial Light &amp; Magic (ILM)",
+            "id": "0072491"
+        },
+        "ilm 2002 special edition": {
+            "name": "Industrial Light &amp; Magic (ILM)",
+            "id": "0072491"
+        },
+        "ilm singapore": {
+            "name": "Industrial Light & Magic (Singapore)",
+            "id": "-1"
+        },
+        "ilm special edition": {
+            "name": "Industrial Light &amp; Magic (ILM)",
+            "id": "0072491"
+        },
+        "ilm visual effects unit": {
+            "name": "Industrial Light &amp; Magic (ILM)",
+            "id": "0072491"
+        },
+        "image engine / junior modeler": {
+            "name": "Image Engine Design",
+            "id": "0069055"
+        },
+        "image engine / visual effects cg modeler": {
+            "name": "Image Engine Design",
+            "id": "0069055"
+        },
+        "image engine vancouver": {
+            "name": "Image Engine Design",
+            "id": "0069055"
+        },
+        "llc": {
+            "name": "zzz_baddata:llc",
+            "id": "-1"
+        },
+        "lookfx": {
+            "name": "Look FX",
+            "id": "0276862"
+        },
+        "luma": {
+            "name": "Luma Pictures",
+            "id": "0116745"
+        },
+        "peerless camera compoany": {
+            "name": "Peerless Camera Company",
+            "id": "0105097"
+        },
+        "sony imageworks": {
+            "name": "Sony Pictures Imageworks (SPI)",
+            "id": "0042679"
+        },
+        "sony pictures imageworks": {
+            "name": "Sony Pictures Imageworks (SPI)",
+            "id": "0042679"
+        },
+        "miniature and optical effects unit": {
+            "name": "zzz_role:miniature and optical effects unit",
+            "id": "-1"
+        },
+        "vancouver": {
+            "name": "zzz_baddata:vancouver",
+            "id": "-1"
+        },
+        "the lab sydney": {
+            "name": "LaB Sydney, The",
+            "id": "0144431"
+        },
+        "caféfx": {
+            "name": "Cafe FX",
+            "id": "0235235"
+        },
+        "model construction": {
+            "name": "zzz_role:model construction",
+            "id": "-1"
+        },
+        "baseblack vfx": {
+            "name": "Baseblack",
+            "id": "0132581"
+        },
+        "baseblack visual effects": {
+            "name": "Baseblack",
+            "id": "0132581"
+        },
+        "modeler": {
+            "name": "zzz_role:modeler",
+            "id": "-1"
+        },
+        "ca scanline production gmbh": {
+            "name": "CA Scanline Production",
+            "id": "0060787"
+        },
+        "rhythm & hues studios": {
+            "name": "Rhythm &amp; Hues",
+            "id": "0304671"
+        },
+        "miniature unit": {
+            "name": "zzz_role:miniature unit",
+            "id": "-1"
+        },
+        "kleiser-walczak": {
+            "name": "Kleiser-Walczak Digital Effects\t",
+            "id": "0067179"
+        },
+        "mpc london": {
+            "name": "Moving Picture Company (MPC)",
+            "id": "0016492"
+        },
+        "the orphanage": {
+            "name": "The Orphanage",
+            "id": -1
+        },
+        "industrial light & magic": {
+            "name": "Industrial Light & Magic (ILM)",
+            "id": "0072491"
+        },
+        "peerless camera co.": {
+            "name": "Peerless Camera Company",
+            "id": "0105097"
+        },
+        "the senate vfx": {
+            "name": "The Senate VFX",
+            "id": -1
+        },
+        "rainmaker uk": {
+            "name": "Rainmaker",
+            "id": "0207461"
+        },
+        "digital doman": {
+            "name": "Digital Domain",
+            "id": "0011313"
+        }
+    }
+}

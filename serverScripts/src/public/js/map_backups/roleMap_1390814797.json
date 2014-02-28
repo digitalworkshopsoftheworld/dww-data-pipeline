@@ -1,0 +1,34 @@
+{
+    "cg artist/compositor": {
+        "name": "Compositor",
+        "id": -1
+    },
+    "cg lighter": {
+        "name": "Lighting",
+        "id": -1
+    },
+    "cg lighting": {
+        "name": "Lighting",
+        "id": -1
+    },
+    "cg lighting & effects artist": {
+        "name": "Lighting",
+        "id": -1
+    },
+    "cg lighting and effects artist": {
+        "name": "Lighting",
+        "id": -1
+    },
+    "cg modeler": {
+        "name": "Modeler",
+        "id": -1
+    },
+    "cg modeling artist": {
+        "name": "Modeler",
+        "id": -1
+    },
+    "stereo compositor": {
+        "name": "Compositor",
+        "id": -1
+    }
+}

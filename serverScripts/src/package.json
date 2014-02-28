@@ -1,0 +1,12 @@
+{
+    "name": "dww-server",
+    "version": "0.0.1",
+    "private": "false",
+    "dependencies": {
+        "express": "*",
+        "jade": "*",
+        "markdown": "*",
+        "neo4j": "*",
+        "forever": "*"
+    }
+}

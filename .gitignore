@@ -1,7 +1,5 @@
-imdbLocalDb/
-imdbLocalDb
-CSVconvert/
-Csvconvert
+imdbcache/
+node_modules/
 
 # Compiled source #
 ###################
@@ -11,6 +9,7 @@ Csvconvert
 *.exe
 *.o
 *.so
+*.pyc
 
 # Packages #
 ############

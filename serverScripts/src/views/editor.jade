@@ -1,0 +1,84 @@
+extends layout
+
+block includes
+  link(rel='stylesheet', href='/stylesheets/editorStyle.css')
+  script(src='/js/jquery.sticky-kit.min.js')
+  script(src='/js/stupidtable.min.js')    
+  script.
+    var blacklist = "#{blacklist}".split(",");
+    var mapType = "#{mappingType}";
+    var mapListUrl = "#{mappingListUrl}";
+    var mapFileUrl = "#{mappingFile}";
+  - var capitalize = function(str) {return str.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });};
+  script(src='/js/dwwFront.js')
+
+block content
+  div.top
+    h1= title
+    h3 Legend:
+    p
+      ul
+        li
+          span.verified &nbsp&nbsp&nbsp&nbsp
+          span  Mapping exists between search and #{mappingType}.
+        if mappingType == "company"
+          li
+            span.verified.role &nbsp&nbsp&nbsp&nbsp
+            span  Search term is a role rather than a #{mappingType}.
+        li
+          span.verified.baddata &nbsp&nbsp&nbsp&nbsp
+          span  Bad search term. Everything that isn't a proper search.
+
+  div.container
+    div#controls
+      button#uploadMap Save changes
+      button#useMapButton Map file
+      button#showFiltered Filtered searches (OFF)
+      input(id='searchCutoff', type='number', min='0', step='1', placeholder='Minimum number of searches')
+    div#datatable.activeEdit
+      table#maintable
+        thead
+          tr
+            th(data-sort='string', class='searchHeader') 
+              a(href='#') Search
+            th(data-sort='string', class='searchFilteredHeader') 
+              a(href='#') Filtered Search
+            th(data-sort='string', class='nameHeader')
+              a(href='#')= capitalize(mappingType)
+            th(data-sort='int', class='searchCountHeader') 
+              a(href='#') Count
+            if mappingType == "company"
+              th
+                button#verifyControlsToggle.headerToggle Verify (ON)
+            th.verifyControls
+        tbody.scroll
+    div#tableseperator
+    div#sidebar.inactiveEdit
+      table#totalstable
+        thead
+          tr
+            th(data-sort='string', class='mappedNameHeader') 
+              a(href='#') Mapped #{capitalize(mappingType)}
+            if mappingType == "company"
+              th(data-sort='string', class='locationHeader')
+                a(href='#') Location
+            th(data-sort='int', class='countTotalHeader') 
+              a(href='#') Total
+            if mappingType == "company"
+              th
+                button#locationControlsToggle.headerToggle Locations (OFF)
+        tbody.scroll
+      table#blacklisttable
+        thead
+          tr
+            th(data-sort='string', class='mappedNameHeader') 
+              a(href='#') Blacklist terms
+            th(data-sort='int', class='countTotalHeader') 
+              a(href='#') Total
+        tbody.scroll
+
+  div.footer
+  
+
+  div#companydropdown.dropdown.dropdown-tip.dropdown-scroll
+    ul.dropdown-menu
